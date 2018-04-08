@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AbstractIO")]
-[assembly: AssemblyDescription("A nanoframwork library for abstracting I/O to simple interfaces getting or accepting values of a certain data type, and for re-usable features above them.")]
+[assembly: AssemblyTitle("AbstractIO.Samples")]
+[assembly: AssemblyDescription("Abstract I/O sample code knowing nothing about the board or physical ports used.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("AbstractIO")]
