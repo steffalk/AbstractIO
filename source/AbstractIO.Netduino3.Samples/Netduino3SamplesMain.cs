@@ -1,10 +1,10 @@
 ﻿// Uncomment exactly one of the offered samples:
 
-//#define Sample01SimpleBlinker
+#define Sample01SimpleBlinker
 //#define Sample01SimpleBlinkerDistributed
 //#define Sample01SimpleBlinkerAlternating
 //#define Sample02ButtonControlsLampPolling
-#define Sample02ButtonControlsLampPollingInvertingButton
+//#define Sample02ButtonControlsLampPollingInvertingButton
 //#define Sample02ButtonControlsLampPollingInvertingLamp
 
 namespace AbstractIO.Netduino3.Samples
@@ -16,13 +16,6 @@ namespace AbstractIO.Netduino3.Samples
     /// </summary>
     public static class Netduino3SamplesMain
     {
-        /// <summary>
-        /// The button that these samples use for polling an input. Change this to any of the Netduino 3 digital inputs
-        /// to easily adapt the samples, for example if you want to attach an external button to one of the pins
-        /// D0 - D13.
-        /// </summary>
-        const Netduino3.DigitalInputPin ButtonToUseUsingPolling = Netduino3.DigitalInputPin.D0;
-
         /// <summary>
         /// Runs one of the abstract samples using physical ports of an Netduino 3 board.
         /// </summary>
@@ -66,7 +59,7 @@ namespace AbstractIO.Netduino3.Samples
             // Sample 02: Control an LED using a button:
 
             AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
-                button: new Netduino3.DigitalInput(ButtonToUseUsingPolling),
+                button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
 
 #elif Sample02ButtonControlsLampPollingInvertingButton
