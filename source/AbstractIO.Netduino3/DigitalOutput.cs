@@ -10,17 +10,6 @@ namespace AbstractIO.Netduino3
         private bool _value;
 
         /// <summary>
-        /// Creates an instance using a specific GpioController and pin drive mode.
-        /// </summary>
-        /// <param name="controller">The controller to use.</param>
-        /// <param name="pin">The pin to use.</param>
-        /// <param name="driveMode">The mode of the pin. This must be valid for output.</param>
-        public DigitalOutput(GpioController controller, DigitalOutputPin pin, GpioPinDriveMode mode) :
-            base(controller, (int)pin, DigitalInputOutputBase.CheckOutputMode(mode))
-        {
-        }
-
-        /// <summary>
         /// Creates an instance using the default GpioController and a specific pin drive mode.
         /// </summary>
         /// <param name="pin">The pin to use.</param>
