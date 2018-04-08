@@ -23,7 +23,7 @@ namespace AbstractIO.Netduino3.Samples
         {
 #if Sample01SimpleBlinker
 
-            // Sample 01: Blink an LED:
+            // Sample 01: Blink a LED:
 
             AbstractIO.Samples.Sample01SimpleBlinker.Run(
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
@@ -45,7 +45,7 @@ namespace AbstractIO.Netduino3.Samples
 
             // Sample 01 again, but this time blinking two LEDs alternating by using the BooleanOutputDistributor
             // combined with inverting one of the outputs using the BooleanOutputInverter, coded using the fluent API
-            // that the corresponding extension method offers::
+            // that the corresponding extension method offers:
 
             AbstractIO.Samples.Sample01SimpleBlinker.Run(
                 lamp: new BooleanOutputDistributor(
@@ -56,7 +56,7 @@ namespace AbstractIO.Netduino3.Samples
 
 #elif Sample02ButtonControlsLampPolling
 
-            // Sample 02: Control an LED using a button:
+            // Sample 02: Control a LED using a button:
 
             AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
