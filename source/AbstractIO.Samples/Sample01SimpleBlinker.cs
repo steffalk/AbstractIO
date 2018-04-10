@@ -4,7 +4,7 @@ using System.Threading;
 namespace AbstractIO.Samples
 {
     /// <summary>
-    /// Demonstrates simple digital output by blinking any output, for example, an LED.
+    /// Demonstrates simple digital output by blinking any output, for example, a LED.
     /// </summary>
     public static class Sample01SimpleBlinker
     {
