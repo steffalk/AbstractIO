@@ -3,8 +3,15 @@ using System.Threading;
 
 namespace AbstractIO.Samples
 {
+    /// <summary>
+    /// Lets a lamp blink smoothly by slowly increasing or decreasing its brightness.
+    /// </summary>
     public static class Sample04SmoothBlinker
     {
+        /// <summary>
+        /// Runs the sample.
+        /// </summary>
+        /// <param name="lamp">The lamp, as an analog output.</param>
         public static void Run(IDoubleOutput lamp)
         {
             // Check parameters:

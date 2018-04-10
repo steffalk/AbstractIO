@@ -23,6 +23,7 @@
     <Compile Include="Sample02ButtonControlsLampPolling.cs" />
     <Compile Include="Sample03ButtonControlsLampEventBased.cs" />
     <Compile Include="Sample04SmoothBlinker.cs" />
+    <Compile Include="Sample05ControlLampBrightnessThroughAnalogInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">

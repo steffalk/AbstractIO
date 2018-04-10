@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace AbstractIO
 {
@@ -94,6 +95,211 @@ namespace AbstractIO
 
     #endregion
 
+    #region Boolean Operators
+
+    /// <summary>
+    /// The base class for <see cref="IBooleanInput"/> objects combining other <see cref="IBooleanInput"/> objecs with
+    /// binary operators.
+    /// </summary>
+    public abstract class BooleanOperatorInputBase : IBooleanInput
+    {
+        /// <summary>
+        /// The source inputs to be operated on.
+        /// </summary>
+        private IBooleanInput[] _sourceInputs;
+
+        /// <summary>
+        /// Creates an instance.
+        /// </summary>
+        /// <param name="sourceInputs">The inputs to be operated on.</param>
+        protected BooleanOperatorInputBase(params IBooleanInput[] sourceInputs)
+        {
+            if (sourceInputs == null || sourceInputs.Length == 0)
+            {
+                throw new ArgumentNullException(nameof(sourceInputs));
+            }
+            foreach (var input in sourceInputs)
+            {
+                if (input == null)
+                {
+                    throw new ArgumentException("sourceInputs must not contain empty elements.");
+                }
+            }
+            _sourceInputs = new IBooleanInput[sourceInputs.Length];
+            sourceInputs.CopyTo(_sourceInputs, 0);
+        }
+
+        /// <summary>
+        /// Gets the source inputs to be operated on.
+        /// </summary>
+        protected IBooleanInput[] SourceInputs
+        {
+            get
+            {
+                return _sourceInputs;
+            }
+        }
+
+        /// <summary>
+        /// Gets (reads) the value.
+        /// </summary>
+        public abstract bool Value { get; }
+    }
+
+    /// <summary>
+    /// An <see cref="IBooleanInput"/> combinding several other <see cref="IBooleanInput"/> objects using AND.
+    /// </summary>
+    public class BooleanAndInput : BooleanOperatorInputBase
+    {
+        /// <summary>
+        /// Creates an instance.
+        /// </summary>
+        /// <param name="sourceInputs">The inputs to be operated on.</param>
+        public BooleanAndInput(params IBooleanInput[] sourceInputs) : base(sourceInputs)
+        {
+        }
+
+        /// <summary>
+        /// Return true if all <see cref="SourceInputs"/> are true, otherwise false.
+        /// </summary>
+        public override bool Value
+        {
+            get
+            {
+                foreach (IBooleanInput input in SourceInputs)
+                {
+                    if (!input.Value)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// An <see cref="IBooleanInput"/> combinding several other <see cref="IBooleanInput"/> objects using OR.
+    /// </summary>
+    public class BooleanOrInput : BooleanOperatorInputBase
+    {
+        /// <summary>
+        /// Creates an instance.
+        /// </summary>
+        /// <param name="sourceInputs">The inputs to be operated on.</param>
+        public BooleanOrInput(params IBooleanInput[] sourceInputs) : base(sourceInputs)
+        {
+        }
+
+        /// <summary>
+        /// Return true if at least one of the <see cref="SourceInputs"/> is true, otherwise false.
+        /// </summary>
+        public override bool Value
+        {
+            get
+            {
+                foreach (IBooleanInput input in SourceInputs)
+                {
+                    if (input.Value)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+    }
+
+    #endregion
+
+    #region Double-valued Transformations
+
+    public class ScaleToRangeInput : IDoubleInput
+    {
+        private IDoubleInput _source;
+        private double _minimum, _maximum, _sourceMinimum, _sourceMaximum;
+
+        public ScaleToRangeInput(IDoubleInput source, double minimum, double maximum)
+        {
+            if (source == null) { throw new ArgumentNullException(nameof(source)); }
+            if (minimum >= maximum) { throw new ArgumentException(); }
+            _source = source;
+            _minimum = minimum;
+            _maximum = maximum;
+            _sourceMinimum = double.MaxValue;
+            _sourceMaximum = double.MinValue;
+        }
+
+        public double Value
+        {
+            get
+            {
+                double sourceValue = _source.Value;
+
+                if (sourceValue < _sourceMinimum) { _sourceMinimum = sourceValue; }
+                if (sourceValue > _sourceMaximum) { _sourceMaximum = sourceValue; }
+
+                double result;
+                double interval = _sourceMaximum - _sourceMinimum;
+
+                if (interval > 0.0)
+                {
+                    result = (sourceValue - _sourceMinimum) / interval * (_maximum - _minimum) + _minimum;
+                }
+                else
+                {
+                    result = (_maximum + _minimum) / 2.0;
+                }
+                if (result < _minimum)
+                {
+                    result = _minimum;
+                }
+                else if (result > _maximum)
+                {
+                    result = _maximum;
+                }
+                return result;
+            }
+        }
+    }
+
+    public class SchmittTriggerInput : IBooleanInput
+    {
+        private IDoubleInput _sourceInput;
+        private double _lowLimit, _highLimit;
+        bool _currentValue;
+
+        public SchmittTriggerInput(IDoubleInput sourceInput, double triggerValue, double hysteresis)
+        {
+            if (sourceInput == null) { throw new ArgumentNullException(nameof(sourceInput)); }
+            if (hysteresis < 0.0) { throw new ArgumentOutOfRangeException(nameof(hysteresis)); }
+            _sourceInput = sourceInput;
+            hysteresis = hysteresis / 2.0;
+            _lowLimit = triggerValue - hysteresis;
+            _highLimit = triggerValue + hysteresis;
+        }
+
+        public bool Value
+        {
+            get
+            {
+                double value = _sourceInput.Value;
+
+                if (value < _lowLimit)
+                {
+                    _currentValue = false;
+                }
+                else if (value > _highLimit)
+                {
+                    _currentValue = true;
+                }
+                return _currentValue;
+            }
+        }
+    }
+
+    #endregion
+
     #region Extension methods
 
     /// <summary>
@@ -126,6 +332,23 @@ namespace AbstractIO
             return new ObserverableBooleanInputInverter(source);
         }
 
+        public static void WaitFor(this IBooleanInput port, bool value)
+        {
+            while (port.Value != value)
+            {
+                Thread.Sleep(1);
+            }
+        }
+
+        public static ScaleToRangeInput ScaleToRange(this IDoubleInput source, double minimum, double maximum)
+        {
+            return new ScaleToRangeInput(source, minimum, maximum);
+        }
+
+        public static SchmittTriggerInput SchmittTrigger(this IDoubleInput source, double triggerValue, double hysteresis)
+        {
+            return new SchmittTriggerInput(source, triggerValue, hysteresis);
+        }
     }
 
     #endregion

@@ -6,9 +6,10 @@
 //#define Sample02ButtonControlsLampPolling
 //#define Sample02ButtonControlsLampPollingInvertingButton
 //#define Sample02ButtonControlsLampPollingInvertingLamp
+#define Sample02ButtonControlsLampUsing2Buttons
 //#define Sample03ButtonControlsLampEventBased
 //#define Sample03ButtonControlsLampEventBasedInvertingButton
-#define Sample04SmoothPwmBlinker
+//#define Sample04SmoothPwmBlinker
 
 namespace AbstractIO.Netduino3.Samples
 {
@@ -82,6 +83,17 @@ namespace AbstractIO.Netduino3.Samples
             AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue).Invert());
+
+#elif Sample02ButtonControlsLampUsing2Buttons
+
+            // Sample 02 again, but this time the lamp shall only light up if both of two buttons are pressed.
+            // To use this sample, connect two closing buttons to the Netduino 3 input pins D0 and D1.
+
+            AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
+                button: new BooleanAndInput(
+                    new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D0), 
+                    new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1)),
+                lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
 
 #elif Sample03ButtonControlsLampEventBased
 

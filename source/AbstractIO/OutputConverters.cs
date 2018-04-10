@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace AbstractIO
 {
@@ -199,6 +200,190 @@ namespace AbstractIO
 
     #endregion
 
+    public class BlinkWhenTrue : IBooleanOutput
+    {
+        private IBooleanOutput _targetOutput;
+        private int _onDurationMs, _offDurationMs;
+        private bool _currentState;
+        private Thread _blinkThread;
+
+        public BlinkWhenTrue(IBooleanOutput targetOutput, int onDurationMs, int offDurationMs)
+        {
+            if (targetOutput == null) { throw new ArgumentNullException(nameof(targetOutput)); }
+            if (onDurationMs <= 0) { throw new ArgumentOutOfRangeException(nameof(onDurationMs)); }
+            if (offDurationMs <= 0) { throw new ArgumentOutOfRangeException(nameof(offDurationMs)); }
+            _targetOutput = targetOutput;
+            _onDurationMs = onDurationMs;
+            _offDurationMs = offDurationMs;
+        }
+
+        public bool Value
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                if (value != _currentState)
+                {
+                    if (value)
+                    {
+                        if (_blinkThread == null)
+                        {
+                            _blinkThread = new Thread(new ThreadStart(Blink));
+                            _blinkThread.Start();
+                        }
+                        else
+                        {
+                            _blinkThread.Resume();
+                        }
+                    }
+                    else
+                    {
+                        if (_blinkThread != null)
+                        {
+                            _blinkThread.Suspend();
+                        }
+                        _targetOutput.Value = false; ;
+                    }
+                    _currentState = value;
+                }
+            }
+        }
+
+        private void Blink()
+        {
+            while (true)
+            {
+                _targetOutput.Value = true;
+                Thread.Sleep(_onDurationMs);
+                _targetOutput.Value = false;
+                Thread.Sleep(_offDurationMs);
+            }
+        }
+    }
+
+    public class BooleanToDoubleMapper : IBooleanOutput
+    {
+        private IDoubleOutput _targetOutput;
+        double _falseValue, _trueValue;
+
+        public BooleanToDoubleMapper(IDoubleOutput targetOutput, double falseValue, double trueValue)
+        {
+            if (targetOutput == null)
+            {
+                throw new ArgumentNullException(nameof(targetOutput));
+            }
+            _targetOutput = targetOutput;
+            _falseValue = falseValue;
+            _trueValue = trueValue;
+        }
+
+        public bool Value
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                if (value)
+                {
+                    _targetOutput.Value = _trueValue;
+                }
+                else
+                {
+                    _targetOutput.Value = _falseValue;
+                }
+            }
+        }
+    }
+
+    public class OutputSmoother : IDoubleOutput
+    {
+        private IDoubleOutput _targetOutput;
+        private double _targetValue, _currentValue, _rampStartValue;
+        private TimeSpan _rampDuration, _rampStartTime;
+        private int _stepPauseMs;
+        private Thread _rampThread;
+
+        public OutputSmoother(IDoubleOutput targetOutput, int rampTimeMs, int stepPauseMs)
+        {
+            if (targetOutput == null)
+            {
+                throw new ArgumentNullException(nameof(targetOutput));
+            }
+            if (rampTimeMs < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(rampTimeMs));
+            }
+            if (stepPauseMs < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(stepPauseMs));
+            }
+            _targetOutput = targetOutput;
+            _rampDuration = TimeSpan.FromTicks(rampTimeMs * TimeSpan.TicksPerMillisecond);
+            _stepPauseMs = stepPauseMs;
+        }
+
+        public double Value
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                _targetValue = value;
+                if (_targetValue != _currentValue)
+                {
+                    throw new NotImplementedException();
+                    //_rampStartTime = Microsoft.SPOT.Hardware.Utility.GetMachineTime();
+                    _rampStartValue = _currentValue;
+                    if (_rampThread == null)
+                    {
+                        _rampThread = new Thread(Ramp);
+                        _rampThread.Start();
+                    }
+                    else if (_rampThread.ThreadState != ThreadState.Running)
+                    {
+                        _rampThread.Resume();
+                    }
+                }
+            }
+        }
+
+        private void Ramp()
+        {
+            while (true)
+            {
+                if (_currentValue == _targetValue)
+                {
+                    _rampThread.Suspend();
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                    //var time = Microsoft.SPOT.Hardware.Utility.GetMachineTime();
+                    //double nextValue;
+                    //if (time >= _rampStartTime + _rampDuration)
+                    //{
+                    //    nextValue = _targetValue;
+                    //}
+                    //else
+                    //{
+                    //    nextValue = _rampStartValue +
+                    //                (_targetValue - _rampStartValue) * (time - _rampStartTime).Ticks / //_rampDuration.Ticks;
+                    //}
+                    //_targetOutput.Write(nextValue);
+                    //_currentValue = nextValue;
+                    //Thread.Sleep(_stepPauseMs);
+                }
+            }
+        }
+    }
+
     public static class OutputConverterExtensionMethods
     {
         /// <summary>
@@ -210,6 +395,22 @@ namespace AbstractIO
         public static IBooleanOutput Invert(this IBooleanOutput target)
         {
             return new BooleanOutputInverter(target);
+        }
+        public static BlinkWhenTrue BlinkWhenTrue(this IBooleanOutput targetOutput, int onDurationMs, int offDurationMs)
+        {
+            return new BlinkWhenTrue(targetOutput, onDurationMs, offDurationMs);
+        }
+
+        public static BooleanToDoubleMapper MapBooleanToDouble(this IDoubleOutput targetOutput,
+                                                               double falseValue,
+                                                               double trueValue)
+        {
+            return new BooleanToDoubleMapper(targetOutput, falseValue, trueValue);
+        }
+
+        public static OutputSmoother SmoothOutput(this IDoubleOutput targetOutput, int rampTimeMs, int stepPauseMs)
+        {
+            return new OutputSmoother(targetOutput, rampTimeMs, stepPauseMs);
         }
     }
 }
