@@ -39,7 +39,7 @@
     <Compile Include="Output Interfaces\IBooleanOutput.cs" />
     <Compile Include="Output Interfaces\IDoubleOutput.cs" />
     <Compile Include="Output Interfaces\IIntegerOutput.cs" />
-    <Compile Include="Output Transformation\BlinkWhenTrue.cs" />
+    <Compile Include="Output Transformation\EnableableBlinker.cs" />
     <Compile Include="Output Transformation\BooleanOutputDistributor.cs" />
     <Compile Include="Output Transformation\BooleanOutputInverter.cs" />
     <Compile Include="Output Transformation\BooleanToDoubleMapper.cs" />

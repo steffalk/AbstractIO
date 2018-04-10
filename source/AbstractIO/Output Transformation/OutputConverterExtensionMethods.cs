@@ -12,11 +12,35 @@
         {
             return new BooleanOutputInverter(target);
         }
-        public static EnableableBlinker BlinkWhenTrue(this IBooleanOutput targetOutput, int onDurationMs, int offDurationMs)
+
+        /// <summary>
+        /// Creates an <see cref="EnableableBlinker"/> object letting an boolean target output "blink" when and as long
+        /// as the input value is true.
+        /// </summary>
+        /// <param name="targetOutput">The output which shall "blink", that is, periodically turned to true and false,
+        /// when and as long as the <see cref="Value"/> property is true.</param>
+        /// <param name="onDurationMs">The number of milliseconds for the true-phase of the blinker.</param>
+        /// <param name="offDurationMs">The number of milliseconds for the false-phase of the blinker.</param>
+        /// <returns>The created input which will blink the <paramref name="targetOutput"/> when and as long as its
+        /// <see cref="IBooleanInput.Value"/> property is true.</returns>
+        public static EnableableBlinker BlinkWhenTrue(
+            this IBooleanOutput targetOutput, 
+            int onDurationMs, 
+            int offDurationMs)
         {
             return new EnableableBlinker(targetOutput, onDurationMs, offDurationMs);
         }
 
+        /// <summary>
+        /// Creates a <see cref="BooleanToDoubleMapper"/> object mapping the boolean values false/true to two double
+        /// values.
+        /// </summary>
+        /// <param name="targetOutput">The target output receiving the double values.</param>
+        /// <param name="falseValue">The value that the <paramref name="targetOutput"/> shall be set to when the
+        /// <see cref="IBooleanInput.Value"/> property is false.</param>
+        /// <param name="trueValue">The value that the <paramref name="targetOutput"/> shall be set to when the
+        /// <see cref="IBooleanInput.Value"/> property is true.</param>
+        /// <returns></returns>
         public static BooleanToDoubleMapper MapBooleanToDouble(this IDoubleOutput targetOutput,
                                                                double falseValue,
                                                                double trueValue)
@@ -24,9 +48,23 @@
             return new BooleanToDoubleMapper(targetOutput, falseValue, trueValue);
         }
 
-        public static OutputSmoother SmoothOutput(this IDoubleOutput targetOutput, int rampTimeMs, int stepPauseMs)
+        /// <summary>
+        /// Creates an <see cref="OutputSmoother"/> object which will slowly approach the
+        /// <paramref name="targetOutput"/> value to the goal <see cref="IDoubleOutput.Value"/>.
+        /// </summary>
+        /// <param name="targetOutput">The target output to be smoothed.</param>
+        /// <param name="valueChangePerSecond">The amount by that the <paramref name="targetOutput"/> value shall change
+        /// per second in order to reach the <see cref="Value"/> property which definies the goal value.</param>
+        /// <param name="rampIntervalMs">The interval, in milliseconds, in which the <paramref name="targetOutput"/>
+        /// value shall be computed and set. The smaller this value, the more often and more smoothly will the target
+        /// value be adapted.</param>
+        /// <returns>The created <see cref="OutputSmoother"/> object.</returns>
+        public static OutputSmoother SmoothOutput(
+            this IDoubleOutput targetOutput, 
+            double valueChangePerSecond, 
+            int rampIntervalMs)
         {
-            return new OutputSmoother(targetOutput, rampTimeMs, stepPauseMs);
+            return new OutputSmoother(targetOutput, valueChangePerSecond, rampIntervalMs);
         }
     }
 }
