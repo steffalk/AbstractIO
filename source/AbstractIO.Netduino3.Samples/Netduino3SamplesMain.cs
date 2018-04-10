@@ -7,7 +7,8 @@
 //#define Sample02ButtonControlsLampPollingInvertingButton
 //#define Sample02ButtonControlsLampPollingInvertingLamp
 //#define Sample03ButtonControlsLampEventBased
-#define Sample03ButtonControlsLampEventBasedInvertingButton
+//#define Sample03ButtonControlsLampEventBasedInvertingButton
+#define Sample04SmoothPwmBlinker
 
 namespace AbstractIO.Netduino3.Samples
 {
@@ -100,6 +101,15 @@ namespace AbstractIO.Netduino3.Samples
             AbstractIO.Samples.Sample03ButtonControlsLampEventBased.Run(
                 button: new Netduino3.ObservableDigitalInput(DigitalInputPin.OnboardButton).Invert(),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
+
+#elif Sample04SmoothPwmBlinker
+
+            // Sample 04: Let a lamp blink smoothly. The abstract code just expects any IDoubleOutput and will cyle that
+            // in small steps from 0.0 to 1.0 and back to 0.0 forever. As an example of an IDoubleOutput, we pass a
+            // PWM-controlled pin:
+
+            AbstractIO.Samples.Sample04SmoothBlinker.Run(
+                lamp: new Netduino3.PwmOutput(DigitalPwmOutputPin.OnboardLedBlue));
 
 #else
 #error Please uncomment exactly one of the samples.
