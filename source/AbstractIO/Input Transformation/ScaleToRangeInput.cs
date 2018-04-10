@@ -48,22 +48,6 @@ namespace AbstractIO
             _sourceMaximum = double.MinValue;
         }
 
-        public double SmallestValueMappedTo
-        {
-            get
-            {
-                return _smallestValueMappedTo;
-            }
-        }
-
-        public double LargestValueMappedTo
-        {
-            get
-            {
-                return _largestValueMappedTo;
-            }
-        }
-
         /// <summary>
         /// Gets (reads) the mapped value. It will always be in the range from <see cref="SmallestValueMappedTo"/> to
         /// <see cref="LargestValueMappedTo"/>.
