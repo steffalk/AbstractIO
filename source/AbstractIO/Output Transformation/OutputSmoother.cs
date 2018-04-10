@@ -3,86 +3,96 @@ using System.Threading;
 
 namespace AbstractIO
 {
+    /// <summary>
+    /// An <see cref="IDoubleOutput"/> which lets a target <see cref="IDoubleOutput"/> smoothly approach a target value.
+    /// </summary>
+    /// <remarks>
+    /// For example, if you want to have a light turning on and offsmoothly, you can use this class to map the values
+    /// 0.0 (lamp off) and 1.0 (lamp fully on) to a smooth ramp of slowly enlighting the lamp from 0.0 slowlow to 1.0
+    /// // and dimming the lamp slowly back from 1.0 to 0.0.
+    /// </remarks>
     public class OutputSmoother : IDoubleOutput
     {
         private IDoubleOutput _targetOutput;
-        private double _targetValue, _currentValue, _rampStartValue;
-        private TimeSpan _rampDuration, _rampStartTime;
-        private int _stepPauseMs;
-        private Thread _rampThread;
+        private double _targetValue, _valueChangePerSecond;
+        private int _rampIntervalMs;
+        private Timer _timer;
 
-        public OutputSmoother(IDoubleOutput targetOutput, int rampTimeMs, int stepPauseMs)
+        /// <summary>
+        /// Creates an instance.
+        /// </summary>
+        /// <param name="targetOutput">The target output to be smoothed.</param>
+        /// <param name="valueChangePerSecond">The amount by that the <paramref name="targetOutput"/> value shall change
+        /// per second in order to reach the <see cref="Value"/> property which definies the goal value.</param>
+        /// <param name="rampIntervalMs">The interval, in milliseconds, in which the <paramref name="targetOutput"/>
+        /// value shall be computed and set. The smaller this value, the more often and more smoothly will the target
+        /// value be adapted.</param>
+        public OutputSmoother(IDoubleOutput targetOutput, double valueChangePerSecond, int rampIntervalMs)
         {
-            if (targetOutput == null)
-            {
-                throw new ArgumentNullException(nameof(targetOutput));
-            }
-            if (rampTimeMs < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(rampTimeMs));
-            }
-            if (stepPauseMs < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(stepPauseMs));
-            }
-            _targetOutput = targetOutput;
-            _rampDuration = TimeSpan.FromTicks(rampTimeMs * TimeSpan.TicksPerMillisecond);
-            _stepPauseMs = stepPauseMs;
+            _targetOutput = targetOutput ?? throw new ArgumentNullException(nameof(targetOutput));
+            if (valueChangePerSecond <= 0.0) { throw new ArgumentOutOfRangeException(nameof(valueChangePerSecond)); }
+            if (rampIntervalMs <= 0) { throw new ArgumentOutOfRangeException(nameof(rampIntervalMs)); }
+
+            _valueChangePerSecond = valueChangePerSecond;
+            _rampIntervalMs = rampIntervalMs;
         }
 
+        /// <summary>
+        /// Gets or sets the value to which the target output shall approach.
+        /// </summary>
+        /// <remarks>
+        /// The inital value is 0.0.
+        /// </remarks>
         public double Value
         {
             get
             {
-                throw new NotImplementedException();
+                return _targetValue;
             }
             set
             {
                 _targetValue = value;
-                if (_targetValue != _currentValue)
+                if (_targetValue != _targetOutput.Value)
                 {
-                    throw new NotImplementedException();
-                    //_rampStartTime = Microsoft.SPOT.Hardware.Utility.GetMachineTime();
-                    _rampStartValue = _currentValue;
-                    if (_rampThread == null)
+                    if (_timer == null)
                     {
-                        _rampThread = new Thread(Ramp);
-                        _rampThread.Start();
+                        _timer = new Timer(ChangeTargetValue, null, 0, _rampIntervalMs);
                     }
-                    else if (_rampThread.ThreadState != ThreadState.Running)
+                    else
                     {
-                        _rampThread.Resume();
+                        _timer.Change(0, _rampIntervalMs);
                     }
                 }
             }
         }
 
-        private void Ramp()
+        /// <summary>
+        /// Changes the target value. This method will run on the used Timer's thread.
+        /// </summary>
+        /// <param name="ignoredState"></param>
+        private void ChangeTargetValue(object ignoredState)
         {
-            while (true)
+            double currentValue = _targetOutput.Value;
+
+            if (currentValue == _targetValue)
             {
-                if (_currentValue == _targetValue)
+                _timer.Change(0, Timeout.Infinite);
+            }
+            else
+            {
+                double newValue;
+                double change = _valueChangePerSecond * 1000.0 / _rampIntervalMs;
+
+                if (currentValue < _targetValue)
                 {
-                    _rampThread.Suspend();
+                    newValue = Math.Min(currentValue + change, _targetValue);
                 }
                 else
                 {
-                    throw new NotImplementedException();
-                    //var time = Microsoft.SPOT.Hardware.Utility.GetMachineTime();
-                    //double nextValue;
-                    //if (time >= _rampStartTime + _rampDuration)
-                    //{
-                    //    nextValue = _targetValue;
-                    //}
-                    //else
-                    //{
-                    //    nextValue = _rampStartValue +
-                    //                (_targetValue - _rampStartValue) * (time - _rampStartTime).Ticks / //_rampDuration.Ticks;
-                    //}
-                    //_targetOutput.Write(nextValue);
-                    //_currentValue = nextValue;
-                    //Thread.Sleep(_stepPauseMs);
+                    newValue = Math.Max(currentValue - change, _targetValue);
                 }
+                currentValue = newValue;
+                _targetOutput.Value = newValue;
             }
         }
     }

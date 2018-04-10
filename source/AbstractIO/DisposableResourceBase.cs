@@ -47,11 +47,15 @@ namespace AbstractIO
             }
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~Netduino3InputOutputBase() {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
+        /// <summary>
+        /// The finalizer, ensuring that the unmanaged resources get cleaned up at some (undetermined time) if the
+        /// program does not Dispose() this resource correctly and the unused object gets garbage collected.
+        /// </summary>
+        ~DisposableResourceBase()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
+        }
 
         // This code added to correctly implement the disposable pattern.
         void IDisposable.Dispose()

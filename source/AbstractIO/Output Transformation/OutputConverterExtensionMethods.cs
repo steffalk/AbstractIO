@@ -12,9 +12,9 @@
         {
             return new BooleanOutputInverter(target);
         }
-        public static BlinkWhenTrue BlinkWhenTrue(this IBooleanOutput targetOutput, int onDurationMs, int offDurationMs)
+        public static EnableableBlinker BlinkWhenTrue(this IBooleanOutput targetOutput, int onDurationMs, int offDurationMs)
         {
-            return new BlinkWhenTrue(targetOutput, onDurationMs, offDurationMs);
+            return new EnableableBlinker(targetOutput, onDurationMs, offDurationMs);
         }
 
         public static BooleanToDoubleMapper MapBooleanToDouble(this IDoubleOutput targetOutput,

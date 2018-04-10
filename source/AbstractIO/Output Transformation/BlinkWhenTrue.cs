@@ -3,38 +3,52 @@ using System.Threading;
 
 namespace AbstractIO
 {
-    public class BlinkWhenTrue : IBooleanOutput
+    /// <summary>
+    /// An <see cref="IBooleanOutput"/> which will blink when and as long as a source <see cref="IBooleanOutput"/> is
+    /// true.
+    /// </summary>
+    public class EnableableBlinker : IBooleanOutput
     {
         private IBooleanOutput _targetOutput;
         private int _onDurationMs, _offDurationMs;
-        private bool _currentState;
+        private bool _currentValue;
         private Thread _blinkThread;
 
-        public BlinkWhenTrue(IBooleanOutput targetOutput, int onDurationMs, int offDurationMs)
+        /// <summary>
+        /// Creates an instance.
+        /// </summary>
+        /// <param name="targetOutput">The output which shall "blink", that is, periodically turned to true and false,
+        /// when and as long as the <see cref="Value"/> property is true.</param>
+        /// <param name="onDurationMs">The number of milliseconds for the true-phase of the blinker.</param>
+        /// <param name="offDurationMs">The number of milliseconds for the false-phase of the blinker.</param>
+        public EnableableBlinker(IBooleanOutput targetOutput, int onDurationMs, int offDurationMs)
         {
-            if (targetOutput == null) { throw new ArgumentNullException(nameof(targetOutput)); }
+            _targetOutput = targetOutput ?? throw new ArgumentNullException(nameof(targetOutput));
             if (onDurationMs <= 0) { throw new ArgumentOutOfRangeException(nameof(onDurationMs)); }
             if (offDurationMs <= 0) { throw new ArgumentOutOfRangeException(nameof(offDurationMs)); }
-            _targetOutput = targetOutput;
+
             _onDurationMs = onDurationMs;
             _offDurationMs = offDurationMs;
         }
 
+        /// <summary>
+        /// Gets or sets whether the output shall blink.
+        /// </summary>
         public bool Value
         {
             get
             {
-                throw new NotImplementedException();
+                return _currentValue;
             }
             set
             {
-                if (value != _currentState)
+                if (value != _currentValue)
                 {
                     if (value)
                     {
                         if (_blinkThread == null)
                         {
-                            _blinkThread = new Thread(new ThreadStart(Blink));
+                            _blinkThread = new Thread(Blink);
                             _blinkThread.Start();
                         }
                         else
@@ -48,13 +62,16 @@ namespace AbstractIO
                         {
                             _blinkThread.Suspend();
                         }
-                        _targetOutput.Value = false; ;
+                        _targetOutput.Value = false;
                     }
-                    _currentState = value;
+                    _currentValue = value;
                 }
             }
         }
 
+        /// <summary>
+        /// Actually blinks the output. This method will run on its own thread.
+        /// </summary>
         private void Blink()
         {
             while (true)
