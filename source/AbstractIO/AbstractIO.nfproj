@@ -18,12 +18,20 @@
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
-    <Compile Include="ConstantInputs.cs" />
+    <Compile Include="Input from Constants\ConstantIntegerInput.cs" />
+    <Compile Include="Input from Constants\ConstantDoubleInput.cs" />
+    <Compile Include="Input from Constants\ConstantBooleanInput.cs" />
     <Compile Include="DisposableResourceBase.cs" />
-    <Compile Include="InputConverters.cs" />
-    <Compile Include="InputEventBased.cs" />
-    <Compile Include="InputPolling.cs" />
-    <Compile Include="Output.cs" />
+    <Compile Include="Input Interfaces\IBooleanInput.cs" />
+    <Compile Include="Input Interfaces\IIntegerInput.cs" />
+    <Compile Include="Input Interfaces\IDoubleInput.cs" />
+    <Compile Include="Input Interfaces\IObservableIntegerInput.cs" />
+    <Compile Include="Input Interfaces\IObservableDoubleInput.cs" />
+    <Compile Include="Input Transformation\InputConverters.cs" />
+    <Compile Include="Input Interfaces\IObservableBooleanInput.cs" />
+    <Compile Include="Output Interfaces\IBooleanOutput.cs" />
+    <Compile Include="Output Interfaces\IDoubleOutput.cs" />
+    <Compile Include="Output Interfaces\IIntegerOutput.cs" />
     <Compile Include="OutputConverters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -41,6 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Output Transformation\" />
   </ItemGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
   <ProjectExtensions>
