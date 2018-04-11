@@ -7,7 +7,7 @@ namespace AbstractIO.Samples
     /// This sample queries any boolean input (say, a button), and turns on any boolean output (say, a lamp) when the
     /// button is pressed. This sample uses polling the input (there is another sample using IRQ events).
     /// </summary>
-    public static class Sample02ButtonControlsLampPolling
+    public static class Sample03ButtonControlsLampPolling
     {
         public static void Run(IBooleanInput button, IBooleanOutput lamp)
         {

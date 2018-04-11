@@ -6,7 +6,7 @@ namespace AbstractIO.Samples
     /// <summary>
     /// Lets a lamp blink smoothly by slowly increasing or decreasing its brightness.
     /// </summary>
-    public static class Sample04SmoothBlinker
+    public static class Sample02SmoothBlinker
     {
         /// <summary>
         /// Runs the sample.

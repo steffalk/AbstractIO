@@ -6,7 +6,7 @@ namespace AbstractIO.Samples
     /// <summary>
     /// Controls a lamp using a button without polling but using events (stemming from IRQs).
     /// </summary>
-    public static class Sample03ButtonControlsLampEventBased
+    public static class Sample04ButtonControlsLampEventBased
     {
         /// <summary>
         /// The lamp to be controlled.

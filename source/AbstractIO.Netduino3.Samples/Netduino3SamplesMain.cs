@@ -3,15 +3,15 @@
 #define Sample01SimpleBlinker
 //#define Sample01SimpleBlinkerDistributed
 //#define Sample01SimpleBlinkerAlternating
-//#define Sample02ButtonControlsLampPolling
-//#define Sample02ButtonControlsLampPollingInvertingButton
-//#define Sample02ButtonControlsLampPollingInvertingLamp
-//#define Sample02ButtonControlsLampUsing2Buttons
-//#define Sample02ButtonControlsLampBlinking
-//#define Sample02ButtonControlsLampBlinkingSmoothly
-//#define Sample03ButtonControlsLampEventBased
-//#define Sample03ButtonControlsLampEventBasedInvertingButton
-//#define Sample04SmoothPwmBlinker
+//#define Sample02SmoothPwmBlinker
+//#define Sample03ButtonControlsLampPolling
+//#define Sample03ButtonControlsLampPollingInvertingButton
+//#define Sample03ButtonControlsLampPollingInvertingLamp
+//#define Sample03ButtonControlsLampUsing2Buttons
+//#define Sample03ButtonControlsLampBlinking
+//#define Sample03ButtonControlsLampBlinkingSmoothly
+//#define Sample04ButtonControlsLampEventBased
+//#define Sample04ButtonControlsLampEventBasedInvertingButton
 //#define Sample05ControlLampBrightnessThroughAnalogInput
 //#define Sample05ControlLampBrightnessThroughAnalogInputScaled
 //#define Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
@@ -63,54 +63,63 @@ namespace AbstractIO.Netduino3.Samples
                     new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.GoPort3Led),
                     new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue).Invert()));
 
-#elif Sample02ButtonControlsLampPolling
+#elif Sample02SmoothPwmBlinker
+
+            // Sample 04: Let a lamp blink smoothly. The abstract code just expects any IDoubleOutput and will cyle that
+            // in small steps from 0.0 to 1.0 and back to 0.0 forever. As an example of an IDoubleOutput, we pass a
+            // PWM-controlled pin:
+
+            AbstractIO.Samples.Sample02SmoothBlinker.Run(
+                lamp: new Netduino3.PwmOutput(DigitalPwmOutputPin.OnboardLedBlue));
+
+#elif Sample03ButtonControlsLampPolling
 
             // Sample 02: Control a LED using a button:
 
-            AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
+            AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
 
-#elif Sample02ButtonControlsLampPollingInvertingButton
+#elif Sample03ButtonControlsLampPollingInvertingButton
 
             // Sample 02 again, but this time inverting the button simply by using a BooleanInputConverter, simply by
             // using the fluent API offered by the corresponding extension methods:
 
-            AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
+            AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(DigitalInputPin.OnboardButton).Invert(),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
 
-#elif Sample02ButtonControlsLampPollingInvertingLamp
+#elif Sample03ButtonControlsLampPollingInvertingLamp
 
             // Sample 02 again, but this time inverting the lamp simply by using a BooleanOuputConverter, simply by
             // using the fluent API offered by the corresponding extension methods:
 
-            AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
+            AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue).Invert());
 
-#elif Sample02ButtonControlsLampUsing2Buttons
+#elif Sample03ButtonControlsLampUsing2Buttons
 
             // Sample 02 again, but this time the lamp shall only light up if both of two buttons are pressed.
             // To use this sample, connect two closing buttons to the Netduino 3 input pins D0 and D1.
 
-            AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
+            AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new BooleanAndInput(
                     new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D0), 
                     new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1)),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
 
-#elif Sample02ButtonControlsLampBlinking
+#elif Sample03ButtonControlsLampBlinking
 
             // Sample 02 again, but this time we let the lamp blink simply by using the EnableableBlinker class, coded
             // using the fluent API provided by extension methods:
 
-            AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
+            AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue)
                         .BlinkWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
-#elif Sample02ButtonControlsLampBlinkingSmoothly
+#elif Sample03ButtonControlsLampBlinkingSmoothly
 
             // Sample 02 again, but this time we let the lamp blink smoothly by using PWM and the SmoothOutput class,
             // coded using fluent API (even if the Run() method does nothing than simply turn the "output" on when the
@@ -126,40 +135,31 @@ namespace AbstractIO.Netduino3.Samples
             // PWM-controlled LED, that is an IDoubleOutput), and apply transformations until you get an "I(type)Output"
             // output where "(type)" matches the output type expected (here, an IBooleanOutput).
 
-            AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
+            AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
                         .SmoothOutput(valueChangePerSecond: 2.0, rampIntervalMs: 100)
                         .MapBooleanToDouble(falseValue: 0.0, trueValue: 1.0)
                         .BlinkWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
-#elif Sample03ButtonControlsLampEventBased
+#elif Sample04ButtonControlsLampEventBased
 
             // Sample 03: Control a lamp using a button, but this time do not poll the status of the button, but react
             // to the ValueChanged event (that is, reacting on an IRQ generated by the µC whenever the status of the
             // button's input pin changed).
 
-            AbstractIO.Samples.Sample03ButtonControlsLampEventBased.Run(
+            AbstractIO.Samples.Sample04ButtonControlsLampEventBased.Run(
                 button: new Netduino3.ObservableDigitalInput(DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
 
-#elif Sample03ButtonControlsLampEventBasedInvertingButton
+#elif Sample04ButtonControlsLampEventBasedInvertingButton
 
             // Sample 03 again: Control a lamp using a button using events, but with an inverted button using the
             // ObserverableBooleanInputInverter class, coded using the fluent API that the extension methods offer.
 
-            AbstractIO.Samples.Sample03ButtonControlsLampEventBased.Run(
+            AbstractIO.Samples.Sample04ButtonControlsLampEventBased.Run(
                 button: new Netduino3.ObservableDigitalInput(DigitalInputPin.OnboardButton).Invert(),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
-
-#elif Sample04SmoothPwmBlinker
-
-            // Sample 04: Let a lamp blink smoothly. The abstract code just expects any IDoubleOutput and will cyle that
-            // in small steps from 0.0 to 1.0 and back to 0.0 forever. As an example of an IDoubleOutput, we pass a
-            // PWM-controlled pin:
-
-            AbstractIO.Samples.Sample04SmoothBlinker.Run(
-                lamp: new Netduino3.PwmOutput(DigitalPwmOutputPin.OnboardLedBlue));
 
 #elif Sample05ControlLampBrightnessThroughAnalogInput
 
