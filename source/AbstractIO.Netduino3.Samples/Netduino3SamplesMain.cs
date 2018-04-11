@@ -1,18 +1,20 @@
 ﻿// Uncomment exactly one of the offered samples:
 
-//#define Sample01SimpleBlinker
+#define Sample01SimpleBlinker
 //#define Sample01SimpleBlinkerDistributed
 //#define Sample01SimpleBlinkerAlternating
 //#define Sample02ButtonControlsLampPolling
 //#define Sample02ButtonControlsLampPollingInvertingButton
 //#define Sample02ButtonControlsLampPollingInvertingLamp
 //#define Sample02ButtonControlsLampUsing2Buttons
+//#define Sample02ButtonControlsLampBlinking
+//#define Sample02ButtonControlsLampBlinkingSmoothly
 //#define Sample03ButtonControlsLampEventBased
 //#define Sample03ButtonControlsLampEventBasedInvertingButton
 //#define Sample04SmoothPwmBlinker
 //#define Sample05ControlLampBrightnessThroughAnalogInput
 //#define Sample05ControlLampBrightnessThroughAnalogInputScaled
-#define Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
+//#define Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
 
 namespace AbstractIO.Netduino3.Samples
 {
@@ -97,6 +99,40 @@ namespace AbstractIO.Netduino3.Samples
                     new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D0), 
                     new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1)),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
+
+#elif Sample02ButtonControlsLampBlinking
+
+            // Sample 02 again, but this time we let the lamp blink simply by using the EnableableBlinker class, coded
+            // using the fluent API provided by extension methods:
+
+            AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
+                button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
+                lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue).BlinkWhenTrue(
+                        onDurationMs: 300,
+                        offDurationMs: 500));
+
+#elif Sample02ButtonControlsLampBlinkingSmoothly
+
+            // Sample 02 again, but this time we let the lamp blink smoothly by using PWM and the SmoothOutput class,
+            // coded using fluent API (even if the Run() method does nothing than simply turn the "output" on when the
+            // button is pressed). Read the definition of the lamp in reverse order:
+            // - Incoming is simply the boolean signal of the button.
+            // - This is made blink (BlinkWhenTrue).
+            // - This, still boolean, value gets mapped to the double number 0.0 for false and 1.0 for true
+            //   (MapBooleanToDouble).
+            // - This signal, which switches between 0.0 and 1.0, is then smoothed to slowly enlight or dimm the lamp
+            //   (SmoothOutput).
+            // - This, finally, is fed into the PwmOutput controlling the LED.
+            // So, using the fluent API for outputs is coded from back to front: Define the target output (here, the
+            // PWM-controlled LED, that is an IDoubleOutput), and apply transformations until you get an "I(type)Output"
+            // output where "(type)" matches the output type expected (here, an IBooleanOutput).
+
+            AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
+                button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
+                lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
+                        .SmoothOutput(valueChangePerSecond: 2.0, rampIntervalMs: 100)
+                        .MapBooleanToDouble(falseValue: 0.0, trueValue: 1.0)
+                        .BlinkWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
 #elif Sample03ButtonControlsLampEventBased
 
