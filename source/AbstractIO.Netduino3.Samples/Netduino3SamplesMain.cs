@@ -6,10 +6,13 @@
 //#define Sample02ButtonControlsLampPolling
 //#define Sample02ButtonControlsLampPollingInvertingButton
 //#define Sample02ButtonControlsLampPollingInvertingLamp
-#define Sample02ButtonControlsLampUsing2Buttons
+//#define Sample02ButtonControlsLampUsing2Buttons
 //#define Sample03ButtonControlsLampEventBased
 //#define Sample03ButtonControlsLampEventBasedInvertingButton
 //#define Sample04SmoothPwmBlinker
+//#define Sample05ControlLampBrightnessThroughAnalogInput
+//#define Sample05ControlLampBrightnessThroughAnalogInputScaled
+#define Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
 
 namespace AbstractIO.Netduino3.Samples
 {
@@ -122,6 +125,40 @@ namespace AbstractIO.Netduino3.Samples
 
             AbstractIO.Samples.Sample04SmoothBlinker.Run(
                 lamp: new Netduino3.PwmOutput(DigitalPwmOutputPin.OnboardLedBlue));
+
+#elif Sample05ControlLampBrightnessThroughAnalogInput
+
+            // Sample 05: Let a LED light up just as bright (in the range from 0.0 to 1.0) as an analog input gives
+            // values (also in the range from 0.0 to 1.0). Note that the input range is not scaled in any way in this
+            // sample, but just goes straigt to the output.
+
+            AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
+                input: new Netduino3.AdcInput(Netduino3.AnalogInputPin.A0),
+                lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
+
+#elif Sample05ControlLampBrightnessThroughAnalogInputScaled
+
+            // Sample 05 again, but this time auto-learn the actual incoming value range of the input and scale it to
+            // the range from 0.0 to 1.0 using the ScaleToRangeInput class, coded using the fluent API of the
+            // corresponding extension methods. This will cause the full range from 0.0 to 1.0 being used on the lamp,
+            // regardless if, for example, the incoming values range only from 0.3 to 0.6.
+
+            AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
+                input: new Netduino3.AdcInput(Netduino3.AnalogInputPin.A0).ScaleToRange(
+                        smallestValueMappedTo: 0.0, 
+                        largestValueMappedTo: 1.0),
+                lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
+
+#elif Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
+
+            // Sample 05 again, but this time the auto-learned ranged has swapped lower and upper limits. This results
+            // in the lamp going brighter when the analog input signal gets lower, and vice versa:
+
+            AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
+                input: new Netduino3.AdcInput(Netduino3.AnalogInputPin.A0).ScaleToRange(
+                        smallestValueMappedTo: 1.0,
+                        largestValueMappedTo: 0.0),
+                lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
 
 #else
 #error Please uncomment exactly one of the samples.
