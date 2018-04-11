@@ -107,9 +107,8 @@ namespace AbstractIO.Netduino3.Samples
 
             AbstractIO.Samples.Sample02ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
-                lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue).BlinkWhenTrue(
-                        onDurationMs: 300,
-                        offDurationMs: 500));
+                lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue)
+                        .BlinkWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
 #elif Sample02ButtonControlsLampBlinkingSmoothly
 
@@ -180,9 +179,8 @@ namespace AbstractIO.Netduino3.Samples
             // regardless if, for example, the incoming values range only from 0.3 to 0.6.
 
             AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
-                input: new Netduino3.AdcInput(Netduino3.AnalogInputPin.A0).ScaleToRange(
-                        smallestValueMappedTo: 0.0, 
-                        largestValueMappedTo: 1.0),
+                input: new Netduino3.AdcInput(Netduino3.AnalogInputPin.A0)
+                        .ScaleToRange(smallestValueMappedTo: 0.0, largestValueMappedTo: 1.0),
                 lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
 
 #elif Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
@@ -191,9 +189,8 @@ namespace AbstractIO.Netduino3.Samples
             // in the lamp going brighter when the analog input signal gets lower, and vice versa:
 
             AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
-                input: new Netduino3.AdcInput(Netduino3.AnalogInputPin.A0).ScaleToRange(
-                        smallestValueMappedTo: 1.0,
-                        largestValueMappedTo: 0.0),
+                input: new Netduino3.AdcInput(Netduino3.AnalogInputPin.A0)
+                        .ScaleToRange(smallestValueMappedTo: 1.0, largestValueMappedTo: 0.0),
                 lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
 
 #else
