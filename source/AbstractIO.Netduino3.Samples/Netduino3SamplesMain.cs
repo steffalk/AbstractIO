@@ -101,7 +101,8 @@ namespace AbstractIO.Netduino3.Samples
 #elif Sample03ButtonControlsLampUsing2Buttons
 
             // Sample 02 again, but this time the lamp shall only light up if both of two buttons are pressed.
-            // To use this sample, connect two closing buttons to the Netduino 3 input pins D0 and D1.
+            // To use this sample, connect two closing buttons to the Netduino 3 input pins D0 and D1 with their other
+            // ports connected to VSS (+5V).
 
             AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new BooleanAndInput(
@@ -119,7 +120,7 @@ namespace AbstractIO.Netduino3.Samples
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue)
                         .BlinkedWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
-            #elif Sample03ButtonControlsLampBlinkingSmoothly
+#elif Sample03ButtonControlsLampBlinkingSmoothly
 
             // Sample 02 again, but this time we let the lamp blink smoothly by using PWM and the SmoothOutput class,
             // coded using fluent API (even if the Run() method does nothing than simply turn the "output" on when the
