@@ -4,7 +4,8 @@ namespace AbstractIO
 {
     /// <summary>
     /// This class contains convenient extension methods for abstract I/O objects that make it possibly to easily chain
-    /// converters using a fluent language.
+    /// converters using a fluent language. Input transformation extension methods are named, by convention, using a
+    /// verb such as "Invert".
     /// </summary>
     public static class InputConverterExtensionMethods
     {
