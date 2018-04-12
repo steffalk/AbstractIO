@@ -5,7 +5,7 @@ namespace AbstractIO.Netduino3
     /// <summary>
     /// An analog ADC input of a Netduino 3 board.
     /// </summary>
-    public class AdcInput : DisposableResourceBase, IDoubleInput
+    public class AnalogAdcInput : DisposableResourceBase, IDoubleInput
     {
         /// <summary>
         /// The ADC controller used by this object.
@@ -21,7 +21,7 @@ namespace AbstractIO.Netduino3
         /// Creates an instance.
         /// </summary>
         /// <param name="pin">The ADC input pin to be read by this object.</param>
-        public AdcInput(AnalogInputPin pin)
+        public AnalogAdcInput(AnalogInputPin pin)
         {
             _controller = AdcController.GetDefault();
             _channel = _controller.OpenChannel((int)pin);

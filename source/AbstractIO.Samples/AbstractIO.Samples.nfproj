@@ -24,6 +24,8 @@
     <Compile Include="Sample04ButtonControlsLampEventBased.cs" />
     <Compile Include="Sample02SmoothBlinker.cs" />
     <Compile Include="Sample05ControlLampBrightnessThroughAnalogInput.cs" />
+    <Compile Include="Sample06WaitForButtonPolling.cs" />
+    <Compile Include="Sample07WaitForButtonEventBased.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">

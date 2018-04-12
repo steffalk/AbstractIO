@@ -20,10 +20,10 @@
   <ItemGroup>
     <Compile Include="DigitalInputOutputBase.cs" />
     <Compile Include="Enumerations.cs" />
-    <Compile Include="AdcInput.cs" />
+    <Compile Include="AnalogAdcInput.cs" />
     <Compile Include="ObservableDigitalInput.cs" />
     <Compile Include="DigitalInput.cs" />
-    <Compile Include="PwmOutput.cs" />
+    <Compile Include="AnalogPwmOutput.cs" />
     <Compile Include="DigitalOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

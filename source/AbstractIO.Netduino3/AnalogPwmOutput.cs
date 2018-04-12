@@ -6,7 +6,7 @@ namespace AbstractIO.Netduino3
     /// <summary>
     /// PWM output on any supported digital output pin or LED on the Netduino 3.
     /// </summary>
-    public class PwmOutput : DisposableResourceBase, IDoubleOutput
+    public class AnalogPwmOutput : DisposableResourceBase, IDoubleOutput
     {
         /// <summary>
         /// The default <see cref="PwmFrequency"/> used.
@@ -69,7 +69,7 @@ namespace AbstractIO.Netduino3
                 {
                     throw new InvalidOperationException(
                         "Setting PwmFrequency is only allowed once and before creation of the first " +
-                        nameof(PwmOutput) + " instance.");
+                        nameof(AnalogPwmOutput) + " instance.");
                 }
                 else if (value <= 0.0)
                 {
@@ -86,7 +86,7 @@ namespace AbstractIO.Netduino3
         /// Creates an instance.
         /// </summary>
         /// <param name="pin">The PWM-enabled pin to use.</param>
-        public PwmOutput(DigitalPwmOutputPin pin)
+        public AnalogPwmOutput(DigitalPwmOutputPin pin)
         {
             if (_controller == null)
             {

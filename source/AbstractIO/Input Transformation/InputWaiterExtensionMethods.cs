@@ -14,13 +14,26 @@ namespace AbstractIO
         /// </summary>
         /// <param name="input">The input which shall be awaited.</param>
         /// <param name="value">The value that the input shall have before this method returns.</param>
+        /// <param name="edgeOnly">If false, this method returns immediately if the desired <paramref name="value"/> is
+        /// already present. If true, only a change from another value than <paramref name="value"/> to
+        /// <paramref name="value"/> will cause the method to return.</param>
         /// <remarks>
         /// This is a blocking method polling the <paramref name="input"/> value in short intervals.
         /// </remarks>
-        public static void WaitFor(this IBooleanInput input, bool value)
+        public static void WaitFor(this IBooleanInput input, bool value, bool edgeOnly)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
 
+            // If we wait for an edge, wait for the input value be unequal to the desired value:
+            if (edgeOnly)
+            {
+                while (input.Value == value)
+                {
+                    Thread.Sleep(1);
+                }
+            }
+
+            // Wait for the input having the desired value.
             while (input.Value != value)
             {
                 Thread.Sleep(1);

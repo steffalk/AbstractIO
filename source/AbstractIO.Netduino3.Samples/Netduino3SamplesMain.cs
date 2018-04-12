@@ -16,6 +16,8 @@
 //#define Sample05ControlLampBrightnessThroughAnalogInput
 //#define Sample05ControlLampBrightnessThroughAnalogInputScaled
 //#define Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
+//#define Sample06WaitForButtonPolling
+//#define Sample07WaitForButtonEventBased
 
 namespace AbstractIO.Netduino3.Samples
 {
@@ -31,6 +33,7 @@ namespace AbstractIO.Netduino3.Samples
         /// </summary>
         public static void Main()
         {
+
 #if Sample01SimpleBlinker
 
             // Sample 01: Blink a LED:
@@ -71,7 +74,7 @@ namespace AbstractIO.Netduino3.Samples
             // PWM-controlled pin:
 
             AbstractIO.Samples.Sample02SmoothBlinker.Run(
-                lamp: new Netduino3.PwmOutput(DigitalPwmOutputPin.OnboardLedBlue));
+                lamp: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.OnboardLedBlue));
 
 #elif Sample03ButtonControlsLampPolling
 
@@ -132,14 +135,14 @@ namespace AbstractIO.Netduino3.Samples
             //   (MappedFromBoolean).
             // - This signal, which switches between 0.0 and 1.0, is then smoothed to slowly enlight or dimm the lamp
             //   (Smoothed).
-            // - This, finally, is fed into the PwmOutput controlling the LED.
+            // - This, finally, is fed into the AnalogPwmOutput controlling the LED.
             // So, using the fluent API for outputs is coded from back to front: Define the target output (here, the
             // PWM-controlled LED, that is an IDoubleOutput), and apply transformations until you get an "I(type)Output"
             // output where "(type)" matches the output type expected (here, an IBooleanOutput).
 
             AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
-                lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
+                lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
                         .Smoothed(valueChangePerSecond: 2.0, rampIntervalMs: 100)
                         .MappedFromBoolean(falseValue: 0.0, trueValue: 1.0)
                         .BlinkedWhenTrue(onDurationMs: 300, offDurationMs: 500));
@@ -173,7 +176,7 @@ namespace AbstractIO.Netduino3.Samples
 
             AbstractIO.Samples.Sample04ButtonControlsLampEventBased.Run(
                 button: new Netduino3.ObservableDigitalInput(DigitalInputPin.OnboardButton),
-                lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
+                lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
                     .Smoothed(valueChangePerSecond: 2.0, rampIntervalMs: 100)
                     .MappedFromBoolean(falseValue: 0.0, trueValue: 1.0)
                     .BlinkedWhenTrue(onDurationMs: 300, offDurationMs: 500));
@@ -185,8 +188,8 @@ namespace AbstractIO.Netduino3.Samples
             // sample, but just goes straigt to the output.
 
             AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
-                input: new Netduino3.AdcInput(Netduino3.AnalogInputPin.A0),
-                lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
+                input: new Netduino3.AnalogAdcInput(Netduino3.AnalogInputPin.A0),
+                lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
 
 #elif Sample05ControlLampBrightnessThroughAnalogInputScaled
 
@@ -196,9 +199,9 @@ namespace AbstractIO.Netduino3.Samples
             // regardless if, for example, the incoming values range only from 0.3 to 0.6.
 
             AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
-                input: new Netduino3.AdcInput(Netduino3.AnalogInputPin.A0)
+                input: new Netduino3.AnalogAdcInput(Netduino3.AnalogInputPin.A0)
                         .ScaleToRange(smallestValueMappedTo: 0.0, largestValueMappedTo: 1.0),
-                lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
+                lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
 
 #elif Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
 
@@ -206,9 +209,30 @@ namespace AbstractIO.Netduino3.Samples
             // in the lamp going brighter when the analog input signal gets lower, and vice versa:
 
             AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
-                input: new Netduino3.AdcInput(Netduino3.AnalogInputPin.A0)
+                input: new Netduino3.AnalogAdcInput(Netduino3.AnalogInputPin.A0)
                         .ScaleToRange(smallestValueMappedTo: 1.0, largestValueMappedTo: 0.0),
-                lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
+                lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
+
+#elif Sample06WaitForButtonPolling
+
+            // Sample 06: Wait for an input to reach a specific value, or to change, using the WaitFor() and
+            // WaitForChange() extension methods.. In this sample, the button is used only as an IBooleanInput, so that
+            // waiting will cause polling. See sample 07 for the exact same code, just using the butten as an
+            // IObservableBooleanInput, working without polling.
+
+            AbstractIO.Samples.Sample06WaitForButtonPolling.Run(
+                button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
+                lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
+
+#elif Sample07WaitForButtonEventBased
+
+            // Sample 07: Nearly the same as sample 06, but using the button as an IObservableBooleanInput insted of
+            // a plain IBooleanInput. This allows the WaitFor() and WaitForChange() methods to use IRQ events instead of
+            // polling:
+
+            AbstractIO.Samples.Sample07WaitForButtonPolling.Run(
+                button: new Netduino3.ObservableDigitalInput(Netduino3.DigitalInputPin.OnboardButton),
+                lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
 
 #else
 #error Please uncomment exactly one of the samples.
