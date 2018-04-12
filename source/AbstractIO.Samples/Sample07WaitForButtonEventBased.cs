@@ -7,7 +7,7 @@ namespace AbstractIO.Samples
     /// objects. Note that the exact same code works using polling on <see cref="IBooleanInput"/> objects in
     /// <see cref="Sample06WaitForButtonPolling"/>.
     /// </summary>
-    public static class Sample07WaitForButtonPolling
+    public static class Sample07WaitForButtonEventBased
     {
         /// <summary>
         /// Waits for a button to turn from false to true, then turns a lamp on, and after that turns the lamp on or off

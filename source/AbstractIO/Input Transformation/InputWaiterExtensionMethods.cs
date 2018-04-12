@@ -52,7 +52,7 @@ namespace AbstractIO
             bool oldValue = input.Value;
             bool newValue;
 
-            while ((newValue = input.Value) != oldValue)
+            while ((newValue = input.Value) == oldValue)
             {
                 Thread.Sleep(1);
             }

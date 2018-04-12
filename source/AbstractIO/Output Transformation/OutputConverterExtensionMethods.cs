@@ -19,8 +19,8 @@
         }
 
         /// <summary>
-        /// Creates an <see cref="BlinkedWhenTrueOutput"/> object letting an boolean target output "blink" when and as long
-        /// as the input value is true.
+        /// Creates an <see cref="BlinkedWhenTrueOutput"/> object letting an boolean target output "blink" when and as
+        /// // long as the input value is true.
         /// </summary>
         /// <param name="targetOutput">The output which shall "blink", that is, periodically turned to true and false,
         /// when and as long as the <see cref="Value"/> property is true.</param>

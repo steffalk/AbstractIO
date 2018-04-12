@@ -1,13 +1,14 @@
 ﻿// Uncomment exactly one of the offered samples:
 
-#define Sample01SimpleBlinker
+//#define Sample01SimpleBlinker
 //#define Sample01SimpleBlinkerDistributed
 //#define Sample01SimpleBlinkerAlternating
 //#define Sample02SmoothPwmBlinker
 //#define Sample03ButtonControlsLampPolling
 //#define Sample03ButtonControlsLampPollingInvertingButton
 //#define Sample03ButtonControlsLampPollingInvertingLamp
-//#define Sample03ButtonControlsLampUsing2Buttons
+//#define Sample03ButtonControlsLampUsing2ButtonsWithAnd
+//#define Sample03ButtonControlsLampUsing2ButtonsWithOr
 //#define Sample03ButtonControlsLampBlinking
 //#define Sample03ButtonControlsLampBlinkingSmoothly
 //#define Sample04ButtonControlsLampEventBased
@@ -17,11 +18,10 @@
 //#define Sample05ControlLampBrightnessThroughAnalogInputScaled
 //#define Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
 //#define Sample06WaitForButtonPolling
-//#define Sample07WaitForButtonEventBased
+#define Sample07WaitForButtonEventBased
 
 namespace AbstractIO.Netduino3.Samples
 {
-
 
     /// <summary>
     /// This class runs the abstract samples in AbstractIO.Samples on a Netduino 3 board.
@@ -102,7 +102,7 @@ namespace AbstractIO.Netduino3.Samples
                 button: new Netduino3.DigitalInput(DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue).Inverted());
 
-#elif Sample03ButtonControlsLampUsing2Buttons
+#elif Sample03ButtonControlsLampUsing2ButtonsWithAnd
 
             // Sample 03 again, but this time the lamp shall only light up if both of two buttons are pressed.
             // To use this sample, connect two closing buttons to the Netduino 3 input pins D0 and D1 with their other
@@ -110,6 +110,18 @@ namespace AbstractIO.Netduino3.Samples
 
             AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new BooleanAndInput(
+                    new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D0),
+                    new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1)),
+                lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
+
+#elif Sample03ButtonControlsLampUsing2ButtonsWithOr
+
+            // Sample 03 again, but this time the lamp shall light up if one or both of two buttons are pressed.
+            // To use this sample, connect two closing buttons to the Netduino 3 input pins D0 and D1 with their other
+            // ports connected to VSS (+5V).
+
+            AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
+                button: new BooleanOrInput(
                     new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D0),
                     new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1)),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
@@ -143,7 +155,7 @@ namespace AbstractIO.Netduino3.Samples
             AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
-                        .Smoothed(valueChangePerSecond: 2.0, rampIntervalMs: 100)
+                        .Smoothed(valueChangePerSecond: 1.0, rampIntervalMs: 20)
                         .MappedFromBoolean(falseValue: 0.0, trueValue: 1.0)
                         .BlinkedWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
@@ -175,9 +187,9 @@ namespace AbstractIO.Netduino3.Samples
             // the same.
 
             AbstractIO.Samples.Sample04ButtonControlsLampEventBased.Run(
-                button: new Netduino3.ObservableDigitalInput(DigitalInputPin.OnboardButton),
+                button: new Netduino3.ObservableDigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
-                    .Smoothed(valueChangePerSecond: 2.0, rampIntervalMs: 100)
+                    .Smoothed(valueChangePerSecond: 1.0, rampIntervalMs: 20)
                     .MappedFromBoolean(falseValue: 0.0, trueValue: 1.0)
                     .BlinkedWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
@@ -185,7 +197,9 @@ namespace AbstractIO.Netduino3.Samples
 
             // Sample 05: Let a LED light up just as bright (in the range from 0.0 to 1.0) as an analog input gives
             // values (also in the range from 0.0 to 1.0). Note that the input range is not scaled in any way in this
-            // sample, but just goes straigt to the output.
+            // sample, but just goes straigt to the output. To run this sample, connect a variable resistor (such as a
+            // photo cell) between anlog input pin A0 and GND (0V). Then, the lamp will light darker as more light goes
+            // to the photo cell.
 
             AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
                 input: new Netduino3.AnalogAdcInput(Netduino3.AnalogInputPin.A0),
@@ -196,7 +210,8 @@ namespace AbstractIO.Netduino3.Samples
             // Sample 05 again, but this time auto-learn the actual incoming value range of the input and scale it to
             // the range from 0.0 to 1.0 using the ScaleToRangeInput class, coded using the fluent API of the
             // corresponding extension methods. This will cause the full range from 0.0 to 1.0 being used on the lamp,
-            // regardless if, for example, the incoming values range only from 0.3 to 0.6.
+            // regardless if, for example, the incoming values range only from 0.3 to 0.6. To run this sample, connect a
+            // variable resistor (such as a photo cell) between anlog input pin A0 and GND (0V).
 
             AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
                 input: new Netduino3.AnalogAdcInput(Netduino3.AnalogInputPin.A0)
@@ -206,7 +221,9 @@ namespace AbstractIO.Netduino3.Samples
 #elif Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
 
             // Sample 05 again, but this time the auto-learned ranged has swapped lower and upper limits. This results
-            // in the lamp going brighter when the analog input signal gets lower, and vice versa:
+            // in the lamp going brighter when the analog input signal gets lower (that is, the photo cell getting  more
+            // light, and vice versa. To run this sample, connect a variable resistor (such as a photo cell) between
+            // anlog input pin A0 and GND (0V).
 
             AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
                 input: new Netduino3.AnalogAdcInput(Netduino3.AnalogInputPin.A0)
@@ -230,7 +247,7 @@ namespace AbstractIO.Netduino3.Samples
             // a plain IBooleanInput. This allows the WaitFor() and WaitForChange() methods to use IRQ events instead of
             // polling:
 
-            AbstractIO.Samples.Sample07WaitForButtonPolling.Run(
+            AbstractIO.Samples.Sample07WaitForButtonEventBased.Run(
                 button: new Netduino3.ObservableDigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
 

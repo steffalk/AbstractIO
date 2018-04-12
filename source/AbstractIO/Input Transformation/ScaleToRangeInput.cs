@@ -83,14 +83,14 @@ namespace AbstractIO
                 }
 
                 // Ensure that the computation result is within the desired output range, even if rounding errors
-                // occurred:
-                if (result < _smallestValueMappedTo)
+                // occurred, respecting positive or negative mapping:
+                if (_smallestValueMappedTo < _largestValueMappedTo)
                 {
-                    result = _smallestValueMappedTo;
+                    result = Math.Min(Math.Max(result, _smallestValueMappedTo), _largestValueMappedTo);
                 }
-                else if (result > _largestValueMappedTo)
+                else
                 {
-                    result = _largestValueMappedTo;
+                    result = Math.Min(Math.Max(result, _largestValueMappedTo), _smallestValueMappedTo);
                 }
 
                 return result;

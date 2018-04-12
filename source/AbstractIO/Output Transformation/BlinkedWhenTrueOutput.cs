@@ -78,8 +78,16 @@ namespace AbstractIO
             {
                 _targetOutput.Value = true;
                 Thread.Sleep(_onDurationMs);
-                _targetOutput.Value = false;
-                Thread.Sleep(_offDurationMs);
+
+                // Do not turn the "lamp" on if it was turned off during the above Sleep. This will happen when the
+                // thread got suspended and then resumed. In this case, we want to start with turning the lamp on
+                // as soon as Value is set to true again and not go through the remaining "off" period from the last
+                // blink cycle.
+                if (_targetOutput.Value)
+                {
+                    _targetOutput.Value = false;
+                    Thread.Sleep(_offDurationMs);
+                }
             }
         }
     }

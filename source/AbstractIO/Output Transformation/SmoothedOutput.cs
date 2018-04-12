@@ -17,6 +17,7 @@ namespace AbstractIO
         private double _targetValue, _valueChangePerSecond;
         private int _rampIntervalMs;
         private Timer _timer;
+        private double _changePerInterval;
 
         /// <summary>
         /// Creates an instance.
@@ -35,6 +36,7 @@ namespace AbstractIO
 
             _valueChangePerSecond = valueChangePerSecond;
             _rampIntervalMs = rampIntervalMs;
+            _changePerInterval = valueChangePerSecond * rampIntervalMs / 1000.0;
         }
 
         /// <summary>
@@ -76,20 +78,19 @@ namespace AbstractIO
 
             if (currentValue == _targetValue)
             {
-                _timer.Change(0, Timeout.Infinite);
+                _timer.Change(Timeout.Infinite, Timeout.Infinite);
             }
             else
             {
                 double newValue;
-                double change = _valueChangePerSecond * 1000.0 / _rampIntervalMs;
 
                 if (currentValue < _targetValue)
                 {
-                    newValue = Math.Min(currentValue + change, _targetValue);
+                    newValue = Math.Min(currentValue + _changePerInterval, _targetValue);
                 }
                 else
                 {
-                    newValue = Math.Max(currentValue - change, _targetValue);
+                    newValue = Math.Max(currentValue - _changePerInterval, _targetValue);
                 }
                 currentValue = newValue;
                 _targetOutput.Value = newValue;

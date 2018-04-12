@@ -25,6 +25,9 @@ namespace AbstractIO.Samples
             // Attach the event handler to the event that the button raises whenever it's Value changed:
             button.ValueChanged += ButtonValueChangedHandler;
 
+            // Set the lamp to its initial state, as the event will raise not earlier than when the input changes:
+            lamp.Value = button.Value;
+
             // Just wait and let the event handler react on button changes:
             for (; ; ) Thread.Sleep(1000);
         }
