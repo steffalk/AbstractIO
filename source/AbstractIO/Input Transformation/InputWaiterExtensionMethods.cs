@@ -4,9 +4,8 @@ using System.Threading;
 namespace AbstractIO
 {
     /// <summary>
-    /// This class contains convenient extension methods for abstract I/O objects that make it possibly to easily chain
-    /// converters using a fluent language. Input transformation extension methods are named, by convention, using a
-    /// verb such as "Invert".
+    /// This class contains convenient extension methods for abstract I/O objects that wait for an input to reach a
+    /// specific state.
     /// </summary>
     public static class InputWaiterExtensionMethods
     {
