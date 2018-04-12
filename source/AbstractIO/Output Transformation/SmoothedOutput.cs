@@ -11,7 +11,7 @@ namespace AbstractIO
     /// 0.0 (lamp off) and 1.0 (lamp fully on) to a smooth ramp of slowly enlighting the lamp from 0.0 slowlow to 1.0
     /// // and dimming the lamp slowly back from 1.0 to 0.0.
     /// </remarks>
-    public class OutputSmoother : IDoubleOutput
+    public class SmoothedOutput : IDoubleOutput
     {
         private IDoubleOutput _targetOutput;
         private double _targetValue, _valueChangePerSecond;
@@ -27,7 +27,7 @@ namespace AbstractIO
         /// <param name="rampIntervalMs">The interval, in milliseconds, in which the <paramref name="targetOutput"/>
         /// value shall be computed and set. The smaller this value, the more often and more smoothly will the target
         /// value be adapted.</param>
-        public OutputSmoother(IDoubleOutput targetOutput, double valueChangePerSecond, int rampIntervalMs)
+        public SmoothedOutput(IDoubleOutput targetOutput, double valueChangePerSecond, int rampIntervalMs)
         {
             _targetOutput = targetOutput ?? throw new ArgumentNullException(nameof(targetOutput));
             if (valueChangePerSecond <= 0.0) { throw new ArgumentOutOfRangeException(nameof(valueChangePerSecond)); }

@@ -8,18 +8,18 @@
     public static class OutputConverterExtensionMethods
     {
         /// <summary>
-        /// Creates an <see cref="BooleanOutputInverter"/> object.
+        /// Creates an <see cref="InvertedBooleanOutput"/> object.
         /// </summary>
         /// <param name="target">The output which shall receive the inverted Value of this object.</param>
-        /// <returns>The <see cref="BooleanOutputInverter"/> object sending inverted
+        /// <returns>The <see cref="InvertedBooleanOutput"/> object sending inverted
         /// <see cref="IBooleanOutput">Values</see> to <paramref name="target"/>.</returns>
         public static IBooleanOutput Inverted(this IBooleanOutput target)
         {
-            return new BooleanOutputInverter(target);
+            return new InvertedBooleanOutput(target);
         }
 
         /// <summary>
-        /// Creates an <see cref="EnableableBlinker"/> object letting an boolean target output "blink" when and as long
+        /// Creates an <see cref="BlinkedWhenTrueOutput"/> object letting an boolean target output "blink" when and as long
         /// as the input value is true.
         /// </summary>
         /// <param name="targetOutput">The output which shall "blink", that is, periodically turned to true and false,
@@ -28,16 +28,16 @@
         /// <param name="offDurationMs">The number of milliseconds for the false-phase of the blinker.</param>
         /// <returns>The created input which will blink the <paramref name="targetOutput"/> when and as long as its
         /// <see cref="IBooleanInput.Value"/> property is true.</returns>
-        public static EnableableBlinker BlinkedWhenTrue(
+        public static BlinkedWhenTrueOutput BlinkedWhenTrue(
             this IBooleanOutput targetOutput, 
             int onDurationMs, 
             int offDurationMs)
         {
-            return new EnableableBlinker(targetOutput, onDurationMs, offDurationMs);
+            return new BlinkedWhenTrueOutput(targetOutput, onDurationMs, offDurationMs);
         }
 
         /// <summary>
-        /// Creates a <see cref="BooleanToDoubleMapper"/> object mapping the boolean values false/true to two double
+        /// Creates a <see cref="MappedFromBooleanOutput"/> object mapping the boolean values false/true to two double
         /// values.
         /// </summary>
         /// <param name="targetOutput">The target output receiving the double values.</param>
@@ -46,16 +46,16 @@
         /// <param name="trueValue">The value that the <paramref name="targetOutput"/> shall be set to when the
         /// <see cref="IBooleanInput.Value"/> property is true.</param>
         /// <returns></returns>
-        public static BooleanToDoubleMapper MappedToDoubleFromBoolean(
+        public static MappedFromBooleanOutput MappedFromBoolean(
             this IDoubleOutput targetOutput,
             double falseValue,
             double trueValue)
         {
-            return new BooleanToDoubleMapper(targetOutput, falseValue, trueValue);
+            return new MappedFromBooleanOutput(targetOutput, falseValue, trueValue);
         }
 
         /// <summary>
-        /// Creates an <see cref="OutputSmoother"/> object which will slowly approach the
+        /// Creates an <see cref="SmoothedOutput"/> object which will slowly approach the
         /// <paramref name="targetOutput"/> value to the goal <see cref="IDoubleOutput.Value"/>.
         /// </summary>
         /// <param name="targetOutput">The target output to be smoothed.</param>
@@ -64,13 +64,13 @@
         /// <param name="rampIntervalMs">The interval, in milliseconds, in which the <paramref name="targetOutput"/>
         /// value shall be computed and set. The smaller this value, the more often and more smoothly will the target
         /// value be adapted.</param>
-        /// <returns>The created <see cref="OutputSmoother"/> object.</returns>
-        public static OutputSmoother Smoothed(
+        /// <returns>The created <see cref="SmoothedOutput"/> object.</returns>
+        public static SmoothedOutput Smoothed(
             this IDoubleOutput targetOutput, 
             double valueChangePerSecond, 
             int rampIntervalMs)
         {
-            return new OutputSmoother(targetOutput, valueChangePerSecond, rampIntervalMs);
+            return new SmoothedOutput(targetOutput, valueChangePerSecond, rampIntervalMs);
         }
     }
 }

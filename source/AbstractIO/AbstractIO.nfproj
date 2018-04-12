@@ -27,26 +27,30 @@
     <Compile Include="Input Interfaces\IDoubleInput.cs" />
     <Compile Include="Input Interfaces\IObservableIntegerInput.cs" />
     <Compile Include="Input Interfaces\IObservableDoubleInput.cs" />
+    <Compile Include="Input Settable\SettableBooleanInput.cs" />
+    <Compile Include="Input Settable\SettableDoubleInput.cs" />
+    <Compile Include="Input Settable\SettableIntegerInput.cs" />
     <Compile Include="Input Transformation\BooleanAndInput.cs" />
     <Compile Include="Input Transformation\BooleanOperatorInputBase.cs" />
     <Compile Include="Input Transformation\BooleanOrInput.cs" />
-    <Compile Include="Input Transformation\BooleanInputInverter.cs" />
+    <Compile Include="Input Transformation\InvertBooleanInput.cs" />
     <Compile Include="Input Transformation\InputConverterExtensionMethods.cs" />
     <Compile Include="Input Interfaces\IObservableBooleanInput.cs" />
-    <Compile Include="Input Transformation\ObservableBooleanInputInverter.cs" />
+    <Compile Include="Input Transformation\InputWaiterExtensionMethods.cs" />
+    <Compile Include="Input Transformation\InvertObserverableBooleanInput.cs" />
     <Compile Include="Input Transformation\ScaleToRangeInput.cs" />
     <Compile Include="Input Transformation\SchmittTriggerInput.cs" />
     <Compile Include="Output Interfaces\IBooleanOutput.cs" />
     <Compile Include="Output Interfaces\IDoubleOutput.cs" />
     <Compile Include="Output Interfaces\IIntegerOutput.cs" />
-    <Compile Include="Output Transformation\EnableableBlinker.cs" />
+    <Compile Include="Output Transformation\BlinkedWhenTrueOutput.cs" />
     <Compile Include="Output Transformation\BooleanOutputDistributor.cs" />
-    <Compile Include="Output Transformation\BooleanOutputInverter.cs" />
-    <Compile Include="Output Transformation\BooleanToDoubleMapper.cs" />
+    <Compile Include="Output Transformation\InvertedBooleanOutput.cs" />
+    <Compile Include="Output Transformation\MappedFromBooleanOutput.cs" />
     <Compile Include="Output Transformation\DoubleOutputDistributor.cs" />
     <Compile Include="Output Transformation\IntegerOutputDistributor.cs" />
     <Compile Include="Output Transformation\OutputConverterExtensionMethods.cs" />
-    <Compile Include="Output Transformation\OutputSmoother.cs" />
+    <Compile Include="Output Transformation\SmoothedOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

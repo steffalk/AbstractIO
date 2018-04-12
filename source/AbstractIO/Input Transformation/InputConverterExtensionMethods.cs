@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace AbstractIO
 {
@@ -10,7 +11,7 @@ namespace AbstractIO
     public static class InputConverterExtensionMethods
     {
         /// <summary>
-        /// Creates a <see cref="BooleanInputInverter"/> using the specified source input.
+        /// Creates a <see cref="InvertBooleanInput"/> using the specified source input.
         /// </summary>
         /// <param name="source">The input which shall be inverted.</param>
         /// <returns>The inverted input.</returns>
@@ -18,7 +19,7 @@ namespace AbstractIO
         /// input.Invert() to get an inverted version of input.</remarks>
         public static IBooleanInput Invert(this IBooleanInput source)
         {
-            return new BooleanInputInverter(source);
+            return new InvertBooleanInput(source);
         }
 
         /// <summary>
@@ -30,23 +31,7 @@ namespace AbstractIO
         /// input.Invert() to get an inverted version of input.</remarks>
         public static IObservableBooleanInput Invert(this IObservableBooleanInput source)
         {
-            return new ObserverableBooleanInputInverter(source);
-        }
-
-        /// <summary>
-        /// Pauses until an <see cref="IBooleanInput"/> returns a specified value.
-        /// </summary>
-        /// <param name="input">The input which shall be awaited.</param>
-        /// <param name="value">The value that the input shall have before this method returns.</param>
-        /// <remarks>
-        /// This is a blocking method polling the <paramref name="input"/> value in short intervals.
-        /// </remarks>
-        public static void WaitFor(this IBooleanInput input, bool value)
-        {
-            while (input.Value != value)
-            {
-                Thread.Sleep(1);
-            }
+            return new InvertObserverableBooleanInput(source);
         }
 
         /// <summary>
@@ -64,8 +49,8 @@ namespace AbstractIO
         /// <paramref name="largestValueMappedTo"/>.</remarks>
         /// <returns>The scaled input.</returns>
         public static ScaleToRangeInput ScaleToRange(
-            this IDoubleInput source, 
-            double smallestValueMappedTo, 
+            this IDoubleInput source,
+            double smallestValueMappedTo,
             double largestValueMappedTo)
         {
             return new ScaleToRangeInput(source, smallestValueMappedTo, largestValueMappedTo);

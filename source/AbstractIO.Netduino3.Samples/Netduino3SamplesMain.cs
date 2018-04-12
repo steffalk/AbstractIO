@@ -107,7 +107,7 @@ namespace AbstractIO.Netduino3.Samples
 
             AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new BooleanAndInput(
-                    new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D0), 
+                    new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D0),
                     new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1)),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
 
@@ -129,7 +129,7 @@ namespace AbstractIO.Netduino3.Samples
             // - Incoming is simply the boolean signal of the button.
             // - This is made blink (BlinkedWhenTrue).
             // - This, still boolean, value gets mapped to the double number 0.0 for false and 1.0 for true
-            //   (MappedToDoubleFromBoolean).
+            //   (MappedFromBoolean).
             // - This signal, which switches between 0.0 and 1.0, is then smoothed to slowly enlight or dimm the lamp
             //   (Smoothed).
             // - This, finally, is fed into the PwmOutput controlling the LED.
@@ -141,7 +141,7 @@ namespace AbstractIO.Netduino3.Samples
                 button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
                         .Smoothed(valueChangePerSecond: 2.0, rampIntervalMs: 100)
-                        .MappedToDoubleFromBoolean(falseValue: 0.0, trueValue: 1.0)
+                        .MappedFromBoolean(falseValue: 0.0, trueValue: 1.0)
                         .BlinkedWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
 #elif Sample04ButtonControlsLampEventBased
@@ -175,7 +175,7 @@ namespace AbstractIO.Netduino3.Samples
                 button: new Netduino3.ObservableDigitalInput(DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.PwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
                     .Smoothed(valueChangePerSecond: 2.0, rampIntervalMs: 100)
-                    .MappedToDoubleFromBoolean(falseValue: 0.0, trueValue: 1.0)
+                    .MappedFromBoolean(falseValue: 0.0, trueValue: 1.0)
                     .BlinkedWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
 #elif Sample05ControlLampBrightnessThroughAnalogInput
