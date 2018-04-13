@@ -48,7 +48,7 @@ namespace AbstractIO
         }
 
         /// <summary>
-        /// The finalizer, ensuring that the unmanaged resources get cleaned up at some (undetermined time) if the
+        /// The finalizer, ensuring that the unmanaged resources get cleaned up at some (undetermined) time if the
         /// program does not Dispose() this resource correctly and the unused object gets garbage collected.
         /// </summary>
         ~DisposableResourceBase()
