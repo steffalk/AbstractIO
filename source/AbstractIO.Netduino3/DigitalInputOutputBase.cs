@@ -47,26 +47,6 @@ namespace AbstractIO.Netduino3
         }
 
         /// <summary>
-        /// Creates an instance using a specific GpioController.
-        /// </summary>
-        /// <param name="controller">The controller to use.</param>
-        /// <param name="pin">The internal pin number to use.</param>
-        /// <param name="driveMode">The mode of the pin. This must be valid for the intended operation (input or
-        /// output).</param>
-        protected DigitalInputOutputBase(
-            GpioController controller,
-            int pin,
-            GpioPinDriveMode driveMode)
-        {
-            if (controller == null)
-            {
-                throw new ArgumentNullException(nameof(controller));
-            }
-            _pin = controller.OpenPin(pin);
-            _pin.SetDriveMode(driveMode);
-        }
-
-        /// <summary>
         /// Creates an instance using the default GpioController.
         /// </summary>
         /// <param name="pin">The internal pin number to use.</param>

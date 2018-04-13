@@ -36,18 +36,6 @@ namespace AbstractIO.Netduino3
         }
 
         /// <summary>
-        /// Creates an instance using a specific GpioController and pin drive mode.
-        /// </summary>
-        /// <param name="controller">The controller to use.</param>
-        /// <param name="pin">The pin to use.</param>
-        /// <param name="driveMode">The mode of the pin. This must be valid for input.</param>
-        public ObservableDigitalInput(GpioController controller, DigitalInputPin pin, GpioPinDriveMode mode) :
-            base(controller, (int)pin, DigitalInputOutputBase.CheckInputMode(mode))
-        {
-            Init();
-        }
-
-        /// <summary>
         /// Creates an instance using the default GpioController and a specific pin drive mode.
         /// </summary>
         /// <param name="pin">The pin to use.</param>

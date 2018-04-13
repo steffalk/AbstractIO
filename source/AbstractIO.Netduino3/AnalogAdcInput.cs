@@ -8,11 +8,6 @@ namespace AbstractIO.Netduino3
     public class AnalogAdcInput : DisposableResourceBase, IDoubleInput
     {
         /// <summary>
-        /// The ADC controller used by this object.
-        /// </summary>
-        private readonly AdcController _controller;
-
-        /// <summary>
         /// The ADC channel on the used controller used by this object.
         /// </summary>
         private AdcChannel _channel;
@@ -23,8 +18,7 @@ namespace AbstractIO.Netduino3
         /// <param name="pin">The ADC input pin to be read by this object.</param>
         public AnalogAdcInput(AnalogInputPin pin)
         {
-            _controller = AdcController.GetDefault();
-            _channel = _controller.OpenChannel((int)pin);
+            _channel = AdcController.GetDefault().OpenChannel((int)pin);
         }
 
         /// <summary>
