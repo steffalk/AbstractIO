@@ -9,9 +9,9 @@ namespace AbstractIO
     public abstract class DisposableResourceBase : IDisposable
     {
         /// <summary>
-        /// Disposes the disposable ressource. This method will be called by the Dispose() method when appropriate.
-        /// Inheritors should still take care of not disposing the same resource multiple times if that could cause
-        /// problems, as this method might be called more than once for the same object.
+        /// Disposes the disposable managed ressource. This method will be called by the Dispose() method when
+        /// appropriate. Inheritors should still take care of not disposing the same resource multiple times if that
+        /// could cause problems, as this method might be called more than once for the same object.
         /// </summary>
         protected abstract void DisposeResource();
 
@@ -45,16 +45,6 @@ namespace AbstractIO
 
                 _disposedValue = true;
             }
-        }
-
-        /// <summary>
-        /// The finalizer, ensuring that the unmanaged resources get cleaned up at some (undetermined) time if the
-        /// program does not Dispose() this resource correctly and the unused object gets garbage collected.
-        /// </summary>
-        ~DisposableResourceBase()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(false);
         }
 
         // This code added to correctly implement the disposable pattern.
