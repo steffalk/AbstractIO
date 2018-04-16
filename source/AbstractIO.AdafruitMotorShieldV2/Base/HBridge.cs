@@ -1,4 +1,13 @@
-﻿// This file is part of the TA.NetMF.MotorControl project
+﻿// This file is a port of the very fine Tigra Astronomy driver for the
+// Adafruit V2 motor shields from Microsoft .NET Micro Framework to
+// nanoFramework and the AbstractIO project. See http://tigra-astronomy.com/, especially
+// http://tigra-astronomy.com/stepper-motor-control-for-net-microframework and
+// https://bitbucket.org/tigra-astronomy/ta.netmf.motorcontrol. Thank you
+// very much, dear Tigra Astronomy team, for the fine work you have done and
+// for using the MIT license, so this port was possible.
+// Here is the original TA copyright notice:
+
+// This file is part of the TA.NetMF.MotorControl project
 // 
 // Copyright © 2014-2015 Tigra Astronomy, all rights reserved.
 // This source code is licensed under the MIT License, see http://opensource.org/licenses/MIT
@@ -6,6 +15,7 @@
 // File: HBridge.cs  Created: 2015-01-13@13:45
 // Last modified: 2015-02-02@14:55 by Tim
 
+using AbstractIO;
 using System;
 using Math = System.Math;
 
@@ -18,11 +28,27 @@ namespace AbstractIO.AdafruitMotorShieldV2
     ///   pin, the power output can be varied by varying the PWN duty cycle. Thus, one H-bridge can
     ///   control a single motor winding, be that a DC motor or one phase of a stepper motor.
     /// </summary>
-    public abstract class HBridge
+    public abstract class HBridge : IDoubleOutput
     {
-        double duty;
-        public bool Polarity { get { return (duty >= 0); } }
-        public double Power { get { return Math.Abs(duty); } }
+        private double _duty;
+
+        public bool Polarity { get { return (_duty >= 0); } }
+        public double Power { get { return Math.Abs(_duty); } }
+
+        /// <summary>
+        /// Gets the last value written or sets the value to be written.
+        /// </summary>
+        public double Value
+        {
+            get
+            {
+                return _duty;
+            }
+            set
+            {
+                SetOutputPowerAndPolarity(Math.Min(Math.Max(value, -1.0), 1.0));
+            }
+        }
 
         /// <summary>
         ///   Sets the output power and polarity of the H-bridge.
@@ -41,7 +67,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         {
             if (duty > 1.0 || duty < -1.0)
                 throw new ArgumentOutOfRangeException("duty", "-1.0 to 1.0 inclusive");
-            this.duty = duty;
+            this._duty = duty;
         }
 
         /// <summary>

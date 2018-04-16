@@ -1,3 +1,12 @@
+// This file is a port of the very fine Tigra Astronomy driver for the
+// Adafruit V2 motor shields from Microsoft .NET Micro Framework to
+// nanoFramework and the AbstractIO project. See http://tigra-astronomy.com/, especially
+// http://tigra-astronomy.com/stepper-motor-control-for-net-microframework and
+// https://bitbucket.org/tigra-astronomy/ta.netmf.motorcontrol. Thank you
+// very much, dear Tigra Astronomy team, for the fine work you have done and
+// for using the MIT license, so this port was possible.
+// Here is the original TA copyright notice:
+
 // This file is part of the TA.NetMF.MotorControl project
 // 
 // Copyright © 2014-2014 Tigra Astronomy, all rights reserved.
