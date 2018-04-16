@@ -20,23 +20,21 @@ using System;
 
 namespace AbstractIO.AdafruitMotorShieldV2
 {
-    public class AdafruitV2MotorShield
+    public class AdafruitMotorShieldV2
     {
         readonly Pca9685PwmController pwmController;
 
         /// <summary>
-        ///   Initializes a new instance of the <see cref="AdafruitV2MotorShield" /> class at the specified
+        ///   Initializes a new instance of the <see cref="AdafruitMotorShieldV2" /> class at the specified
         ///   I2C address.
         /// </summary>
         /// <param name="address">
         ///   The I2C base address of the shield (optional; defaults to 0x60).
         /// </param>
-        public AdafruitV2MotorShield(ushort address = 0x60)
+        public AdafruitMotorShieldV2(ushort address = 0x60)
         {
             pwmController = new Pca9685PwmController(address);
         }
-
-        public void InitializeShield() { }
 
         /// <summary>
         ///   Gets a stepper motor with the specified number of microsteps. The

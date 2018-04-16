@@ -18,7 +18,7 @@
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
-    <Compile Include="AdafruitV2MotorShield.cs" />
+    <Compile Include="AdafruitMotorShieldV2.cs" />
     <Compile Include="Base\HBridge.cs" />
     <Compile Include="Base\IServoControl.cs" />
     <Compile Include="Base\IStepSequencer.cs" />
