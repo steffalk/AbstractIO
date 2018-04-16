@@ -1,6 +1,6 @@
 ﻿// Please uncomment exactly one of the offered samples to run it:
 
-#define Sample01SimpleBlinker
+//#define Sample01SimpleBlinker
 //#define Sample01SimpleBlinkerDistributed
 //#define Sample01SimpleBlinkerAlternating
 //#define Sample02SmoothPwmBlinker
@@ -19,6 +19,8 @@
 //#define Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
 //#define Sample06WaitForButtonPolling
 //#define Sample07WaitForButtonEventBased
+//#define Sample08LetMotorRun
+#define Sample09LetManyMotorsRun
 
 namespace AbstractIO.Netduino3.Samples
 {
@@ -250,6 +252,27 @@ namespace AbstractIO.Netduino3.Samples
             AbstractIO.Samples.Sample07WaitForButtonEventBased.Run(
                 button: new Netduino3.ObservableDigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
+
+#elif Sample08LetMotorRun
+
+            // Connect to the Adafruit V2 shield at its default address:
+            var shield = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2();
+
+            // Use the sample controlling a lamp just control a motor, as both implement IDoubleOutput:
+
+            AbstractIO.Samples.Sample02SmoothBlinker.Run(
+                lamp: shield.GetDcMotor(1));
+
+#elif Sample09LetManyMotorsRun
+
+            // Control 8 motors on 2 motor shields simultaneously:
+
+            var shield1 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(96);
+            var shield2 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(97);
+
+            AbstractIO.Samples.Sample08SmoothManyAnalogOutputs.Run(
+                 shield1.GetDcMotor(1), shield1.GetDcMotor(2), shield1.GetDcMotor(3), shield1.GetDcMotor(4),
+                 shield2.GetDcMotor(1), shield2.GetDcMotor(2), shield2.GetDcMotor(3), shield2.GetDcMotor(4));
 
 #else
 #error Please uncomment exactly one of the samples.

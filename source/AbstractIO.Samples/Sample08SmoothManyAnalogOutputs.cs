@@ -29,7 +29,7 @@ namespace AbstractIO.Samples
 
             for (int i = 0; i < outputs.Length; i++)
             {
-                smoothedOutputs[i] = outputs[i].Smoothed(valueChangePerSecond: 1.0, rampIntervalMs: 20);
+                smoothedOutputs[i] = outputs[i].Smoothed(valueChangePerSecond: 0.25, rampIntervalMs: 20);
             }
 
             // Do the demo:
@@ -37,6 +37,7 @@ namespace AbstractIO.Samples
             var random = new Random();
 
             const int PauseImMs = 5000;
+            const double MinimumSpeed = 0.3;
 
             while (true)
             {
@@ -45,21 +46,30 @@ namespace AbstractIO.Samples
                 {
                     output.Value = 1.0;
                 }
-                Thread.Sleep(PauseImMs);
+                Thread.Sleep(2 * PauseImMs);
 
                 // Full negative power to all outputs:
                 foreach (IDoubleOutput output in smoothedOutputs)
                 {
                     output.Value = -1.0;
                 }
-                Thread.Sleep(PauseImMs);
+                Thread.Sleep(4 * PauseImMs);
 
                 // Several cycles of random power:
-                for (int cycle = 0; cycle < 5; cycle++)
+                for (int cycle = 0; cycle < 10; cycle++)
                 {
                     foreach (IDoubleOutput output in smoothedOutputs)
                     {
-                        output.Value = random.NextDouble() * 2.0 - 1.0;
+                        double value = random.NextDouble() * (2.0 - 2.0 * MinimumSpeed) - 1.0 + MinimumSpeed;
+                        if (value < 0)
+                        {
+                            value -= MinimumSpeed;
+                        }
+                        else
+                        {
+                            value += MinimumSpeed;
+                        }
+                        output.Value = value;
                     }
                     Thread.Sleep(PauseImMs);
                 }

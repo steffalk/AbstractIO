@@ -72,38 +72,38 @@ namespace AbstractIO
         /// </remarks>
         public static void WaitFor(this IObservableBooleanInput input, bool value, bool edgeOnly)
         {
-            if (input == null) throw new ArgumentNullException(nameof(input));
+            //if (input == null) throw new ArgumentNullException(nameof(input));
 
-            // Only wait if the desired value is not already present and we do not wait for an edge:
-            if (edgeOnly || (input.Value != value))
-            {
+            //// Only wait if the desired value is not already present and we do not wait for an edge:
+            //if (edgeOnly || (input.Value != value))
+            //{
 
-                // The signal being set when the desired value is reached:
-                ManualResetEvent valueReached = new ManualResetEvent(false);
+            //    // The signal being set when the desired value is reached:
+            //    ManualResetEvent valueReached = new ManualResetEvent(false);
 
-                // Handles the input.ValueChanged event.
-                void ValueChangedHandler(object sender, bool newValue)
-                {
-                    if (newValue == value)
-                    {
-                        valueReached.Set();
-                    }
-                }
+            //    // Handles the input.ValueChanged event.
+            //    void ValueChangedHandler(object sender, bool newValue)
+            //    {
+            //        if (newValue == value)
+            //        {
+            //            valueReached.Set();
+            //        }
+            //    }
 
-                // Attach the event handler:
-                input.ValueChanged += ValueChangedHandler;
+            //    // Attach the event handler:
+            //    input.ValueChanged += ValueChangedHandler;
 
-                try
-                {
-                    // Wait (blocking) for the event handler to set the signal:
-                    valueReached.WaitOne();
-                }
-                finally
-                {
-                    // Remove the event handler:
-                    input.ValueChanged -= ValueChangedHandler;
-                }
-            }
+            //    try
+            //    {
+            //        // Wait (blocking) for the event handler to set the signal:
+            //        valueReached.WaitOne();
+            //    }
+            //    finally
+            //    {
+            //        // Remove the event handler:
+            //        input.ValueChanged -= ValueChangedHandler;
+            //    }
+            //}
         }
 
         /// <summary>
@@ -120,31 +120,32 @@ namespace AbstractIO
         /// </remarks>
         public static bool WaitForChange(this IObservableBooleanInput input)
         {
-            if (input == null) throw new ArgumentNullException(nameof(input));
+            return false;
+            //if (input == null) throw new ArgumentNullException(nameof(input));
 
-            // The signal being set when the desired value is reached:
-            ManualResetEvent valueReached = new ManualResetEvent(false);
+            //// The signal being set when the desired value is reached:
+            //ManualResetEvent valueReached = new ManualResetEvent(false);
 
-            // Handles the input.ValueChanged event.
-            void ValueChangedHandler(object sender, bool newValue)
-            {
-                valueReached.Set();
-            }
+            //// Handles the input.ValueChanged event.
+            //void ValueChangedHandler(object sender, bool newValue)
+            //{
+            //    valueReached.Set();
+            //}
 
-            // Attach the event handler:
-            input.ValueChanged += ValueChangedHandler;
+            //// Attach the event handler:
+            //input.ValueChanged += ValueChangedHandler;
 
-            try
-            {
-                // Wait (blocking) for the event handler to set the signal:
-                valueReached.WaitOne();
-                return input.Value;
-            }
-            finally
-            {
-                // Remove the event handler:
-                input.ValueChanged -= ValueChangedHandler;
-            }
+            //try
+            //{
+            //    // Wait (blocking) for the event handler to set the signal:
+            //    valueReached.WaitOne();
+            //    return input.Value;
+            //}
+            //finally
+            //{
+            //    // Remove the event handler:
+            //    input.ValueChanged -= ValueChangedHandler;
+            //}
         }
     }
 }

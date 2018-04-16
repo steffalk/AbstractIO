@@ -42,6 +42,11 @@
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
+    <Reference Include="Windows.Devices.I2c, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6df87852110734f7">
+      <HintPath>..\packages\nanoFramework.Windows.Devices.I2c.1.0.0-preview171\lib\Windows.Devices.I2c.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
     <Reference Include="Windows.Devices.Pwm, Version=0.0.0.0, Culture=neutral, PublicKeyToken=6df87852110734f7">
       <HintPath>..\packages\nanoFramework.Windows.Devices.Pwm.1.0.0-preview161\lib\Windows.Devices.Pwm.dll</HintPath>
       <Private>True</Private>
@@ -52,6 +57,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AbstractIO.AdafruitMotorShieldV2\AbstractIO.AdafruitMotorShieldV2.nfproj" />
     <ProjectReference Include="..\AbstractIO.Netduino3\AbstractIO.Netduino3.nfproj" />
     <ProjectReference Include="..\AbstractIO.Samples\AbstractIO.Samples.nfproj" />
     <ProjectReference Include="..\AbstractIO\AbstractIO.nfproj" />
