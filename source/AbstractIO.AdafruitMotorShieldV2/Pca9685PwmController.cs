@@ -16,9 +16,10 @@
 // Last modified: 2014-11-30@13:57 by Tim
 
 using System;
+using System.Collections;
 using System.Threading;
-using Math = System.Math;
 using Windows.Devices.I2c;
+using Math = System.Math;
 
 namespace AbstractIO.AdafruitMotorShieldV2
 {
@@ -33,6 +34,8 @@ namespace AbstractIO.AdafruitMotorShieldV2
         private I2cConnectionSettings _i2CConfiguration;
         private I2cDevice _i2cDevice;
         private double _outputModulationFrequencyHz;
+
+        private  readonly ArrayList AllocatedChannels = new ArrayList();
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="Pca9685PwmController" /> class at the specified I2C address
