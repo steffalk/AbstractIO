@@ -18,6 +18,7 @@
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
+    <Compile Include="GlobalLockObjects.cs" />
     <Compile Include="Input from Constants\ConstantIntegerInput.cs" />
     <Compile Include="Input from Constants\ConstantDoubleInput.cs" />
     <Compile Include="Input from Constants\ConstantBooleanInput.cs" />

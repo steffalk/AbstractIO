@@ -19,23 +19,18 @@ using System;
 using System.Collections;
 using System.Threading;
 using Windows.Devices.I2c;
-using Math = System.Math;
 
 namespace AbstractIO.AdafruitMotorShieldV2
 {
     internal class Pca9685PwmController : IPwmController
     {
-        private static Object _lockObject = new Object();
-
         private const int MaxChannel = 15;
         private const int PwmCounterCycle = 4096;
 
-        private readonly ushort _i2cAddress;
-        private I2cConnectionSettings _i2CConfiguration;
         private I2cDevice _i2cDevice;
         private double _outputModulationFrequencyHz;
 
-        private  readonly ArrayList AllocatedChannels = new ArrayList();
+        private readonly ArrayList _allocatedChannels = new ArrayList();
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="Pca9685PwmController" /> class at the specified I2C address
@@ -51,8 +46,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             ushort i2cAddress = 0x60,
             double outputModulationFrequencyHz = Pca9685Constants.DefaultOutputModulationFrequency)
         {
-            _i2cAddress = i2cAddress;
-            InitializeI2CDevice();
+            _i2cDevice = I2cDevice.FromId("IC21", new I2cConnectionSettings(i2cAddress));
             Reset();
             SetOutputModulationFrequency(outputModulationFrequencyHz);
             // At this point the device is fully configured but all PWM channels are turned off.
@@ -60,9 +54,19 @@ namespace AbstractIO.AdafruitMotorShieldV2
 
         public PwmChannel GetPwmChannel(uint channel)
         {
-            if (channel > MaxChannel) throw new ArgumentOutOfRangeException("channel", "Maximum channel is 15");
-
-            return new PwmChannel(this, channel, 0.0);
+            if (channel > MaxChannel)
+            {
+                throw new ArgumentOutOfRangeException("channel", "Maximum channel is 15");
+            }
+            else if (_allocatedChannels.Contains(channel))
+            {
+                throw new ArgumentException("This channel is already reserved.");
+            }
+            else
+            {
+                _allocatedChannels.Add(channel);
+                return new PwmChannel(this, channel, 0.0);
+            }
         }
 
         public double OutputModulationFrequencyHz
@@ -123,12 +127,6 @@ namespace AbstractIO.AdafruitMotorShieldV2
             WriteConsecutiveRegisters(registerOffset, 0x00, 0x10, 0x00, 0x00); // Set LED_FULL_ON bit
         }
 
-        private void InitializeI2CDevice()
-        {
-            _i2CConfiguration = new I2cConnectionSettings(_i2cAddress);
-            _i2cDevice = I2cDevice.FromId("IC21", _i2CConfiguration);
-        }
-
         private void SetBitInRegister(byte registerOffset, ushort bitNumber)
         {
             var bitSetMask = 0x01 << bitNumber;
@@ -182,7 +180,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         private void WriteRegister(byte registerOffset, byte data)
         {
             byte[] writeBuffer = { registerOffset, data };
-            lock (_lockObject)
+            lock (AbstractIO.GlobalLockObjects.I2cLockObject)
             {
                 _i2cDevice.Write(writeBuffer);
             }
@@ -205,7 +203,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             {
                 writeBuffer[++bufferIndex] = value;
             }
-            lock (_lockObject)
+            lock (AbstractIO.GlobalLockObjects.I2cLockObject)
             {
                 _i2cDevice.Write(writeBuffer);
             }
@@ -279,7 +277,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         {
             byte[] writeBuffer = { registerOffset };
             var readBuffer = new byte[1];
-            lock (_lockObject)
+            lock (AbstractIO.GlobalLockObjects.I2cLockObject)
             {
                 _i2cDevice.Write(writeBuffer);
                 _i2cDevice.Read(readBuffer);
@@ -288,8 +286,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             //operations[0] = I2cDevice.CreateWriteTransaction(writeBuffer);
             //operations[1] = I2cDevice.CreateReadTransaction(readBuffer);
             //i2cDevice.Execute(operations, Pca9685.I2CTimeout);
-            var result = readBuffer[0];
-            return result;
+            return readBuffer[0];
         }
     }
 }

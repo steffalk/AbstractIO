@@ -26,18 +26,10 @@ namespace AbstractIO.AdafruitMotorShieldV2
     /// </summary>
     public sealed class PwmChannel
     {
-        public enum ScaleFactor : uint
-        {
-            Milliseconds = 1000U,
-            Microseconds = 1000000U,
-            Nanoseconds = 1000000000U,
-        }
-
         private readonly uint _channel; // The base address of the channel's registers.
 
         private uint _duration; // The duration for which the PWM signal is active.
         private uint _period; // The PWM waveform period, 1/frequency
-        private ScaleFactor _scale;
         private IPwmController _controller;
         private double _dutyCycle;
 
@@ -53,12 +45,11 @@ namespace AbstractIO.AdafruitMotorShieldV2
             Commit();
         }
 
-        internal PwmChannel(IPwmController controller, uint channel, uint period, uint duration, ScaleFactor scale)
+        internal PwmChannel(IPwmController controller, uint channel, uint period, uint duration)
         {
             _channel = channel;
             _period = period;
             _duration = duration;
-            _scale = scale;
             _controller = controller;
             Commit();
         }
