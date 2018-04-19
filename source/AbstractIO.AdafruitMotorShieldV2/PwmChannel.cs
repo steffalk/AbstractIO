@@ -34,15 +34,15 @@ namespace AbstractIO.AdafruitMotorShieldV2
             Nanoseconds = 1000000000U,
         }
 
-        static readonly ArrayList AllocatedChannels = new ArrayList();
+        private static readonly ArrayList AllocatedChannels = new ArrayList();
 
-        readonly uint channel; // The base address of the channel's registers.
+        private readonly uint channel; // The base address of the channel's registers.
 
-        uint duration; // The duration for which the PWM signal is active.
-        uint period; // The PWM waveform period, 1/frequency
-        ScaleFactor scale;
-        IPwmController controller;
-        double dutyCycle;
+        private uint duration; // The duration for which the PWM signal is active.
+        private uint period; // The PWM waveform period, 1/frequency
+        private ScaleFactor scale;
+        private IPwmController controller;
+        private double dutyCycle;
 
         internal PwmChannel(IPwmController controller, uint channel, double dutyCycle)
         {
@@ -92,16 +92,13 @@ namespace AbstractIO.AdafruitMotorShieldV2
             }
         }
 
-
-
-
         /// <summary>
         ///   Allocates the channel after ensuring that it is not already in use.
         ///   Channel instances must be disposed before they can be re-used.
         /// </summary>
         /// <param name="channel">The channel base address.</param>
         /// <exception cref="InvalidOperationException">Thrown if there is already an instance of this channel.</exception>
-        void AllocateChannel(uint channel)
+        private void AllocateChannel(uint channel)
         {
             if (AllocatedChannels.Contains(channel))
                 throw new InvalidOperationException("Channel with base address " + channel + " is already allocated");

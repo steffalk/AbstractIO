@@ -19,7 +19,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
     /// <summary>
     ///   Pca9685 constants.
     /// </summary>
-    internal static class Pca9685
+    internal static class Pca9685Constants
     {
         #region MODE1 register bits
         public const ushort AllCallBit = 0;

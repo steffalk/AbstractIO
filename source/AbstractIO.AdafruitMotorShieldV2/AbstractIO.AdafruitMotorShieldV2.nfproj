@@ -23,7 +23,7 @@
     <Compile Include="Base\IServoControl.cs" />
     <Compile Include="Base\IStepSequencer.cs" />
     <Compile Include="IPwmController.cs" />
-    <Compile Include="Pca9685.cs" />
+    <Compile Include="Pca9685Constants.cs" />
     <Compile Include="Pca9685PwmController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PwmBoolean.cs" />

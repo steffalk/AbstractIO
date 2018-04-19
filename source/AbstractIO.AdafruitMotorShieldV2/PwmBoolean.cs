@@ -24,18 +24,18 @@ namespace AbstractIO.AdafruitMotorShieldV2
     /// </summary>
     public class PwmBoolean
     {
-        readonly PwmChannel pwm;
+        private readonly PwmChannel _pwmChannel;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="PwmBoolean" /> class.
         /// </summary>
-        /// <param name="pwm">
+        /// <param name="pwmChannel">
         ///   The PWM channel to be used as a boolean.
         ///   It is assume that the channel's frequency has already been initialized by its constructor.
         /// </param>
-        public PwmBoolean(PwmChannel pwm, bool initialState = false)
+        public PwmBoolean(PwmChannel pwmChannel, bool initialState = false)
         {
-            this.pwm = pwm;
+            _pwmChannel = pwmChannel;
             InitializePwm(initialState);
         }
 
@@ -43,12 +43,22 @@ namespace AbstractIO.AdafruitMotorShieldV2
         ///   Gets or sets the state of this <see cref="PwmBoolean" />.
         /// </summary>
         /// <value><c>true</c> or <c>false</c>.</value>
-        public bool State { get { return pwm.DutyCycle >= 1.0; } set { pwm.DutyCycle = value ? 1.0 : 0.0; } }
+        public bool State
+        {
+            get
+            {
+                return _pwmChannel.DutyCycle >= 1.0;
+            }
+            set
+            {
+                _pwmChannel.DutyCycle = value ? 1.0 : 0.0;
+            }
+        }
 
         /// <summary>
         ///   Initializes the PWM boolean to 'false' and starts it.
         /// </summary>
-        void InitializePwm(bool initialState)
+        private void InitializePwm(bool initialState)
         {
             State = initialState;
         }
