@@ -22,6 +22,8 @@
 //#define Sample08LetMotorRun
 #define Sample09LetManyMotorsRun
 
+using System.Threading;
+
 namespace AbstractIO.Netduino3.Samples
 {
 
@@ -264,6 +266,12 @@ namespace AbstractIO.Netduino3.Samples
                 lamp: shield.GetDcMotor(1));
 
 #elif Sample09LetManyMotorsRun
+
+            Thread blinkThread = new Thread(
+                () => AbstractIO.Samples.Sample01SimpleBlinker.Run(
+                    lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue)));
+
+            blinkThread.Start();
 
             // Control 8 motors on 2 motor shields simultaneously:
 
