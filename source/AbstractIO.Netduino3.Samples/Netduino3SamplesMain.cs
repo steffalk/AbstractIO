@@ -268,8 +268,8 @@ namespace AbstractIO.Netduino3.Samples
 #elif Sample09LetManyMotorsRun
 
             Thread blinkThread = new Thread(
-                () => AbstractIO.Samples.Sample01SimpleBlinker.Run(
-                    lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue)));
+                () => AbstractIO.Samples.Sample02SmoothBlinker.Run(
+                    lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)));
 
             blinkThread.Start();
 
