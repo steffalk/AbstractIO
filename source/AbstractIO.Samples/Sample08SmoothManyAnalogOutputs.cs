@@ -46,7 +46,7 @@ namespace AbstractIO.Samples
                 {
                     output.Value = 1.0;
                 }
-                Thread.Sleep(2 * PauseImMs);
+                Thread.Sleep(3 * PauseImMs);
 
                 // Full negative power to all outputs:
                 foreach (IDoubleOutput output in smoothedOutputs)
