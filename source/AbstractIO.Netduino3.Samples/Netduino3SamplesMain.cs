@@ -277,10 +277,14 @@ namespace AbstractIO.Netduino3.Samples
 
             var shield1 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(96);
             var shield2 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(97);
+            var shield3 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(98);
+            var shield4 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(99);
 
             AbstractIO.Samples.Sample08SmoothManyAnalogOutputs.Run(
                  shield1.GetDcMotor(1), shield1.GetDcMotor(2), shield1.GetDcMotor(3), shield1.GetDcMotor(4),
-                 shield2.GetDcMotor(1), shield2.GetDcMotor(2), shield2.GetDcMotor(3), shield2.GetDcMotor(4));
+                 shield2.GetDcMotor(1), shield2.GetDcMotor(2), shield2.GetDcMotor(3), shield2.GetDcMotor(4),
+                 shield3.GetDcMotor(1), shield3.GetDcMotor(2), shield3.GetDcMotor(3), shield3.GetDcMotor(4),
+                 shield4.GetDcMotor(1), shield4.GetDcMotor(2), shield4.GetDcMotor(3), shield4.GetDcMotor(4));
 
 #else
 #error Please uncomment exactly one of the samples.

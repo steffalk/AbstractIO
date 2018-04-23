@@ -183,6 +183,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             lock (AbstractIO.GlobalLockObjects.I2cLockObject)
             {
                 _i2cDevice.Write(writeBuffer);
+                //Thread.Sleep(1);
             }
             //var operations = new I2cDevice.I2CTransaction[1];
             //operations[0] = I2cDevice.CreateWriteTransaction(writeBuffer);
@@ -206,6 +207,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             lock (AbstractIO.GlobalLockObjects.I2cLockObject)
             {
                 _i2cDevice.Write(writeBuffer);
+                //Thread.Sleep(1);
             }
             //var transactions = new I2cDevice.I2CTransaction[]
             //    {
@@ -281,6 +283,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             {
                 _i2cDevice.Write(writeBuffer);
                 _i2cDevice.Read(readBuffer);
+                //Thread.Sleep(1);
             }
             //var operations = new I2cDevice.I2CTransaction[2];
             //operations[0] = I2cDevice.CreateWriteTransaction(writeBuffer);
