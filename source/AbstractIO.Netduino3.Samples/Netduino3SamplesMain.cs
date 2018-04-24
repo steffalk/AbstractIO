@@ -132,8 +132,8 @@ namespace AbstractIO.Netduino3.Samples
 
 #elif Sample03ButtonControlsLampBlinking
 
-            // Sample 03 again, but this time we let the lamp blink simply by using the EnableableBlinker class, coded
-            // using the fluent API provided by extension methods:
+            // Sample 03 again, but this time we let the lamp blink simply by using the BlinkedWhenTrueOutput class,
+            // coded using the fluent API provided by extension methods:
 
             AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
@@ -142,7 +142,7 @@ namespace AbstractIO.Netduino3.Samples
 
 #elif Sample03ButtonControlsLampBlinkingSmoothly
 
-            // Sample 03 again, but this time we let the lamp blink smoothly by using PWM and the SmoothOutput class,
+            // Sample 03 again, but this time we let the lamp blink smoothly by using PWM and the SmoothedOutput class,
             // coded using fluent API (even if the Run() method does nothing than simply turn the "output" on when the
             // button is pressed). Read the definition of the lamp in reverse order:
             // - Incoming is simply the boolean signal of the button.
@@ -237,7 +237,7 @@ namespace AbstractIO.Netduino3.Samples
 #elif Sample06WaitForButtonPolling
 
             // Sample 06: Wait for an input to reach a specific value, or to change, using the WaitFor() and
-            // WaitForChange() extension methods.. In this sample, the button is used only as an IBooleanInput, so that
+            // WaitForChange() extension methods. In this sample, the button is used only as an IBooleanInput, so that
             // waiting will cause polling. See sample 07 for the exact same code, just using the butten as an
             // IObservableBooleanInput, working without polling.
 
@@ -267,13 +267,18 @@ namespace AbstractIO.Netduino3.Samples
 
 #elif Sample09LetManyMotorsRun
 
+            // Control 8 motors on 2 motor shields simultaneously:
+
+            // Let a lamp blink smoothly on a separate thread as a means to see how smooth all these operations can be
+            // handled by the board:
+
             Thread blinkThread = new Thread(
                 () => AbstractIO.Samples.Sample02SmoothBlinker.Run(
                     lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)));
 
             blinkThread.Start();
 
-            // Control 8 motors on 2 motor shields simultaneously:
+            // Run the sample, using as many motors as you like:
 
             var shield1 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(96);
             var shield2 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(97);
