@@ -13,11 +13,29 @@ namespace AbstractIO
     /// </remarks>
     public class SmoothedOutput : IDoubleOutput
     {
+        // The target output which shall received the smoothly accelerated/decelerated output:
         private IDoubleOutput _targetOutput;
-        private double _targetValue, _valueChangePerSecond;
+
+        // The acceleration/deceleration in units of change per tick:
+        private double _valueChangePerTick;
+
+        // The interval, in ms, at which the target output value shall be adapted when accelerating/decelearting:
         private int _rampIntervalMs;
+
+        // The target value up to which the target output shall be accelerated/decelerated:
+        private double _targetValue;
+
+        // The timer used to periodically update the target output value:
         private Timer _timer;
-        private double _changePerInterval;
+
+        // The UTC time ticks when acceleration started:
+        private long _startTimeTicks;
+
+        // The value at the time the acceleration started:
+        private double _startValue;
+
+        // The signed acceleration as a value change per tick to be used for the current acceleration/deceleration:
+        private double _signedValuePerTick;
 
         /// <summary>
         /// Creates an instance.
@@ -31,12 +49,11 @@ namespace AbstractIO
         public SmoothedOutput(IDoubleOutput targetOutput, double valueChangePerSecond, int rampIntervalMs)
         {
             _targetOutput = targetOutput ?? throw new ArgumentNullException(nameof(targetOutput));
-            if (valueChangePerSecond <= 0.0) { throw new ArgumentOutOfRangeException(nameof(valueChangePerSecond)); }
-            if (rampIntervalMs <= 0) { throw new ArgumentOutOfRangeException(nameof(rampIntervalMs)); }
+            if (valueChangePerSecond <= 0.0) throw new ArgumentOutOfRangeException(nameof(valueChangePerSecond));
+            if (rampIntervalMs <= 0) throw new ArgumentOutOfRangeException(nameof(rampIntervalMs));
 
-            _valueChangePerSecond = valueChangePerSecond;
+            _valueChangePerTick = valueChangePerSecond / TimeSpan.TicksPerSecond;
             _rampIntervalMs = rampIntervalMs;
-            _changePerInterval = valueChangePerSecond * rampIntervalMs / 1000.0;
         }
 
         /// <summary>
@@ -54,8 +71,21 @@ namespace AbstractIO
             set
             {
                 _targetValue = value;
-                if (_targetValue != _targetOutput.Value)
+                _startValue = _targetOutput.Value;
+                if (_targetValue != _startValue)
                 {
+                    // Remember when and at what actual current value the accleration started:
+                    _startTimeTicks = DateTime.UtcNow.Ticks;
+                    if (_targetValue > _startValue)
+                    {
+                        _signedValuePerTick = _valueChangePerTick;
+                    }
+                    else
+                    {
+                        _signedValuePerTick = -_valueChangePerTick;
+                    }
+
+                    // Create or resume the acceleration timer:
                     if (_timer == null)
                     {
                         _timer = new Timer(ChangeTargetValue, null, 0, _rampIntervalMs);
@@ -82,18 +112,30 @@ namespace AbstractIO
             }
             else
             {
-                double newValue;
+                // New value = [Start Value] + [Time Difference] * [Acceleration], aka "v = v0 + a * t":
+                double newValue = _startValue + (DateTime.UtcNow.Ticks - _startTimeTicks) * _signedValuePerTick;
 
-                if (currentValue < _targetValue)
+                if (_signedValuePerTick > 0)
                 {
-                    newValue = Math.Min(currentValue + _changePerInterval, _targetValue);
+                    if (newValue > _targetValue)
+                    {
+                        newValue = _targetValue;
+                    }
                 }
                 else
                 {
-                    newValue = Math.Max(currentValue - _changePerInterval, _targetValue);
+                    if (newValue < _targetValue)
+                    {
+                        newValue = _targetValue;
+                    }
                 }
+
                 currentValue = newValue;
                 _targetOutput.Value = newValue;
+                if (currentValue == _targetValue)
+                {
+                    _timer.Change(Timeout.Infinite, Timeout.Infinite);
+                }
             }
         }
     }

@@ -15,7 +15,8 @@ namespace AbstractIO.Samples
         public static void Run(params IDoubleOutput[] outputs)
         {
             // Check parameters:
-            if (outputs == null || outputs.Length == 0) { throw new ArgumentNullException(nameof(outputs)); }
+            if (outputs == null || outputs.Length == 0) throw new ArgumentNullException(nameof(outputs));
+
             for (int i = 0; i < outputs.Length; i++)
             {
                 if (outputs[i] == null)
@@ -29,7 +30,7 @@ namespace AbstractIO.Samples
 
             for (int i = 0; i < outputs.Length; i++)
             {
-                smoothedOutputs[i] = outputs[i].Smoothed(valueChangePerSecond: 0.25, rampIntervalMs: 20);
+                smoothedOutputs[i] = outputs[i].Smoothed(valueChangePerSecond: 0.15, rampIntervalMs: 50);
             }
 
             // Do the demo:
