@@ -51,6 +51,7 @@
     <Compile Include="Output Transformation\DoubleOutputDistributor.cs" />
     <Compile Include="Output Transformation\IntegerOutputDistributor.cs" />
     <Compile Include="Output Transformation\OutputConverterExtensionMethods.cs" />
+    <Compile Include="Output Transformation\ScaledOutput.cs" />
     <Compile Include="Output Transformation\SmoothedOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

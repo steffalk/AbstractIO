@@ -29,8 +29,8 @@
         /// <returns>The created input which will blink the <paramref name="targetOutput"/> when and as long as its
         /// <see cref="IBooleanInput.Value"/> property is true.</returns>
         public static BlinkedWhenTrueOutput BlinkedWhenTrue(
-            this IBooleanOutput targetOutput, 
-            int onDurationMs, 
+            this IBooleanOutput targetOutput,
+            int onDurationMs,
             int offDurationMs)
         {
             return new BlinkedWhenTrueOutput(targetOutput, onDurationMs, offDurationMs);
@@ -55,7 +55,7 @@
         }
 
         /// <summary>
-        /// Creates an <see cref="SmoothedOutput"/> object which will slowly approach the
+        /// Creates a <see cref="SmoothedOutput"/> object which will slowly approach the
         /// <paramref name="targetOutput"/> value to the goal <see cref="IDoubleOutput.Value"/>.
         /// </summary>
         /// <param name="targetOutput">The target output to be smoothed.</param>
@@ -66,11 +66,40 @@
         /// value be adapted.</param>
         /// <returns>The created <see cref="SmoothedOutput"/> object.</returns>
         public static SmoothedOutput Smoothed(
-            this IDoubleOutput targetOutput, 
-            double valueChangePerSecond, 
+            this IDoubleOutput targetOutput,
+            double valueChangePerSecond,
             int rampIntervalMs)
         {
             return new SmoothedOutput(targetOutput, valueChangePerSecond, rampIntervalMs);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="ScaledOutput"/> object which will scale values linear using a factor and an offset.
+        /// </summary>
+        /// <param name="targetOutput">The target output to received the scaled values.</param>
+        /// <param name="factor">The factor to use.</param>
+        /// <param name="offset">The offset to use.</param>
+        /// <returns>The creted <see cref="ScaledOutput"/> object.</returns>
+        /// <remarks>The <paramref name="targetOutput"/> will receive values scaled by the formula:
+        /// <see cref="IDoubleOutput.Value">Value</see> * <paramref name="factor"/> + <paramref name="offset"/>.
+        /// </remarks>
+        public static ScaledOutput Scaled(this IDoubleOutput targetOutput, double factor, double offset)
+        {
+            return new ScaledOutput(targetOutput, factor, offset);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="ScaledOutput"/> object which will scale values linear using a factor only and 0.0 as
+        /// the offset.
+        /// </summary>
+        /// <param name="targetOutput">The target output to received the scaled values.</param>
+        /// <param name="factor">The factor to use.</param>
+        /// <returns>The creted <see cref="ScaledOutput"/> object.</returns>
+        /// <remarks>The <paramref name="targetOutput"/> will receive values scaled by the formula:
+        /// <see cref="IDoubleOutput.Value">Value</see> * <paramref name="factor"/>.</remarks>
+        public static ScaledOutput Scaled(this IDoubleOutput targetOutput, double factor)
+        {
+            return new ScaledOutput(targetOutput, factor);
         }
     }
 }

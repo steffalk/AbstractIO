@@ -267,7 +267,7 @@ namespace AbstractIO.Netduino3.Samples
 
 #elif Sample09LetManyMotorsRun
 
-            // Control 8 motors on 2 motor shields simultaneously:
+            // Control as many motors you whish on as many motor shields you whish simultaneously:
 
             // Let a lamp blink smoothly on a separate thread as a means to see how smooth all these operations can be
             // handled by the board:
@@ -279,6 +279,11 @@ namespace AbstractIO.Netduino3.Samples
             blinkThread.Start();
 
             // Run the sample, using as many motors as you like:
+            // As additional ideas, suppose that:
+            // - All motors can run on 9V, but one only on 6V. So we scale this motor's output by 6/9.
+            // - One DC motor has its pins swapped and needs output in reverse polarity. So scale by a factor of -1.
+            // Note that the Run() method does not know nor needs to know about this facts about the actual motors, and
+            // that all we need to do is to pass scaled outputs using the fluent API to the Run() method.
 
             var shield1 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(96);
             var shield2 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(97);
@@ -288,8 +293,10 @@ namespace AbstractIO.Netduino3.Samples
             AbstractIO.Samples.Sample08SmoothManyAnalogOutputs.Run(
                  shield1.GetDcMotor(1), shield1.GetDcMotor(2), shield1.GetDcMotor(3), shield1.GetDcMotor(4),
                  shield2.GetDcMotor(1), shield2.GetDcMotor(2), shield2.GetDcMotor(3), shield2.GetDcMotor(4),
-                 shield3.GetDcMotor(1), shield3.GetDcMotor(2), shield3.GetDcMotor(3), shield3.GetDcMotor(4),
-                 shield4.GetDcMotor(1), shield4.GetDcMotor(2), shield4.GetDcMotor(3), shield4.GetDcMotor(4));
+                 shield3.GetDcMotor(1).Scaled(factor: 6.0 / 9.0),
+                                        shield3.GetDcMotor(2), shield3.GetDcMotor(3), shield3.GetDcMotor(4),
+                 shield4.GetDcMotor(1).Scaled(factor: -1.0),
+                                        shield4.GetDcMotor(2), shield4.GetDcMotor(3), shield4.GetDcMotor(4));
 
 #else
 #error Please uncomment exactly one of the samples.
