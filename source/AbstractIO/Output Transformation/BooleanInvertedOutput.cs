@@ -5,7 +5,7 @@ namespace AbstractIO
     /// <summary>
     /// A class inverting an <see cref="IBooleanOuput"/>.
     /// </summary>
-    public class InvertedBooleanOutput : IBooleanOutput
+    public class BooleanInvertedOutput : IBooleanOutput
     {
         private readonly IBooleanOutput _target;
 
@@ -13,7 +13,7 @@ namespace AbstractIO
         /// Creates an instance.
         /// </summary>
         /// <param name="target">The ouput get the inverted Value of this object.</param>
-        public InvertedBooleanOutput(IBooleanOutput target)
+        public BooleanInvertedOutput(IBooleanOutput target)
         {
             _target = target ?? throw new ArgumentNullException(nameof(target));
         }

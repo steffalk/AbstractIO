@@ -5,7 +5,7 @@ namespace AbstractIO
     /// <summary>
     /// A class inverting an <see cref="IBooleanInput"/>.
     /// </summary>
-    public class InvertBooleanInput : IBooleanInput
+    public class BooleanInvertInput : IBooleanInput
     {
         private readonly IBooleanInput _source;
 
@@ -13,7 +13,7 @@ namespace AbstractIO
         /// Creates an instance.
         /// </summary>
         /// <param name="source">The input to be converted.</param>
-        public InvertBooleanInput(IBooleanInput source)
+        public BooleanInvertInput(IBooleanInput source)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
         }

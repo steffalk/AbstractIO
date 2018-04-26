@@ -3,7 +3,7 @@
     /// <summary>
     /// An input always returning the same Boolean value.
     /// </summary>
-    public class ConstantBooleanInput : IBooleanInput
+    public class BooleanConstantInput : IBooleanInput
     {
         private readonly bool _value;
 
@@ -11,7 +11,7 @@
         /// Creates an instance.
         /// </summary>
         /// <param name="value">The value that the <see cref="Value"/> property shall return.</param>
-        public ConstantBooleanInput(bool value)
+        public BooleanConstantInput(bool value)
         {
             _value = value;
         }

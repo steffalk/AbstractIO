@@ -3,12 +3,12 @@
 namespace AbstractIO
 {
     /// <summary>
-    /// An <see cref="IDoubleOutput"/> that passes its value linear scaled to a target <see cref="IDoubleOutput"/>.
+    /// An <see cref="ISingleOutput"/> that passes its value linear scaled to a target <see cref="ISingleOutput"/>.
     /// </summary>
-    public class ScaledOutput : IDoubleOutput
+    public class SingleScaledOutput : ISingleOutput
     {
-        private IDoubleOutput _target;
-        private double _factor, _offset, _value;
+        private ISingleOutput _target;
+        private float _factor, _offset, _value;
 
         /// <summary>
         /// Creates an instance given a factor and an offset.
@@ -18,7 +18,7 @@ namespace AbstractIO
         /// <param name="offset">The offset to add to the output.</param>
         /// <remarks>Setting the <see cref="Value"/> will set the <paramref name="target"/> value to
         /// <see cref="Value"/> * <paramref name="factor"/> + <paramref name="offset"/>.</remarks>
-        public ScaledOutput(IDoubleOutput target, double factor, double offset)
+        public SingleScaledOutput(ISingleOutput target, float factor, float offset)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             _target = target;
@@ -33,7 +33,7 @@ namespace AbstractIO
         /// <param name="factor">The factor to scale the output.</param>
         /// <remarks>Setting the <see cref="Value"/> will set the <paramref name="target"/> value to
         /// <see cref="Value"/> * <paramref name="factor"/>.</remarks>
-        public ScaledOutput(IDoubleOutput target, double factor)
+        public SingleScaledOutput(ISingleOutput target, float factor)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             _target = target;
@@ -42,9 +42,9 @@ namespace AbstractIO
 
         /// <summary>
         /// Gets the last value written or sets the value to be written. It will be passed to the target
-        /// <see cref="IDoubleOutput.Value">Value</see> scaled as defined by the constructor parameters.
+        /// <see cref="ISingleOutput.Value">Value</see> scaled as defined by the constructor parameters.
         /// </summary>
-        public double Value
+        public float Value
         {
             get
             {

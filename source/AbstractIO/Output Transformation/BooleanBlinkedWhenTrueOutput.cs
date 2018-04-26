@@ -7,7 +7,7 @@ namespace AbstractIO
     /// An <see cref="IBooleanOutput"/> which will blink when and as long as a source <see cref="IBooleanOutput"/> is
     /// true.
     /// </summary>
-    public class BlinkedWhenTrueOutput : IBooleanOutput
+    public class BooleanBlinkedWhenTrueOutput : IBooleanOutput
     {
         private IBooleanOutput _targetOutput;
         private int _onDurationMs, _offDurationMs;
@@ -21,7 +21,7 @@ namespace AbstractIO
         /// when and as long as the <see cref="Value"/> property is true.</param>
         /// <param name="onDurationMs">The number of milliseconds for the true-phase of the blinker.</param>
         /// <param name="offDurationMs">The number of milliseconds for the false-phase of the blinker.</param>
-        public BlinkedWhenTrueOutput(IBooleanOutput targetOutput, int onDurationMs, int offDurationMs)
+        public BooleanBlinkedWhenTrueOutput(IBooleanOutput targetOutput, int onDurationMs, int offDurationMs)
         {
             _targetOutput = targetOutput ?? throw new ArgumentNullException(nameof(targetOutput));
             if (onDurationMs <= 0) { throw new ArgumentOutOfRangeException(nameof(onDurationMs)); }

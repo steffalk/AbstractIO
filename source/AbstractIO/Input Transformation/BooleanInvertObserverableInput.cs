@@ -5,7 +5,7 @@ namespace AbstractIO
     /// <summary>
     /// A class inverting an <see cref="IObservableBooleanInput"/>.
     /// </summary>
-    public class InvertObserverableBooleanInput : IObservableBooleanInput
+    public class BooleanInvertObserverableInput : IObservableBooleanInput
     {
         private readonly IObservableBooleanInput _source;
 
@@ -33,7 +33,7 @@ namespace AbstractIO
         /// Creates an instance.
         /// </summary>
         /// <param name="source">The input to be converted.</param>
-        public InvertObserverableBooleanInput(IObservableBooleanInput source)
+        public BooleanInvertObserverableInput(IObservableBooleanInput source)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _source.ValueChanged += SourceValueChangedHandler;

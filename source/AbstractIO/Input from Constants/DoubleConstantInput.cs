@@ -1,17 +1,17 @@
 ﻿namespace AbstractIO
 {
     /// <summary>
-    /// An input always returning the same Integer value.
+    /// An input always returning the same Double value.
     /// </summary>
-    public class ConstantIntegerInput : IIntegerInput
+    public class DoubleConstantInput : IDoubleInput
     {
-        private readonly int _value;
+        private readonly double _value;
 
         /// <summary>
         /// Creates an instance.
         /// </summary>
         /// <param name="value">The value that the <see cref="Value"/> property shall return.</param>
-        public ConstantIntegerInput(int value)
+        public DoubleConstantInput(double value)
         {
             _value = value;
         }
@@ -19,7 +19,7 @@
         /// <summary>
         /// Returns the value passed to the constructor.
         /// </summary>
-        public int Value
+        public double Value
         {
             get
             {

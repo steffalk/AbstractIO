@@ -1,13 +1,13 @@
 ﻿namespace AbstractIO
 {
     /// <summary>
-    /// An abstract input reading double-precision floating point values.
+    /// An abstract input reading single-precision floating point values.
     /// </summary>
-    public interface IDoubleInput
+    public interface ISingleInput
     {
         /// <summary>
         /// Gets (reads) the value.
         /// </summary>
-        double Value { get; }
+        float Value { get; }
     }
 }

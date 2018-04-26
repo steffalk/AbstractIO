@@ -5,7 +5,7 @@ namespace AbstractIO
     /// <summary>
     /// A class mapping an <see cref="IDoubleInput"/> to an <see cref="IBooleanInput"/> using a threshold value.
     /// </summary>
-    public class SchmittTriggerInput : IBooleanInput
+    public class DoubleSchmittTriggerInput : IBooleanInput
     {
         private IDoubleInput _sourceInput;
         private double _lowThreshold, _highThreshold;
@@ -23,7 +23,7 @@ namespace AbstractIO
         /// following sequence of source input values, in the given order, will then result in the following resulting
         /// values: 0.0 -> false, 1.0 -> true, 0.6 -> true, 0.5 -> true, 0.4 -> true, 0.3 -> false, 0.4 -> false,
         /// 0.5 -> false, 0.6 -> false, 0.7 -> true.</remarks>
-        public SchmittTriggerInput(IDoubleInput sourceInput, double threshold, double hysteresis)
+        public DoubleSchmittTriggerInput(IDoubleInput sourceInput, double threshold, double hysteresis)
         {
             _sourceInput = sourceInput ?? throw new ArgumentNullException(nameof(sourceInput));
             if (hysteresis < 0.0) { throw new ArgumentOutOfRangeException(nameof(hysteresis)); }

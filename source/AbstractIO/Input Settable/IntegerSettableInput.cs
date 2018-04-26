@@ -1,11 +1,11 @@
 ﻿namespace AbstractIO
 {
     /// <summary>
-    /// An <see cref="IObservableBooleanInput"/> whose value can be freely set.
+    /// An <see cref="IObservableIntegerInput"/> whose value can be freely set.
     /// </summary>
-    public class SettableBooleanInput : IObservableBooleanInput
+    public class IntegerSettableInput : IObservableIntegerInput
     {
-        private bool _value;
+        private int _value;
 
         /// <summary>
         /// This event gets fired when the Value property of the abstract input/output interfaces has changed.
@@ -16,13 +16,13 @@
         /// original value causing the event, not a possibly meanwhile again changed Value property. So, handlers of
         /// this event should usually inspect their newValue parameter and not query the object's Value property.
         /// </remarks>
-        public event BooleanValueChangedHandler ValueChanged;
+        public event IntegerValueChangedHandler ValueChanged;
 
         /// <summary>
         /// Raises the <see cref="ValueChanged"/> event.
         /// </summary>
         /// <param name="newValue">The new value to which the <see cref="Value"/> property changed.</param>
-        protected void OnValueChanged(bool newValue)
+        protected void OnValueChanged(int newValue)
         {
             ValueChanged(this, newValue);
         }
@@ -35,7 +35,7 @@
         /// The <see cref="ValueChanged"/> will not be raised until the first time the <see cref="Value"/> property has
         /// been changed after this object was created.
         /// </remarks>
-        public SettableBooleanInput(bool initialValue )
+        public IntegerSettableInput(int initialValue)
         {
             _value = initialValue;
         }
@@ -44,7 +44,7 @@
         /// Gets or sets the value of the input. Setting it to another than its current value will raise the
         /// <see cref="ValueChanged"/> event.
         /// </summary>
-        public bool Value
+        public int Value
         {
             get
             {
