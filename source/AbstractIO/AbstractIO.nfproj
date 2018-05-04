@@ -31,6 +31,7 @@
     <Compile Include="Input Interfaces\IDoubleInput.cs" />
     <Compile Include="Input Interfaces\IObservableIntegerInput.cs" />
     <Compile Include="Input Interfaces\IObservableDoubleInput.cs" />
+    <Compile Include="Output Transformation\ITargetReachedObservable.cs" />
     <Compile Include="Input Settable\BooleanSettableInput.cs" />
     <Compile Include="Input Settable\SingleSettableInput.cs" />
     <Compile Include="Input Settable\DoubleSettableInput.cs" />

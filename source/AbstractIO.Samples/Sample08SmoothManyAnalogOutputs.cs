@@ -8,6 +8,9 @@ namespace AbstractIO.Samples
     /// </summary>
     public static class Sample08SmoothManyAnalogOutputs
     {
+
+        private delegate double ValueGetter();
+
         /// <summary>
         /// Lets many analog outputs smoothly increase or decrease positive and negative power as a demo.
         /// </summary>
@@ -26,7 +29,7 @@ namespace AbstractIO.Samples
             }
 
             // Generate smoothed versions of the outputs:
-            IDoubleOutput[] smoothedOutputs = new IDoubleOutput[outputs.Length];
+            DoubleSmoothedOutput[] smoothedOutputs = new DoubleSmoothedOutput[outputs.Length];
 
             for (int i = 0; i < outputs.Length; i++)
             {
@@ -37,44 +40,38 @@ namespace AbstractIO.Samples
 
             var random = new Random();
 
-            const int PauseImMs = 5000;
-            const double MinimumSpeed = 0.3;
-
             while (true)
             {
                 // Full positive power to all outputs:
-                foreach (IDoubleOutput output in smoothedOutputs)
-                {
-                    output.Value = 1.0;
-                }
-                Thread.Sleep(3 * PauseImMs);
+                SetOutputsAndWait(smoothedOutputs, () => +1.0);
 
                 // Full negative power to all outputs:
-                foreach (IDoubleOutput output in smoothedOutputs)
-                {
-                    output.Value = -1.0;
-                }
-                Thread.Sleep(4 * PauseImMs);
+                SetOutputsAndWait(smoothedOutputs, () => -1.0);
 
                 // Several cycles of random power:
                 for (int cycle = 0; cycle < 10; cycle++)
                 {
-                    foreach (IDoubleOutput output in smoothedOutputs)
-                    {
-                        double value = random.NextDouble() * (2.0 - 2.0 * MinimumSpeed) - 1.0 + MinimumSpeed;
-                        if (value < 0)
-                        {
-                            value -= MinimumSpeed;
-                        }
-                        else
-                        {
-                            value += MinimumSpeed;
-                        }
-                        output.Value = value;
-                    }
-                    Thread.Sleep(PauseImMs);
+                    SetOutputsAndWait(smoothedOutputs, () => random.NextDouble() * 2.0 - 1.0);
                 }
             }
+        }
+
+        private static void SetOutputsAndWait(DoubleSmoothedOutput[] smoothedOutputs, ValueGetter getValue)
+        {
+            // Set the target values:
+            foreach (DoubleSmoothedOutput output in smoothedOutputs)
+            {
+                output.Value = getValue();
+            }
+
+            // Wait for all target values to be reached:
+            foreach (DoubleSmoothedOutput output in smoothedOutputs)
+            {
+                output.IsTargetReached.WaitFor(true);
+            }
+
+            // Let the motors run at the target speed for a little while:
+            Thread.Sleep(2000);
         }
     }
 }

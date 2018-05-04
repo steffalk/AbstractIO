@@ -1,6 +1,6 @@
 ﻿// Please uncomment exactly one of the offered samples to run it:
 
-#define Sample01SimpleBlinker
+//#define Sample01SimpleBlinker
 //#define Sample01SimpleBlinkerDistributed
 //#define Sample01SimpleBlinkerAlternating
 //#define Sample02SmoothPwmBlinker
@@ -20,7 +20,7 @@
 //#define Sample06WaitForButtonPolling
 //#define Sample07WaitForButtonEventBased
 //#define Sample08LetMotorRun
-//#define Sample09LetManyMotorsRun
+#define Sample09LetManyMotorsRun
 
 using System.Threading;
 
