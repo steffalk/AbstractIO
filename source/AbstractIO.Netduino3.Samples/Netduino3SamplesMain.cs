@@ -284,6 +284,8 @@ namespace AbstractIO.Netduino3.Samples
             // - One DC motor has its pins swapped and needs output in reverse polarity. So scale by a factor of -1.
             // Note that the Run() method does not know nor needs to know about this facts about the actual motors, and
             // that all we need to do is to pass scaled outputs using the fluent API to the Run() method.
+            // We let the Run() method run on its own thread because blocking the main thread by waiting for
+            // ManualResetEvents (as is done while the Run() method waits) would block the whole OS (as of 2018-05-05).
 
             var shield1 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(96);
             var shield2 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(97);
