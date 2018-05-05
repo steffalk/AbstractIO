@@ -284,6 +284,10 @@ namespace AbstractIO.Netduino3.Samples
             // - One DC motor has its pins swapped and needs output in reverse polarity. So scale by a factor of -1.
             // Note that the Run() method does not know nor needs to know about this facts about the actual motors, and
             // that all we need to do is to pass scaled outputs using the fluent API to the Run() method.
+            //
+            // We pass 3 onboard LEDs to display the number of motors which are (still) accelerating or decelerating
+            // as numbers 0, 1, 2 or greater than 2.
+            //
             // We let the Run() method run on its own thread because blocking the main thread by waiting for
             // ManualResetEvents (as is done while the Run() method waits) would block the whole OS (as of 2018-05-05).
 
@@ -293,13 +297,28 @@ namespace AbstractIO.Netduino3.Samples
             var shield4 = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2(99);
 
             Thread runner = new Thread(() =>
-                 AbstractIO.Samples.Sample08SmoothManyAnalogOutputs.Run(
-                      shield1.GetDcMotor(1), shield1.GetDcMotor(2), shield1.GetDcMotor(3), shield1.GetDcMotor(4),
-                      shield2.GetDcMotor(1), shield2.GetDcMotor(2), shield2.GetDcMotor(3), shield2.GetDcMotor(4),
-                      shield3.GetDcMotor(1).Scaled(factor: 6.0 / 9.0),
-                                             shield3.GetDcMotor(2), shield3.GetDcMotor(3), shield3.GetDcMotor(4),
-                      shield4.GetDcMotor(1).Scaled(factor: -1.0),
-                                             shield4.GetDcMotor(2), shield4.GetDcMotor(3), shield4.GetDcMotor(4)));
+                AbstractIO.Samples.Sample08SmoothManyAnalogOutputs.Run(
+                    new IBooleanOutput[] {
+                        new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.GoPort1Led),
+                        new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.GoPort2Led),
+                        new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.GoPort3Led)
+                    },
+                    shield1.GetDcMotor(1),
+                    shield1.GetDcMotor(2),
+                    shield1.GetDcMotor(3),
+                    shield1.GetDcMotor(4),
+                    shield2.GetDcMotor(1),
+                    shield2.GetDcMotor(2),
+                    shield2.GetDcMotor(3),
+                    shield2.GetDcMotor(4),
+                    shield3.GetDcMotor(1).Scaled(factor: 6.0 / 9.0),
+                    shield3.GetDcMotor(2),
+                    shield3.GetDcMotor(3),
+                    shield3.GetDcMotor(4),
+                    shield4.GetDcMotor(1).Scaled(factor: -1.0),
+                    shield4.GetDcMotor(2),
+                    shield4.GetDcMotor(3),
+                    shield4.GetDcMotor(4)));
 
             runner.Start();
 

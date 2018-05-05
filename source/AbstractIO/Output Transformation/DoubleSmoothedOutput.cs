@@ -38,7 +38,7 @@ namespace AbstractIO
         private double _signedValuePerTick;
 
         // This input will be set (and thus raise events) when the _targetValue is reached.
-        private BooleanSettableInput _isTargetReached = new BooleanSettableInput(false);
+        private BooleanSettableInput _isTargetReached = new BooleanSettableInput(true);
 
         /// <summary>
         /// Creates an instance.
