@@ -24,7 +24,7 @@
         /// <param name="newValue">The new value to which the <see cref="Value"/> property changed.</param>
         protected void OnValueChanged(bool newValue)
         {
-            ValueChanged(this, newValue);
+            ValueChanged?.Invoke(this, newValue);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@
         /// The <see cref="ValueChanged"/> will not be raised until the first time the <see cref="Value"/> property has
         /// been changed after this object was created.
         /// </remarks>
-        public BooleanSettableInput(bool initialValue )
+        public BooleanSettableInput(bool initialValue)
         {
             _value = initialValue;
         }
