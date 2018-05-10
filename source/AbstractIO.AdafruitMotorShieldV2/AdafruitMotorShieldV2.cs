@@ -15,7 +15,6 @@
 // File: AdafruitV2MotorShield.cs  Created: 2015-01-13@13:45
 // Last modified: 2015-02-02@18:10 by Tim
 
-using AbstractIO;
 using System;
 
 namespace AbstractIO.AdafruitMotorShieldV2
@@ -141,6 +140,20 @@ namespace AbstractIO.AdafruitMotorShieldV2
         public HBridge GetDcMotor(int connectorNumber)
         {
             return GetHbridge(connectorNumber);
+        }
+
+        /// <summary>
+        /// Gets a stepper motor on the specified connector pins.
+        /// </summary>
+        /// <param name="phase1Output">The H-Bridge that controls motor phase 1.</param>
+        /// <param name="phase2Output">The H-Bridge that controls motor phase 2.</param>
+        /// <param name="stepsPerStepCycle">The steps per step cycle.</param>
+        public StepperMotor GetStepperMotor(int phase1ConnectorNumber, int phase2ConnectorNumber, int stepsPerStepCycle)
+        {
+            return new StepperMotor(
+                GetHbridge(phase1ConnectorNumber),
+                GetHbridge(phase2ConnectorNumber),
+                stepsPerStepCycle);
         }
 
         /// <summary>

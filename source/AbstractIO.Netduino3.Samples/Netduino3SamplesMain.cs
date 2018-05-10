@@ -19,8 +19,9 @@
 //#define Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
 //#define Sample06WaitForButtonPolling
 //#define Sample07WaitForButtonEventBased
-//#define Sample08LetMotorRun
-#define Sample09LetManyMotorsRun
+//#define Sample02LetMotorRun
+//#define Sample08LetManyMotorsRun
+#define Sample09SimpleStepperMotor
 
 using System.Threading;
 
@@ -255,7 +256,7 @@ namespace AbstractIO.Netduino3.Samples
                 button: new Netduino3.ObservableDigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.DigitalOutput(Netduino3.DigitalOutputPin.OnboardLedBlue));
 
-#elif Sample08LetMotorRun
+#elif Sample02LetMotorRun
 
             // Connect to the Adafruit V2 shield at its default address:
             var shield = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2();
@@ -265,7 +266,7 @@ namespace AbstractIO.Netduino3.Samples
             AbstractIO.Samples.Sample02SmoothBlinker.Run(
                 lamp: shield.GetDcMotor(1));
 
-#elif Sample09LetManyMotorsRun
+#elif Sample08LetManyMotorsRun
 
             // Control as many motors you whish on as many motor shields you whish simultaneously:
 
@@ -324,6 +325,17 @@ namespace AbstractIO.Netduino3.Samples
 
             for (; ; ) { Thread.Sleep(10); }
 
+#elif Sample09SimpleStepperMotor
+
+            // Let a stepper motor turn randomly:
+
+            var shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
+
+            new Thread(() =>
+                AbstractIO.Samples.Sample09SimpleStepperMotor.Run(shield.GetStepperMotor(1, 2, 8)))
+                .Start();
+
+            for (; ; ) Thread.Sleep(10);
 #else
 #error Please uncomment exactly one of the samples.
 #endif
