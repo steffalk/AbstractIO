@@ -14,5 +14,12 @@
         /// <remarks>This method should be implemented blocking. Moving steps in background is to be implemented in
         /// higher level classes.</remarks>
         void MoveSteps(int steps, int pauseInMs);
+
+        /// <summary>
+        /// Cuts power from the outputs.
+        /// </summary>
+        /// <remarks>Use this method to save power or to have to stepper turn freely using outside mechanical force.
+        /// </remarks>
+        void ReleaseHoldingTorque();
     }
 }

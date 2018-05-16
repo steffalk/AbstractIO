@@ -32,6 +32,7 @@ namespace AbstractIO
         double[] _inPhaseDutyCycle;
         double[] _outOfPhaseDutyCycle;
         int _phaseIndex;
+        BooleanSettableInput _applyOutputPower = new BooleanSettableInput(false);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StepperMotor"/> class.

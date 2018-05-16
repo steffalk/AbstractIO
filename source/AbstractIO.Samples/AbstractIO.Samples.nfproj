@@ -28,6 +28,7 @@
     <Compile Include="Sample07WaitForButtonEventBased.cs" />
     <Compile Include="Sample08SmoothManyAnalogOutputs.cs" />
     <Compile Include="Sample09SimpleStepperMotor.cs" />
+    <Compile Include="Sample10StepperMotorClock.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
