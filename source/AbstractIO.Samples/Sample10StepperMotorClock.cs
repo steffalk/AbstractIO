@@ -31,7 +31,7 @@ namespace AbstractIO.Samples
                 // Compute the next time at which the stepper must work:
                 // For demo purposes, you can use one step per second, for example:
                 // DateTime nextTime = lastTime.AddSeconds(1.0);
-                DateTime nextTime = lastTime.AddMilliseconds(1.0);
+                DateTime nextTime = lastTime.AddMinutes(1.0);
 
                 // Wait the correct time, avoiding cumulative errors:
                 Thread.Sleep((nextTime - DateTime.UtcNow).Milliseconds);
