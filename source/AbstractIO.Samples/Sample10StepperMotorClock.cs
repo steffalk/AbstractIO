@@ -34,7 +34,7 @@ namespace AbstractIO.Samples
                 DateTime nextTime = lastTime.AddMinutes(1.0);
 
                 // Wait the correct time, avoiding cumulative errors:
-                Thread.Sleep((nextTime - DateTime.UtcNow).Milliseconds);
+                Thread.Sleep((int)((nextTime - DateTime.UtcNow).Ticks / TimeSpan.TicksPerMillisecond));
 
                 // Let the stepper do its job to turn the clock:
                 stepper.MoveSteps(stepsPerMinute, pauseBetweenStepsInMs);
