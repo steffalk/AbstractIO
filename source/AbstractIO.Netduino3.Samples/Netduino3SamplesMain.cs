@@ -335,9 +335,11 @@ namespace AbstractIO.Netduino3.Samples
             //    AbstractIO.Samples.Sample09SimpleStepperMotor.Run(shield.GetStepperMotor(1, 2, 8)))
             //    .Start();
 
+            const double scale = 0.3;
+
             new Thread(() =>
                 AbstractIO.Samples.Sample09SimpleStepperMotor.Run(
-                    new StepperMotor(shield.GetDcMotor(1).Scaled(0.3), shield.GetDcMotor(2).Scaled(0.3), 8)))
+                    new StepperMotor(shield.GetDcMotor(1).Scaled(scale), shield.GetDcMotor(2).Scaled(scale), 4)))
                 .Start();
 
             for (; ; ) Thread.Sleep(10);

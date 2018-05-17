@@ -15,9 +15,11 @@ namespace AbstractIO.Samples
 
             var random = new Random();
 
+            const int steps = 200;
+
             while (true)
             {
-                stepper.MoveSteps(random.Next(101) - 50, 0);
+                stepper.MoveSteps(random.Next(steps * 2 + 1) - steps, 500);
                 Thread.Sleep(1000);
             }
         }
