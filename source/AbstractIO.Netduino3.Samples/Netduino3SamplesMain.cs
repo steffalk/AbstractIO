@@ -21,7 +21,8 @@
 //#define Sample07WaitForButtonEventBased
 //#define Sample02LetMotorRun
 //#define Sample08LetManyMotorsRun
-#define Sample09SimpleStepperMotor
+//#define Sample09SimpleStepperMotor
+#define Sample10StepperMotorClock
 
 using System.Threading;
 
@@ -343,6 +344,26 @@ namespace AbstractIO.Netduino3.Samples
                 .Start();
 
             for (; ; ) Thread.Sleep(10);
+
+#elif Sample10StepperMotorClock
+
+            // Let a simple clock run by turning a stepper motor a given number of steps every minute:
+
+            var shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2(97);
+
+            const double scale = 0.2;
+
+            new Thread(() =>
+                AbstractIO.Samples.Sample10StepperMotorClock.Run(
+                    stepper: new StepperMotor(phase1Output: shield.GetDcMotor(1).Scaled(scale),
+                                              phase2Output: shield.GetDcMotor(2).Scaled(scale),
+                                              stepsPerStepCycle: 4),
+                    stepsPerMinute: 4,
+                    pauseBetweenStepsInMs: 50))
+                .Start();
+
+            for (; ; ) Thread.Sleep(10);
+
 #else
 #error Please uncomment exactly one of the samples.
 #endif
