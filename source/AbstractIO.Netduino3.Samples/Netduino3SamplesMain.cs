@@ -21,8 +21,8 @@
 //#define Sample07WaitForButtonEventBased
 //#define Sample02LetMotorRun
 //#define Sample08LetManyMotorsRun
-//#define Sample09SimpleStepperMotor
-#define Sample10StepperMotorClock
+#define Sample09SimpleStepperMotor
+//#define Sample10StepperMotorClock
 
 using System.Threading;
 
@@ -336,11 +336,11 @@ namespace AbstractIO.Netduino3.Samples
             //    AbstractIO.Samples.Sample09SimpleStepperMotor.Run(shield.GetStepperMotor(1, 2, 8)))
             //    .Start();
 
-            const double scale = 0.3;
+            const double scale = 0.4;
 
             new Thread(() =>
                 AbstractIO.Samples.Sample09SimpleStepperMotor.Run(
-                    new StepperMotor(shield.GetDcMotor(1).Scaled(scale), shield.GetDcMotor(2).Scaled(scale), 4)))
+                    new StepperMotor(shield.GetDcMotor(1).Scaled(scale), shield.GetDcMotor(2).Scaled(scale), 8)))
                 .Start();
 
             for (; ; ) Thread.Sleep(10);

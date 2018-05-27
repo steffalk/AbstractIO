@@ -19,7 +19,7 @@ namespace AbstractIO.Samples
 
             while (true)
             {
-                stepper.MoveSteps(random.Next(steps * 2 + 1) - steps, 500);
+                stepper.MoveSteps(random.Next(steps * 2 + 1) - steps, 0);
                 Thread.Sleep(1000);
             }
         }
