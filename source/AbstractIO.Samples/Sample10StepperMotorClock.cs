@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using AbstractIO;
 
 namespace AbstractIO.Samples
 {
@@ -23,6 +22,16 @@ namespace AbstractIO.Samples
             if (stepper == null) throw new ArgumentNullException(nameof(stepper));
             if (stepsPerMinute == 0) throw new ArgumentOutOfRangeException(nameof(stepsPerMinute));
 
+            // Variant 1: Sleep a minute, turn the stepper, sleep again:
+            // RunUsingSleep(stepper, stepsPerMinute, pauseBetweenStepsInMs);
+
+            // Variant 2: Use a timer fireing each minute:
+            RunUsingTimer(stepper, stepsPerMinute, pauseBetweenStepsInMs);
+        }
+
+        private static void RunUsingSleep(
+            IStepDrive stepper, int stepsPerMinute, int pauseBetweenStepsInMs)
+        {
             // Save "now":
             DateTime lastTime = DateTime.UtcNow;
 
@@ -46,5 +55,25 @@ namespace AbstractIO.Samples
                 stepper.ReleaseHoldingTorque();
             }
         }
+
+        private static void RunUsingTimer(
+            IStepDrive stepper, int stepsPerMinute, int pauseBetweenStepsInMs)
+        {
+            // Do steps each minute, that is, every 60000 milliseconds:
+            var timer = new Timer(
+                (state) =>
+                {
+                    stepper.MoveSteps(stepsPerMinute, pauseBetweenStepsInMs);
+                    stepper.ReleaseHoldingTorque();
+                },
+                null,
+                60000,
+                60000);
+
+            // Sleep and let the timer do its job:
+            for (; ; ) Thread.Sleep(1000);
+
+        }
+
     }
 }
