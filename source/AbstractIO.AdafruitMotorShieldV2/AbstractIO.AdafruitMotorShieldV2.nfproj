@@ -33,27 +33,27 @@
     <Compile Include="Base\ServoMotor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AbstractIO\AbstractIO.nfproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="mscorlib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\packages\nanoFramework.CoreLibrary.1.0.0-preview048\lib\mscorlib.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.CoreLibrary.1.0.0-preview049\lib\mscorlib.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="Windows.Devices.I2c, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6df87852110734f7">
-      <HintPath>..\packages\nanoFramework.Windows.Devices.I2c.1.0.0-preview173\lib\Windows.Devices.I2c.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Windows.Devices.I2c.1.0.0-preview174\lib\Windows.Devices.I2c.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="Windows.Devices.Pwm, Version=0.0.0.0, Culture=neutral, PublicKeyToken=6df87852110734f7">
-      <HintPath>..\packages\nanoFramework.Windows.Devices.Pwm.1.0.0-preview161\lib\Windows.Devices.Pwm.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Windows.Devices.Pwm.1.0.0-preview162\lib\Windows.Devices.Pwm.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AbstractIO\AbstractIO.nfproj" />
   </ItemGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
   <ProjectExtensions>

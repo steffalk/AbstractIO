@@ -22,45 +22,45 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AbstractIO.AdafruitMotorShieldV2\AbstractIO.AdafruitMotorShieldV2.nfproj" />
+    <ProjectReference Include="..\AbstractIO.Netduino3\AbstractIO.Netduino3.nfproj" />
+    <ProjectReference Include="..\AbstractIO.Samples\AbstractIO.Samples.nfproj" />
+    <ProjectReference Include="..\AbstractIO\AbstractIO.nfproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="mscorlib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\packages\nanoFramework.CoreLibrary.1.0.0-preview048\lib\mscorlib.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.CoreLibrary.1.0.0-preview049\lib\mscorlib.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="nanoFramework.Runtime.Events, Version=1.0.0.0, Culture=neutral, PublicKeyToken=72027bbd7f714be2">
-      <HintPath>..\packages\nanoFramework.Runtime.Events.1.0.0-preview174\lib\nanoFramework.Runtime.Events.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Runtime.Events.1.0.0-preview175\lib\nanoFramework.Runtime.Events.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="Windows.Devices.Adc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\nanoFramework.Windows.Devices.Adc.1.0.0-preview162\lib\Windows.Devices.Adc.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Windows.Devices.Adc.1.0.0-preview163\lib\Windows.Devices.Adc.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="Windows.Devices.Gpio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6df87852110734f7">
-      <HintPath>..\packages\nanoFramework.Windows.Devices.Gpio.1.0.0-preview181\lib\Windows.Devices.Gpio.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Windows.Devices.Gpio.1.0.0-preview182\lib\Windows.Devices.Gpio.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="Windows.Devices.I2c, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6df87852110734f7">
-      <HintPath>..\packages\nanoFramework.Windows.Devices.I2c.1.0.0-preview173\lib\Windows.Devices.I2c.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Windows.Devices.I2c.1.0.0-preview174\lib\Windows.Devices.I2c.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="Windows.Devices.Pwm, Version=0.0.0.0, Culture=neutral, PublicKeyToken=6df87852110734f7">
-      <HintPath>..\packages\nanoFramework.Windows.Devices.Pwm.1.0.0-preview161\lib\Windows.Devices.Pwm.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Windows.Devices.Pwm.1.0.0-preview162\lib\Windows.Devices.Pwm.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AbstractIO.AdafruitMotorShieldV2\AbstractIO.AdafruitMotorShieldV2.nfproj" />
-    <ProjectReference Include="..\AbstractIO.Netduino3\AbstractIO.Netduino3.nfproj" />
-    <ProjectReference Include="..\AbstractIO.Samples\AbstractIO.Samples.nfproj" />
-    <ProjectReference Include="..\AbstractIO\AbstractIO.nfproj" />
   </ItemGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
   <ProjectExtensions>
