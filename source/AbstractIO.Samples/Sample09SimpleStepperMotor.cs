@@ -20,6 +20,7 @@ namespace AbstractIO.Samples
             while (true)
             {
                 stepper.MoveSteps(random.Next(steps * 2 + 1) - steps, 0);
+                stepper.ReleaseHoldingTorque();
                 Thread.Sleep(1000);
             }
         }
