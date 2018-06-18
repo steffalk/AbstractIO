@@ -47,11 +47,11 @@ namespace AbstractIO.AdafruitMotorShieldV2
         {
             get
             {
-                return _pwmChannel.DutyCycle >= 1.0;
+                return _pwmChannel.DutyCycle >= 1.0f;
             }
             set
             {
-                _pwmChannel.DutyCycle = value ? 1.0 : 0.0;
+                _pwmChannel.DutyCycle = value ? 1.0f : 0.0f;
             }
         }
 

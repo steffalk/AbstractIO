@@ -29,7 +29,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         readonly uint minPulse;
         readonly uint range;
         readonly uint refreshCycleMilliseconds;
-        double position;
+        float position;
         Windows.Devices.Pwm.PwmPin pwm;
 
         /// <summary>
@@ -80,18 +80,18 @@ namespace AbstractIO.AdafruitMotorShieldV2
         ///     rotation and 1.0 represents full counter-clockwise rotation.
         /// </summary>
         /// <value>The position expressed as a fraction of unity, i.e. in the range 0.0 to +1.0 inclusive.</value>
-        public double Position
+        public float Position
         {
             get { return position; }
             set
             {
-                if (value < 0.0)
+                if (value < 0.0f)
                 {
-                    value = 0.0;
+                    value = 0.0f;
                 }
-                else if (value > 1.0)
+                else if (value > 1.0f)
                 {
-                    value = 1.0;
+                    value = 1.0f;
                 }
                 position = value;
                 pwm.SetActiveDutyCyclePercentage(value); // (uint)MapPositionToPulseWidth(value);
@@ -105,7 +105,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         ///     The maximum angle is that specified in the constructor.
         /// </summary>
         /// <value>The angle, in positive degrees, away from full clockwise displacement.</value>
-        public double Angle
+        public float Angle
         {
             get { return position * SweepAngle; }
             set
@@ -116,7 +116,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             }
         }
 
-        double MapPositionToPulseWidth(double position)
+        float MapPositionToPulseWidth(float position)
         {
             return minPulse + (range * position);
         }

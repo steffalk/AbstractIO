@@ -27,10 +27,10 @@ namespace AbstractIO
     public class StepperMotor : IStepDrive
     {
         readonly int _maxIndex;
-        readonly IDoubleOutput _phase1Output;
-        readonly IDoubleOutput _phase2Output;
-        double[] _inPhaseDutyCycle;
-        double[] _outOfPhaseDutyCycle;
+        readonly ISingleOutput _phase1Output;
+        readonly ISingleOutput _phase2Output;
+        float[] _inPhaseDutyCycle;
+        float[] _outOfPhaseDutyCycle;
         int _phaseIndex;
         BooleanSettableInput _applyOutputPower = new BooleanSettableInput(false);
 
@@ -41,8 +41,8 @@ namespace AbstractIO
         /// <param name="phase2Output">The H-Bridge that controls motor phase 2.</param>
         /// <param name="stepsPerStepCycle">The steps per step cycle.</param>
         public StepperMotor(
-            IDoubleOutput phase1Output,
-            IDoubleOutput phase2Output,
+            ISingleOutput phase1Output,
+            ISingleOutput phase2Output,
             int stepsPerStepCycle)
         {
             if (phase1Output == null) throw new ArgumentNullException(nameof(phase1Output));
@@ -77,33 +77,33 @@ namespace AbstractIO
         void ComputeHalfStepTables()
         {
             _inPhaseDutyCycle =
-                new[] { +1.0, +1.0, +0.0, -1.0, -1.0, -1.0, +0.0, +1.0 };
+                new[] { +1.0f, +1.0f, +0.0f, -1.0f, -1.0f, -1.0f, +0.0f, +1.0f };
 
             _outOfPhaseDutyCycle =
-                new[] { +0.0, +1.0, +1.0, +1.0, +0.0, -1.0, -1.0, -1.0 };
+                new[] { +0.0f, +1.0f, +1.0f, +1.0f, +0.0f, -1.0f, -1.0f, -1.0f };
         }
 
         void ComputeWholeStepTables()
         {
             _inPhaseDutyCycle =
-                new[] { +1.0, -1.0, -1.0, +1.0 };
+                new[] { +1.0f, -1.0f, -1.0f, +1.0f };
 
             _outOfPhaseDutyCycle =
-                new[] { +1.0, +1.0, -1.0, -1.0 };
+                new[] { +1.0f, +1.0f, -1.0f, -1.0f };
         }
 
         public void ReleaseHoldingTorque()
         {
-            _phase1Output.Value = 0.0;
-            _phase2Output.Value = 0.0;
+            _phase1Output.Value = 0.0f;
+            _phase2Output.Value = 0.0f;
         }
 
         void ComputeMicrostepTables(int microsteps)
         {
             // This implementation prefers performance over memory footprint.
-            var radiansPerIndex = (2 * Math.PI) / (microsteps - 1);
-            _inPhaseDutyCycle = new double[microsteps];
-            _outOfPhaseDutyCycle = new double[microsteps];
+            var radiansPerIndex = (2 * (float)Math.PI) / (microsteps - 1);
+            _inPhaseDutyCycle = new float[microsteps];
+            _outOfPhaseDutyCycle = new float[microsteps];
             for (var i = 0; i < microsteps; ++i)
             {
                 var phaseAngle = i * radiansPerIndex;

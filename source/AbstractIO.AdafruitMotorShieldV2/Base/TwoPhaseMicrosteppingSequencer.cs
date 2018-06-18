@@ -27,8 +27,8 @@ namespace AbstractIO.AdafruitMotorShieldV2
         readonly int maxIndex;
         readonly HBridge phase1;
         readonly HBridge phase2;
-        double[] inPhaseDutyCycle;
-        double[] outOfPhaseDutyCycle;
+        float[] inPhaseDutyCycle;
+        float[] outOfPhaseDutyCycle;
         int phaseIndex;
 
         /// <summary>
@@ -69,17 +69,17 @@ namespace AbstractIO.AdafruitMotorShieldV2
         void ComputeHalfStepTables()
         {
             inPhaseDutyCycle = new[]
-                {+1.0, +1.0, +0.0, -1.0, -1.0, -1.0, +0.0, +1.0};
+                {+1.0f, +1.0f, +0.0f, -1.0f, -1.0f, -1.0f, +0.0f, +1.0f};
             outOfPhaseDutyCycle = new[]
-                {+0.0, +1.0, +1.0, +1.0, +0.0, -1.0, -1.0, -1.0};
+                {+0.0f, +1.0f, +1.0f, +1.0f, +0.0f, -1.0f, -1.0f, -1.0f};
         }
 
         void ComputeWholeStepTables()
         {
             inPhaseDutyCycle = new[]
-                {+1.0, -1.0, -1.0, +1.0};
+                {+1.0f, -1.0f, -1.0f, +1.0f};
             outOfPhaseDutyCycle = new[]
-                {+1.0, +1.0, -1.0, -1.0};
+                {+1.0f, +1.0f, -1.0f, -1.0f};
         }
 
         public void PerformStep(int direction)
@@ -95,16 +95,16 @@ namespace AbstractIO.AdafruitMotorShieldV2
 
         public void ReleaseHoldingTorque()
         {
-            phase1.SetOutputPowerAndPolarity(0.0);
-            phase2.SetOutputPowerAndPolarity(0.0);
+            phase1.SetOutputPowerAndPolarity(0.0f);
+            phase2.SetOutputPowerAndPolarity(0.0f);
         }
 
         void ComputeMicrostepTables(int microsteps)
         {
             // This implementation prefers performance over memory footprint.
-            var radiansPerIndex = (2 * Math.PI) / (microsteps - 1);
-            inPhaseDutyCycle = new double[microsteps];
-            outOfPhaseDutyCycle = new double[microsteps];
+            var radiansPerIndex = (2 * (float)Math.PI) / (microsteps - 1);
+            inPhaseDutyCycle = new float[microsteps];
+            outOfPhaseDutyCycle = new float[microsteps];
             for (var i = 0; i < microsteps; ++i)
             {
                 var phaseAngle = i * radiansPerIndex;

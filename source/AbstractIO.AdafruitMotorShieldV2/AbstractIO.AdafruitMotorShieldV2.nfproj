@@ -37,17 +37,17 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\packages\nanoFramework.CoreLibrary.1.0.0-preview050\lib\mscorlib.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.CoreLibrary.1.0.0-preview054\lib\mscorlib.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="Windows.Devices.I2c, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6df87852110734f7">
-      <HintPath>..\packages\nanoFramework.Windows.Devices.I2c.1.0.0-preview176\lib\Windows.Devices.I2c.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Windows.Devices.I2c.1.0.0-preview177\lib\Windows.Devices.I2c.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="Windows.Devices.Pwm, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6df87852110734f7">
-      <HintPath>..\packages\nanoFramework.Windows.Devices.Pwm.1.0.0-preview164\lib\Windows.Devices.Pwm.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Windows.Devices.Pwm.1.0.0-preview166\lib\Windows.Devices.Pwm.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>

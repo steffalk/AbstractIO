@@ -24,14 +24,14 @@ namespace AbstractIO.AdafruitMotorShieldV2
         ///   one on/off cycle.
         /// </summary>
         /// <value>The output modulation frequency in Hertz.</value>
-        double OutputModulationFrequencyHz { get; }
+        float OutputModulationFrequencyHz { get; }
 
         /// <summary>
         ///   Configures the specified PWM channel with the specified duty cycle.
         /// </summary>
         /// <param name="channel">The channel number (0-based).</param>
         /// <param name="dutyCycle">The duty cycle as a fraction of unity.</param>
-        void ConfigureChannelDutyCycle(uint channel, double dutyCycle);
+        void ConfigureChannelDutyCycle(uint channel, float dutyCycle);
 
         PwmChannel GetPwmChannel(uint channel);
     }

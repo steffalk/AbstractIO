@@ -9,13 +9,13 @@ namespace AbstractIO.Samples
     public static class Sample08SmoothManyAnalogOutputs
     {
 
-        private delegate double ValueGetter();
+        private delegate float ValueGetter();
 
         /// <summary>
         /// Lets many analog outputs smoothly increase or decrease positive and negative power as a demo.
         /// </summary>
         /// <param name="outputs"></param>
-        public static void Run(IBooleanOutput[] statusLeds, params IDoubleOutput[] outputs)
+        public static void Run(IBooleanOutput[] statusLeds, params ISingleOutput[] outputs)
         {
             // Check parameters:
             if (outputs == null || outputs.Length == 0) throw new ArgumentNullException(nameof(outputs));
@@ -29,12 +29,12 @@ namespace AbstractIO.Samples
             }
 
             // Generate smoothed versions of the outputs:
-            DoubleSmoothedOutput[] smoothedOutputs = new DoubleSmoothedOutput[outputs.Length];
+            SingleSmoothedOutput[] smoothedOutputs = new SingleSmoothedOutput[outputs.Length];
             int _numberOfAcceleratingMotors = 0;
 
             for (int i = 0; i < outputs.Length; i++)
             {
-                smoothedOutputs[i] = outputs[i].Smoothed(valueChangePerSecond: 0.15, rampIntervalMs: 50);
+                smoothedOutputs[i] = outputs[i].Smoothed(valueChangePerSecond: 0.15f, rampIntervalMs: 50);
 
                 // Register an event handler showing if 1, 2 or more motors are still accelerating by lighting a LED:
                 smoothedOutputs[i].IsTargetReached.ValueChanged += (sender, value) =>
@@ -61,29 +61,29 @@ namespace AbstractIO.Samples
             while (true)
             {
                 // Full positive power to all outputs:
-                SetOutputsAndWait(smoothedOutputs, () => +1.0);
+                SetOutputsAndWait(smoothedOutputs, () => +1.0f);
 
                 // Full negative power to all outputs:
-                SetOutputsAndWait(smoothedOutputs, () => -1.0);
+                SetOutputsAndWait(smoothedOutputs, () => -1.0f);
 
                 // Several cycles of random power:
                 for (int cycle = 0; cycle < 10; cycle++)
                 {
-                    SetOutputsAndWait(smoothedOutputs, () => random.NextDouble() * 2.0 - 1.0);
+                    SetOutputsAndWait(smoothedOutputs, () => (float)random.NextDouble() * 2.0f - 1.0f);
                 }
             }
         }
 
-        private static void SetOutputsAndWait(DoubleSmoothedOutput[] smoothedOutputs, ValueGetter getValue)
+        private static void SetOutputsAndWait(SingleSmoothedOutput[] smoothedOutputs, ValueGetter getValue)
         {
             // Set the target values:
-            foreach (DoubleSmoothedOutput output in smoothedOutputs)
+            foreach (SingleSmoothedOutput output in smoothedOutputs)
             {
                 output.Value = getValue();
             }
 
             // Wait for all target values to be reached:
-            foreach (DoubleSmoothedOutput output in smoothedOutputs)
+            foreach (SingleSmoothedOutput output in smoothedOutputs)
             {
                 output.IsTargetReached.WaitFor(true);
             }

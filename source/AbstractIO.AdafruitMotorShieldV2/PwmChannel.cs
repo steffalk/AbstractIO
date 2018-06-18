@@ -31,9 +31,9 @@ namespace AbstractIO.AdafruitMotorShieldV2
         private uint _duration; // The duration for which the PWM signal is active.
         private uint _period; // The PWM waveform period, 1/frequency
         private IPwmController _controller;
-        private double _dutyCycle;
+        private float _dutyCycle;
 
-        internal PwmChannel(IPwmController controller, uint channel, double dutyCycle)
+        internal PwmChannel(IPwmController controller, uint channel, float dutyCycle)
         {
             if (dutyCycle < 0.0 || dutyCycle > 1.0)
             {
@@ -54,7 +54,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             Commit();
         }
 
-        public double DutyCycle
+        public float DutyCycle
         {
             get
             {
@@ -62,7 +62,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             }
             set
             {
-                if (value < 0.0 || value > 1.0)
+                if (value < 0.0f || value > 1.0f)
                 {
                     throw new ArgumentOutOfRangeException("value", "must be a fraction of unity");
                 }

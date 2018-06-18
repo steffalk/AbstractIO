@@ -8,10 +8,10 @@ namespace AbstractIO
     /// </summary>
     /// <remarks>
     /// For example, if you want to have a light turning on and offsmoothly, you can use this class to map the values
-    /// 0.0 (lamp off) and 1.0 (lamp fully on) to a smooth ramp of slowly enlighting the lamp from 0.0 slowlow to 1.0
-    /// // and dimming the lamp slowly back from 1.0 to 0.0.
+    /// 0.0f (lamp off) and 1.0f (lamp fully on) to a smooth ramp of slowly enlighting the lamp from 0.0f slowlow to
+    /// 1.0f and dimming the lamp slowly back from 1.0f to 0.0f.
     /// </remarks>
-    public class SingleSmoothedOutput : ISingleOutput
+    public class SingleSmoothedOutput : ISingleOutput, ITargetReachedObservable
     {
         // The target output which shall received the smoothly accelerated/decelerated output:
         private ISingleOutput _targetOutput;
@@ -37,6 +37,9 @@ namespace AbstractIO
         // The signed acceleration as a value change per tick to be used for the current acceleration/deceleration:
         private float _signedValuePerTick;
 
+        // This input will be set (and thus raise events) when the _targetValue is reached.
+        private BooleanSettableInput _isTargetReached = new BooleanSettableInput(true);
+
         /// <summary>
         /// Creates an instance.
         /// </summary>
@@ -49,7 +52,7 @@ namespace AbstractIO
         public SingleSmoothedOutput(ISingleOutput targetOutput, float valueChangePerSecond, int rampIntervalMs)
         {
             _targetOutput = targetOutput ?? throw new ArgumentNullException(nameof(targetOutput));
-            if (valueChangePerSecond <= 0.0) throw new ArgumentOutOfRangeException(nameof(valueChangePerSecond));
+            if (valueChangePerSecond <= 0.0f) throw new ArgumentOutOfRangeException(nameof(valueChangePerSecond));
             if (rampIntervalMs <= 0) throw new ArgumentOutOfRangeException(nameof(rampIntervalMs));
 
             _valueChangePerTick = valueChangePerSecond / TimeSpan.TicksPerSecond;
@@ -60,7 +63,7 @@ namespace AbstractIO
         /// Gets or sets the value to which the target output shall approach.
         /// </summary>
         /// <remarks>
-        /// The inital value is 0.0.
+        /// The inital value is 0.0f.
         /// </remarks>
         public float Value
         {
@@ -72,8 +75,13 @@ namespace AbstractIO
             {
                 _targetValue = value;
                 _startValue = _targetOutput.Value;
-                if (_targetValue != _startValue)
+                if (_targetValue == _startValue)
                 {
+                    _isTargetReached.Value = true;
+                }
+                else
+                {
+                    _isTargetReached.Value = false;
                     // Remember when and at what actual current value the accleration started:
                     _startTimeTicks = DateTime.UtcNow.Ticks;
                     if (_targetValue > _startValue)
@@ -99,6 +107,22 @@ namespace AbstractIO
         }
 
         /// <summary>
+        /// Gets an <see cref="IObservableBooleanInput"/> whose <see cref="IBooleanInput.Value">Value</see> property
+        /// returns true when a set target <see cref="Value"/> value has actually been reached by the smoothed output.
+        /// </summary>
+        /// <remarks>
+        /// As the returned object will also raise an event when this state changes, so you can easily wait for the
+        /// smoothed output to reach the desired target value.
+        /// </remarks>
+        public IObservableBooleanInput IsTargetReached
+        {
+            get
+            {
+                return _isTargetReached;
+            }
+        }
+
+        /// <summary>
         /// Changes the target value. This method will run on the used Timer's thread.
         /// </summary>
         /// <param name="ignoredState"></param>
@@ -109,6 +133,7 @@ namespace AbstractIO
             if (currentValue == _targetValue)
             {
                 _timer.Change(Timeout.Infinite, Timeout.Infinite);
+                _isTargetReached.Value = true;
             }
             else
             {
@@ -135,6 +160,7 @@ namespace AbstractIO
                 if (currentValue == _targetValue)
                 {
                     _timer.Change(Timeout.Infinite, Timeout.Infinite);
+                    _isTargetReached.Value = true;
                 }
             }
         }

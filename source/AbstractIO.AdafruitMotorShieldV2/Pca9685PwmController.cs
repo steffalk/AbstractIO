@@ -28,7 +28,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         private const int PwmCounterCycle = 4096;
 
         private I2cDevice _i2cDevice;
-        private double _outputModulationFrequencyHz;
+        private float _outputModulationFrequencyHz;
 
         private readonly ArrayList _allocatedChannels = new ArrayList();
 
@@ -44,7 +44,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         /// </param>
         public Pca9685PwmController(
             ushort i2cAddress = 0x60,
-            double outputModulationFrequencyHz = Pca9685Constants.DefaultOutputModulationFrequency)
+            float outputModulationFrequencyHz = Pca9685Constants.DefaultOutputModulationFrequency)
         {
             _i2cDevice = I2cDevice.FromId("IC21", new I2cConnectionSettings(i2cAddress));
             Reset();
@@ -65,11 +65,11 @@ namespace AbstractIO.AdafruitMotorShieldV2
             else
             {
                 _allocatedChannels.Add(channel);
-                return new PwmChannel(this, channel, 0.0);
+                return new PwmChannel(this, channel, 0.0f);
             }
         }
 
-        public double OutputModulationFrequencyHz
+        public float OutputModulationFrequencyHz
         {
             get
             {
@@ -77,7 +77,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             }
         }
 
-        public void ConfigureChannelDutyCycle(uint channel, double dutyCycle)
+        public void ConfigureChannelDutyCycle(uint channel, float dutyCycle)
         {
             if (dutyCycle >= 1.0)
             {
@@ -213,10 +213,11 @@ namespace AbstractIO.AdafruitMotorShieldV2
             return (registerValue & bitTestMask) != 0;
         }
 
-        public void SetOutputModulationFrequency(double frequencyHz = Pca9685Constants.DefaultOutputModulationFrequency)
+        public void SetOutputModulationFrequency(float frequencyHz = Pca9685Constants.DefaultOutputModulationFrequency)
         {
             // See PCA9685 data sheet, pp.24 for details on calculating the prescale value.
-            var computedPrescale = Math.Round(Pca9685Constants.InternalOscillatorFrequencyHz / 4096.0 / frequencyHz) - 1;
+            var computedPrescale = Math.Round(Pca9685Constants.InternalOscillatorFrequencyHz / 4096.0f /
+                                              frequencyHz) - 1;
 
             if (computedPrescale < 3.0 || computedPrescale > 255.0)
             {

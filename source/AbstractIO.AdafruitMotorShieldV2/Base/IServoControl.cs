@@ -27,13 +27,13 @@ namespace AbstractIO.AdafruitMotorShieldV2
         ///     rotation and 1.0 represents full counterclockwise rotation.
         /// </summary>
         /// <value>The position expressed as a fraction of unity, i.e. in the range 0.0 to +1.0 inclusive.</value>
-        double Position { get; set; }
+        float Position { get; set; }
         /// <summary>
         ///     Gets or sets the angular position (in positive degrees) of the servo motor. The zero-point is the position of maximum 
         ///     clockwise rotation and the angle is measured counter-clockwise.
         ///     The maximum angle is implementation dependent.
         /// </summary>
         /// <value>The angle, in positive degrees, away from full clockwise displacement.</value>
-        double Angle { get; set; }
+        float Angle { get; set; }
     }
 }

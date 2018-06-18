@@ -313,11 +313,11 @@ namespace AbstractIO.Netduino3.Samples
                     shield2.GetDcMotor(2),
                     shield2.GetDcMotor(3),
                     shield2.GetDcMotor(4),
-                    shield3.GetDcMotor(1).Scaled(factor: 6.0 / 9.0),
+                    shield3.GetDcMotor(1).Scaled(factor: 6.0f / 9.0f),
                     shield3.GetDcMotor(2),
                     shield3.GetDcMotor(3),
                     shield3.GetDcMotor(4),
-                    shield4.GetDcMotor(1).Scaled(factor: -1.0),
+                    shield4.GetDcMotor(1).Scaled(factor: -1.0f),
                     shield4.GetDcMotor(2),
                     shield4.GetDcMotor(3),
                     shield4.GetDcMotor(4)));
@@ -336,7 +336,7 @@ namespace AbstractIO.Netduino3.Samples
             //    AbstractIO.Samples.Sample09SimpleStepperMotor.Run(shield.GetStepperMotor(1, 2, 8)))
             //    .Start();
 
-            const double scale = 0.4;
+            const float scale = 0.4f;
 
             new Thread(() =>
                 AbstractIO.Samples.Sample09SimpleStepperMotor.Run(
@@ -351,7 +351,7 @@ namespace AbstractIO.Netduino3.Samples
 
             var shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2(97);
 
-            const double scale = 0.2;
+            const float scale = 0.2f;
 
             new Thread(() =>
                 AbstractIO.Samples.Sample10StepperMotorClock.Run(

@@ -63,7 +63,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         /// </summary>
         private void Release()
         {
-            _powerControl.DutyCycle = 0.0;
+            _powerControl.DutyCycle = 0.0f;
             _in1.State = false;
             _in2.State = false;
         }
@@ -102,7 +102,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         ///   The output power expressed as a fraction, in the range -1.0 to +1.0 inclusive.
         ///   Positive values represent normal (forwards) polarity and negative values represent reversed polarity.
         /// </param>
-        public override void SetOutputPowerAndPolarity(double duty)
+        public override void SetOutputPowerAndPolarity(float duty)
         {
             base.SetOutputPowerAndPolarity(duty);
             var polarity = (duty >= 0.0);
@@ -115,11 +115,11 @@ namespace AbstractIO.AdafruitMotorShieldV2
         /// </summary>
         /// <param name="magnitude">The magnitude, or absolute power setting.</param>
         /// <param name="polarity">if set to <c>true</c> then the motor runs in the forward direction; otherwise in reverse.</param>
-        private void SetOutputPowerAndPolarity(double magnitude, bool polarity)
+        private void SetOutputPowerAndPolarity(float magnitude, bool polarity)
         {
             if (polarity != Polarity)
             {
-                _powerControl.DutyCycle = 0.0; // If reversing direction, set power to zero first.
+                _powerControl.DutyCycle = 0.0f; // If reversing direction, set power to zero first.
             }
             if (polarity)
             {

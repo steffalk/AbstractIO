@@ -28,17 +28,17 @@ namespace AbstractIO.AdafruitMotorShieldV2
     ///   pin, the power output can be varied by varying the PWN duty cycle. Thus, one H-bridge can
     ///   control a single motor winding, be that a DC motor or one phase of a stepper motor.
     /// </summary>
-    public abstract class HBridge : IDoubleOutput
+    public abstract class HBridge : ISingleOutput
     {
-        private double _duty;
+        private float _duty;
 
         public bool Polarity { get { return (_duty >= 0); } }
-        public double Power { get { return Math.Abs(_duty); } }
+        public float Power { get { return Math.Abs(_duty); } }
 
         /// <summary>
         /// Gets the last value written or sets the value to be written.
         /// </summary>
-        public double Value
+        public float Value
         {
             get
             {
@@ -46,7 +46,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             }
             set
             {
-                SetOutputPowerAndPolarity(Math.Min(Math.Max(value, -1.0), 1.0));
+                SetOutputPowerAndPolarity(Math.Min(Math.Max(value, -1.0f), 1.0f));
             }
         }
 
@@ -63,7 +63,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         ///   other'. The actual sign of voltages or current produced at the motor are dependent on
         ///   the application.
         /// </remarks>
-        public virtual void SetOutputPowerAndPolarity(double duty)
+        public virtual void SetOutputPowerAndPolarity(float duty)
         {
             if (duty > 1.0 || duty < -1.0)
                 throw new ArgumentOutOfRangeException("duty", "-1.0 to 1.0 inclusive");
@@ -81,7 +81,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         /// </summary>
         public virtual void ApplyBrake()
         {
-            SetOutputPowerAndPolarity(0.0);
+            SetOutputPowerAndPolarity(0.0f);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
         /// </summary>
         public virtual void ReleaseTorque()
         {
-            SetOutputPowerAndPolarity(0.0);
+            SetOutputPowerAndPolarity(0.0f);
         }
     }
 }
