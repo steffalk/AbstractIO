@@ -21,10 +21,9 @@
 //#define Sample07WaitForButtonEventBased
 //#define Sample02LetMotorRun
 //#define Sample08LetManyMotorsRun
-#define Sample09SimpleStepperMotor
+//#define Sample09SimpleStepperMotor
 //#define Sample10StepperMotorClock
-
-using System.Threading;
+#define Sample11SimpleTrainWithDoors
 
 namespace AbstractIO.Netduino3.Samples
 {
@@ -39,6 +38,8 @@ namespace AbstractIO.Netduino3.Samples
         /// </summary>
         public static void Main()
         {
+
+            AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2 shield;
 
 #if Sample01SimpleBlinker
 
@@ -161,8 +162,8 @@ namespace AbstractIO.Netduino3.Samples
             AbstractIO.Samples.Sample03ButtonControlsLampPolling.Run(
                 button: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
-                        .Smoothed(valueChangePerSecond: 1.0, rampIntervalMs: 20)
-                        .MappedFromBoolean(falseValue: 0.0, trueValue: 1.0)
+                        .Smoothed(valueChangePerSecond: 1.0f, rampIntervalMs: 20)
+                        .MappedFromBoolean(falseValue: 0.0f, trueValue: 1.0f)
                         .BlinkedWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
 #elif Sample04ButtonControlsLampEventBased
@@ -195,8 +196,8 @@ namespace AbstractIO.Netduino3.Samples
             AbstractIO.Samples.Sample04ButtonControlsLampEventBased.Run(
                 button: new Netduino3.ObservableDigitalInput(Netduino3.DigitalInputPin.OnboardButton),
                 lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue)
-                    .Smoothed(valueChangePerSecond: 1.0, rampIntervalMs: 20)
-                    .MappedFromBoolean(falseValue: 0.0, trueValue: 1.0)
+                    .Smoothed(valueChangePerSecond: 1.0f, rampIntervalMs: 20)
+                    .MappedFromBoolean(falseValue: 0.0f, trueValue: 1.0f)
                     .BlinkedWhenTrue(onDurationMs: 300, offDurationMs: 500));
 
 #elif Sample05ControlLampBrightnessThroughAnalogInput
@@ -221,7 +222,7 @@ namespace AbstractIO.Netduino3.Samples
 
             AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
                 input: new Netduino3.AnalogAdcInput(Netduino3.AnalogInputPin.A0)
-                        .ScaleToRange(smallestValueMappedTo: 0.0, largestValueMappedTo: 1.0),
+                        .ScaleToRange(smallestValueMappedTo: 0.0f, largestValueMappedTo: 1.0f),
                 lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
 
 #elif Sample05ControlLampBrightnessThroughAnalogInputScaledInverted
@@ -233,7 +234,7 @@ namespace AbstractIO.Netduino3.Samples
 
             AbstractIO.Samples.Sample05ControlLampBrightnessThroughAnalogInput.Run(
                 input: new Netduino3.AnalogAdcInput(Netduino3.AnalogInputPin.A0)
-                        .ScaleToRange(smallestValueMappedTo: 1.0, largestValueMappedTo: 0.0),
+                        .ScaleToRange(smallestValueMappedTo: 1.0f, largestValueMappedTo: 0.0f),
                 lamp: new Netduino3.AnalogPwmOutput(Netduino3.DigitalPwmOutputPin.OnboardLedBlue));
 
 #elif Sample06WaitForButtonPolling
@@ -260,7 +261,7 @@ namespace AbstractIO.Netduino3.Samples
 #elif Sample02LetMotorRun
 
             // Connect to the Adafruit V2 shield at its default address:
-            var shield = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2();
+            shield = new AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2();
 
             // Use the sample controlling a lamp just control a motor, as both implement IDoubleOutput:
 
@@ -330,7 +331,7 @@ namespace AbstractIO.Netduino3.Samples
 
             // Let a stepper motor turn randomly:
 
-            var shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
+            shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
 
             //new Thread(() =>
             //    AbstractIO.Samples.Sample09SimpleStepperMotor.Run(shield.GetStepperMotor(1, 2, 8)))
@@ -343,26 +344,49 @@ namespace AbstractIO.Netduino3.Samples
                     new StepperMotor(shield.GetDcMotor(1).Scaled(scale), shield.GetDcMotor(2).Scaled(scale), 8)))
                 .Start();
 
-            for (; ; ) Thread.Sleep(10);
+            for (; ; )
+            {
+                Thread.Sleep(10);
+            }
 
 #elif Sample10StepperMotorClock
 
             // Let a simple clock run by turning a stepper motor a given number of steps every minute:
 
-            var shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2(97);
+            shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2(97);
 
-            const float scale = 0.2f;
+            const float clockScale = 0.2f;
 
             new Thread(() =>
                 AbstractIO.Samples.Sample10StepperMotorClock.Run(
-                    stepper: new StepperMotor(phase1Output: shield.GetDcMotor(1).Scaled(scale),
-                                              phase2Output: shield.GetDcMotor(2).Scaled(scale),
+                    stepper: new StepperMotor(phase1Output: shield.GetDcMotor(1).Scaled(clockScale),
+                                              phase2Output: shield.GetDcMotor(2).Scaled(clockScale),
                                               stepsPerStepCycle: 4),
                     stepsPerMinute: 4,
                     pauseBetweenStepsInMs: 50))
                 .Start();
 
-            for (; ; ) Thread.Sleep(10);
+            for (; ; )
+            {
+                Thread.Sleep(10);
+            }
+
+#elif Sample11SimpleTrainWithDoors
+
+            // Let a train run:
+
+            shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2(97);
+
+            AbstractIO.Samples.Sample11SimpleTrainWithDoors.Run(
+                trainMotor: shield.GetDcMotor(0).Smoothed(valueChangePerSecond: 2.0f, rampIntervalMs: 20),
+                train1ReachedBottomStation: new Netduino3.DigitalInput(DigitalInputPin.D0),
+                train2ReachedBottomStation: new Netduino3.DigitalInput(DigitalInputPin.D1),
+                doorMotor: shield.GetDcMotor(1),
+                redLight: shield.GetDcMotor(2).MappedFromBoolean(falseValue: 0.0f, trueValue: 1.0f),
+                greenLight: shield.GetDcMotor(3).MappedFromBoolean(falseValue: 0.0f, trueValue: 1.0f),
+                waitForDoorsToMoveInMs: 4000,
+                waitWithOpenDoorsInMs: 3000,
+                waitAroundDoorOperationsInMs: 2000);
 
 #else
 #error Please uncomment exactly one of the samples.

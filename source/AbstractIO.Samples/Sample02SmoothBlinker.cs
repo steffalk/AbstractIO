@@ -12,7 +12,7 @@ namespace AbstractIO.Samples
         /// Runs the sample.
         /// </summary>
         /// <param name="lamp">The lamp, as an analog output.</param>
-        public static void Run(IDoubleOutput lamp)
+        public static void Run(ISingleOutput lamp)
         {
             // Check parameters:
             if (lamp == null) throw new ArgumentNullException(nameof(lamp));
@@ -26,12 +26,12 @@ namespace AbstractIO.Samples
             {
                 for (int step = 0; step < Steps; step++)
                 {
-                    lamp.Value = (double)step / (double)Steps;
+                    lamp.Value = (float)step / (float)Steps;
                     Thread.Sleep(PauseInMs);
                 }
                 for (int step = Steps; step > 0; step--)
                 {
-                    lamp.Value = (double)step / (double)Steps;
+                    lamp.Value = (float)step / (float)Steps;
                     Thread.Sleep(PauseInMs);
                 }
             }

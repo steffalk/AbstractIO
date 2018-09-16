@@ -29,6 +29,7 @@
     <Compile Include="Sample08SmoothManyAnalogOutputs.cs" />
     <Compile Include="Sample09SimpleStepperMotor.cs" />
     <Compile Include="Sample10StepperMotorClock.cs" />
+    <Compile Include="Sample11SimpleTrainWithDoors.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AbstractIO\AbstractIO.nfproj" />

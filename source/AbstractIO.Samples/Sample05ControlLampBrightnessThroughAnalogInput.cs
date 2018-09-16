@@ -5,7 +5,7 @@ namespace AbstractIO.Samples
 {
     public static class Sample05ControlLampBrightnessThroughAnalogInput
     {
-        public static void Run(IDoubleInput input, IDoubleOutput lamp)
+        public static void Run(ISingleInput input, ISingleOutput lamp)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
             if (lamp == null) throw new ArgumentNullException(nameof(lamp));

@@ -6,7 +6,7 @@ namespace AbstractIO.Netduino3
     /// <summary>
     /// PWM output on any supported digital output pin or LED on the Netduino 3.
     /// </summary>
-    public class AnalogPwmOutput : DisposableResourceBase, IDoubleOutput
+    public class AnalogPwmOutput : DisposableResourceBase, ISingleOutput
     {
         /// <summary>
         /// The default <see cref="PwmFrequency"/> used.
@@ -26,7 +26,7 @@ namespace AbstractIO.Netduino3
         /// <summary>
         /// The current <see cref="Value"/> of this object.
         /// </summary>
-        private double _value = 0.0;
+        private float _value = 0.0f;
 
         /// <summary>
         /// Initializes the PwmController instance used by every instance of this class.
@@ -102,7 +102,7 @@ namespace AbstractIO.Netduino3
         /// than 0.0 will silently set it to 0.0, setting it to value greater than 1.0 will silently set it to 1.0, so
         /// that an invalid value will not cause an exception.
         /// </summary>
-        public double Value
+        public float Value
         {
             get
             {
@@ -110,13 +110,13 @@ namespace AbstractIO.Netduino3
             }
             set
             {
-                if (value < 0.0)
+                if (value < 0.0f)
                 {
-                    _value = 0.0;
+                    _value = 0.0f;
                 }
-                else if (value > 1.0)
+                else if (value > 1.0f)
                 {
-                    _value = 1.0;
+                    _value = 1.0f;
                 }
                 else
                 {
