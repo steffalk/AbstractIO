@@ -98,8 +98,7 @@ namespace AbstractIO.Samples
                 Thread.Sleep(waitAroundDoorOperationsInMs);
 
                 // Open the door:
-
-
+                
                 doorMotor.Value = 1.0f;
                 Thread.Sleep(waitForDoorsToMoveInMs);
                 doorMotor.Value = 0.0f;
