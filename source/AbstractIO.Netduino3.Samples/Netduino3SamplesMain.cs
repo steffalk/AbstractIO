@@ -379,14 +379,12 @@ namespace AbstractIO.Netduino3.Samples
 
             AbstractIO.Samples.Sample11SimpleTrainWithDoors.Run(
                 trainMotor: shield.GetDcMotor(1).Smoothed(valueChangePerSecond: 2.0f, rampIntervalMs: 20),
-                train1ReachedBottomStation: new Netduino3.DigitalInput(DigitalInputPin.D0),
-                train2ReachedBottomStation: new Netduino3.DigitalInput(DigitalInputPin.D1),
+                trainReachedBottomStation: new BooleanOrInput(new Netduino3.DigitalInput(DigitalInputPin.D0),
+                                                              new Netduino3.DigitalInput(DigitalInputPin.D1)),
                 doorMotor: shield.GetDcMotor(2),
-                redLight: shield.GetDcMotor(3).MappedFromBoolean(falseValue: 0.0f, trueValue: 1.0f),
-                greenLight: shield.GetDcMotor(4).MappedFromBoolean(falseValue: 0.0f, trueValue: 1.0f),
-                waitForDoorsToMoveInMs: 4000,
+                waitForDoorsToMoveInMs: 1000,
                 waitWithOpenDoorsInMs: 3000,
-                waitAroundDoorOperationsInMs: 2000);
+                waitAroundDoorOperationsInMs: 1000);
 
 #else
 #error Please uncomment exactly one of the samples.

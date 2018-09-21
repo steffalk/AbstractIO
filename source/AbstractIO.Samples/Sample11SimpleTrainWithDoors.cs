@@ -27,11 +27,8 @@ namespace AbstractIO.Samples
         /// <param name="waitAroundDoorOperationsInMs">The time, in milliseconds, to wait after the train stopped and
         /// before opening the door, and after the doors were closed again before the train starts.</param>
         public static void Run(ISingleOutput trainMotor,
-                               IBooleanInput train1ReachedBottomStation,
-                               IBooleanInput train2ReachedBottomStation,
+                               IBooleanInput trainReachedBottomStation,
                                ISingleOutput doorMotor,
-                               IBooleanOutput redLight,
-                               IBooleanOutput greenLight,
                                int waitForDoorsToMoveInMs,
                                int waitWithOpenDoorsInMs,
                                int waitAroundDoorOperationsInMs)
@@ -42,25 +39,13 @@ namespace AbstractIO.Samples
             {
                 throw new ArgumentNullException(nameof(trainMotor));
             }
-            if (train1ReachedBottomStation == null)
+            if (trainReachedBottomStation == null)
             {
-                throw new ArgumentNullException(nameof(train1ReachedBottomStation));
-            }
-            if (train2ReachedBottomStation == null)
-            {
-                throw new ArgumentNullException(nameof(train2ReachedBottomStation));
+                throw new ArgumentNullException(nameof(trainReachedBottomStation));
             }
             if (doorMotor == null)
             {
                 throw new ArgumentNullException(nameof(doorMotor));
-            }
-            if (redLight == null)
-            {
-                throw new ArgumentNullException(nameof(redLight));
-            }
-            if (greenLight == null)
-            {
-                throw new ArgumentNullException(nameof(greenLight));
             }
             if (waitForDoorsToMoveInMs < 0)
             {
@@ -77,23 +62,20 @@ namespace AbstractIO.Samples
 
             // Run the train:
 
-            bool moveDirection = false;
-            var trainReachedBottom = new BooleanOrInput(train1ReachedBottomStation, train2ReachedBottomStation);
+            float moveDirection = 1.0f;
 
             while (true)
             {
-                // Initialize lamps:
-                redLight.Value = true;
-                greenLight.Value = false;
-
                 // Move the train in the current direction until one of the end buttons is pressed:
-                if (!(train1ReachedBottomStation.Value || train2ReachedBottomStation.Value))
+                if (!trainReachedBottomStation.Value)
                 {
-                    trainMotor.Value = moveDirection ? 1.0f : -1.0f;
-                    trainReachedBottom.WaitFor(value: true, edgeOnly: false);
+                    trainMotor.Value = moveDirection;
+                    trainReachedBottomStation.WaitFor(value: true, edgeOnly: false);
                     trainMotor.Value = 0.0f;
                 }
-                moveDirection = !moveDirection;
+
+                // Change direction for the next pass:
+                moveDirection = -moveDirection;
 
                 // Wait a bit before opening the doors:
                 Thread.Sleep(waitAroundDoorOperationsInMs);
@@ -104,11 +86,7 @@ namespace AbstractIO.Samples
                 doorMotor.Value = 0.0f;
 
                 // Let people step in and out, wait a bit:
-                redLight.Value = false;
-                greenLight.Value = true;
                 Thread.Sleep(waitWithOpenDoorsInMs);
-                redLight.Value = true;
-                greenLight.Value = false;
 
                 // Close the door:
                 doorMotor.Value = -1.0f;
