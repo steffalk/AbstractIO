@@ -81,37 +81,43 @@ namespace AbstractIO.Samples
 
             while (true)
             {
+                // Initialize lamps:
                 redLight.Value = true;
                 greenLight.Value = false;
 
                 // Move the train in the current direction until one of the end buttons is pressed:
-
                 if (!(train1ReachedBottomStation.Value || train2ReachedBottomStation.Value))
                 {
                     trainMotor.Value = moveDirection ? 1.0f : -1.0f;
-                    while (!(train1ReachedBottomStation.Value || train2ReachedBottomStation.Value))
-                    {
-                    }
+
+                    new BooleanOrInput(train1ReachedBottomStation, train2ReachedBottomStation)
+                        .WaitFor(true, false);
+
                     trainMotor.Value = 0.0f;
                 }
                 moveDirection = !moveDirection;
+
+                // Wait a bit before opening the doors:
                 Thread.Sleep(waitAroundDoorOperationsInMs);
 
                 // Open the door:
-                
                 doorMotor.Value = 1.0f;
                 Thread.Sleep(waitForDoorsToMoveInMs);
                 doorMotor.Value = 0.0f;
 
+                // Let people step in and out, wait a bit:
                 redLight.Value = false;
                 greenLight.Value = true;
                 Thread.Sleep(waitWithOpenDoorsInMs);
                 redLight.Value = true;
                 greenLight.Value = false;
 
+                // Close the door:
                 doorMotor.Value = -1.0f;
                 Thread.Sleep(waitForDoorsToMoveInMs);
                 doorMotor.Value = 0.0f;
+
+                // Wait a bit before the train starts again:
                 Thread.Sleep(waitAroundDoorOperationsInMs);
             }
         }

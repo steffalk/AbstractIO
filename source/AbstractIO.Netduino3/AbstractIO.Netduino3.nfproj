@@ -36,11 +36,6 @@
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
-    <Reference Include="nanoFramework.Runtime.Events, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\packages\nanoFramework.Runtime.Events.1.0.0-preview191\lib\nanoFramework.Runtime.Events.dll</HintPath>
-      <Private>True</Private>
-      <SpecificVersion>True</SpecificVersion>
-    </Reference>
     <Reference Include="Windows.Devices.Adc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
       <HintPath>..\packages\nanoFramework.Windows.Devices.Adc.1.0.0-preview176\lib\Windows.Devices.Adc.dll</HintPath>
       <Private>True</Private>
