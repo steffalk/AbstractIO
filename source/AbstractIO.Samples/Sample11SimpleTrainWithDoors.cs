@@ -78,6 +78,7 @@ namespace AbstractIO.Samples
             // Run the train:
 
             bool moveDirection = false;
+            var trainReachedBottom = new BooleanOrInput(train1ReachedBottomStation, train2ReachedBottomStation);
 
             while (true)
             {
@@ -89,10 +90,7 @@ namespace AbstractIO.Samples
                 if (!(train1ReachedBottomStation.Value || train2ReachedBottomStation.Value))
                 {
                     trainMotor.Value = moveDirection ? 1.0f : -1.0f;
-
-                    new BooleanOrInput(train1ReachedBottomStation, train2ReachedBottomStation)
-                        .WaitFor(true, false);
-
+                    trainReachedBottom.WaitFor(value: true, edgeOnly: false);
                     trainMotor.Value = 0.0f;
                 }
                 moveDirection = !moveDirection;
