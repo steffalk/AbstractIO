@@ -30,6 +30,7 @@
     <Compile Include="Sample09SimpleStepperMotor.cs" />
     <Compile Include="Sample10StepperMotorClock.cs" />
     <Compile Include="Sample11SimpleTrainWithDoors.cs" />
+    <Compile Include="Sample12ClockWithContinuouslyControlledMotor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AbstractIO\AbstractIO.nfproj" />

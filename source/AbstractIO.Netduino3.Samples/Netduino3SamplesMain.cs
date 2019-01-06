@@ -23,7 +23,8 @@
 //#define Sample08LetManyMotorsRun
 //#define Sample09SimpleStepperMotor
 //#define Sample10StepperMotorClock
-#define Sample11SimpleTrainWithDoors
+//#define Sample11SimpleTrainWithDoors
+#define Sample12ClockWithContinuouslyControlledMotor
 
 namespace AbstractIO.Netduino3.Samples
 {
@@ -385,6 +386,21 @@ namespace AbstractIO.Netduino3.Samples
                 waitForDoorsToMoveInMs: 1000,
                 waitWithOpenDoorsInMs: 3000,
                 waitAroundDoorOperationsInMs: 1000);
+
+#elif Sample12ClockWithContinuouslyControlledMotor
+
+            // Let a clock run that is driven by a simple DC motor (no stepper) and which has a digital input that gives
+            // a specific number of "1" pulses for a turn of a specific axis of the clock's gear.
+
+            shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
+
+            AbstractIO.Samples.Sample12ClockWithContinuouslyControlledMotor.Run(
+                motor: shield.GetDcMotor(1),
+                pulse: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1),
+                millisecondsPerPulse: 3600f * 1000f / (22f * 24f),
+                secondsLamp: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.OnboardLedBlue)
+                             .Smoothed(valueChangePerSecond: 2f, rampIntervalMs: 500)
+                             .MappedFromBoolean(falseValue: 0f, trueValue: 1f));
 
 #else
 #error Please uncomment exactly one of the samples.
