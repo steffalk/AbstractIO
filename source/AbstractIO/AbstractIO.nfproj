@@ -31,6 +31,8 @@
     <Compile Include="Input Interfaces\IDoubleInput.cs" />
     <Compile Include="Input Interfaces\IObservableIntegerInput.cs" />
     <Compile Include="Input Interfaces\IObservableDoubleInput.cs" />
+    <Compile Include="Input Transformation\BooleanDebouncedInput.cs" />
+    <Compile Include="Input Transformation\BooleanTeeInput.cs" />
     <Compile Include="StepDrives\IStepDrive.cs" />
     <Compile Include="Output Transformation\ITargetReachedObservable.cs" />
     <Compile Include="Input Settable\BooleanSettableInput.cs" />

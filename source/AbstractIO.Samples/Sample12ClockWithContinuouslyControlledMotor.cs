@@ -10,8 +10,8 @@ namespace AbstractIO.Samples
 
             private struct Pair
             {
-                public float X;
-                public float Y;
+                public float MotorSpeed;
+                public float PulsesPerSecond;
             }
 
             private int _maxPairs;
@@ -29,14 +29,17 @@ namespace AbstractIO.Samples
                 _pairs = new Pair[_maxPairs];
             }
 
-            public void Add(float x, float y)
+            public void Add(float motorSpeed, float pulsesPerSecond)
             {
-                _pairs[_nextIndexToWrite] = new Pair { X = x, Y = y };
-                int newIndex = (_nextIndexToWrite + 1) % _maxPairs;
-                if (newIndex == _firstUsedIndex)
+                _pairs[_nextIndexToWrite] = new Pair { MotorSpeed = motorSpeed, PulsesPerSecond = pulsesPerSecond };
+                _nextIndexToWrite = (_nextIndexToWrite + 1) % _maxPairs;
+                if (_nextIndexToWrite == _firstUsedIndex)
                 {
                     _firstUsedIndex = (_firstUsedIndex + 1) % _maxPairs;
                 }
+
+                Console.WriteLine("Added MotorSpeed = " + motorSpeed.ToString()
+                                  + ", PulsesPerSecond = " + pulsesPerSecond.ToString());
             }
 
             public int Count
@@ -56,8 +59,8 @@ namespace AbstractIO.Samples
                 while (index != _nextIndexToWrite)
                 {
                     Pair p = _pairs[index];
-                    float x = p.X;
-                    float y = p.Y;
+                    float x = p.MotorSpeed;
+                    float y = p.PulsesPerSecond;
                     sumX += x;
                     sumY += y;
                     sumX2 += x * x;
@@ -80,20 +83,24 @@ namespace AbstractIO.Samples
 
                 offset = b / a;
                 slope = (sumX2 * sumY - sumX * sumXY) / a;
+
+                Console.WriteLine("Calculate with count = " + n.ToString() + ": PulsesPerSecond = "
+                                  + slope.ToString() + " * MotorSpeed "
+                                  + (offset < 0f ? "- " : "+ ") + Math.Abs(offset).ToString());
             }
 
-            public float EstimateY(float x)
+            public float EstimatePulsesPerSecond(float motorSpeed)
             {
                 float offset = 0f, slope = 0f;
                 Calculate(ref offset, ref slope);
-                return x * slope + offset;
+                return motorSpeed * slope + offset;
             }
 
-            public float EstimateX(float y)
+            public float EstimateMotorSpeed(float pulsesPerSecond)
             {
                 float offset = 0f, slope = 0f;
                 Calculate(ref offset, ref slope);
-                return (y - offset) / slope;
+                return (pulsesPerSecond - offset) / slope;
             }
         }
 
@@ -102,32 +109,66 @@ namespace AbstractIO.Samples
         /// </summary>
         /// <param name="motor">The motor to drive continuously.</param>
         /// <param name="pulse">The input which pulses to measure the motor speed.</param>
-        /// <param name="millisecondsPerPulse">The number of milliseconds per pulse which would give a perfectly
+        /// <param name="pulsesPerSecond">The number of seconds per pulse which would give a perfectly
         /// accurate operation of the clock.</param>
         /// <remarks>The motor speed is constantly adapted to the measurement given by the pulse to realize the needed
         /// pulse times without cumulative errors, even if the motor changes its behaviour during the operation.
         /// </remarks>
         public static void Run(ISingleOutput motor,
                                IBooleanInput pulse,
-                               float millisecondsPerPulse,
+                               float pulsesPerSecond,
                                IBooleanOutput secondsLamp)
         {
             // Start a seconds lamp:
             var secondsTimer = new Timer((state) => { secondsLamp.Value = !secondsLamp.Value; },
                                          null, 0, 500);
 
-            var estimater = new LinearEstimater(10);
+            var estimater = new LinearEstimater(64);
 
-            Calibrate(motor, pulse, millisecondsPerPulse,estimater);
+            Calibrate(motor, pulse, pulsesPerSecond, estimater);
 
-            // Run forever:
-            Thread.Sleep(Timeout.Infinite);
+            // This is our starting point:
+            var t0 = DateTime.UtcNow;
+
+            while (true)
+            {
+                // This is the time we want the next gear cycle to end, ideally:
+                var t1 = t0.AddSeconds(pulsesPerSecond);
+
+                // Calculate the needed motor speed to have this goal reached.
+                // Note that we use the real "now" to calculate this, as we may have reached this point too early or
+                // too late from the last cycle, and we aim to realize (at least in the long term) our ideally counted
+                // time t.
+                var speed = estimater.EstimateMotorSpeed(1f / (Single)(t1 - DateTime.UtcNow).TotalSeconds);
+
+                if (speed < 0.1f)
+                {
+                    speed = 0.1f;
+                }
+                else if (speed > 1.0f)
+                {
+                    speed = 1.0f;
+                }
+
+                // Run the motor at this speed:
+                motor.Value = speed;
+                Console.WriteLine("Motor Speed = " + speed.ToString());
+
+                // Wait for this cycle to end:
+                pulse.WaitFor(true, true);
+
+                // Take note of the new measurement:
+                estimater.Add(speed, (float)(DateTime.UtcNow - t0).TotalSeconds);
+
+                // t1 is the new t0:
+                t0 = t1;
+            }
         }
 
         private static void Calibrate(
-            ISingleOutput motor, 
-            IBooleanInput pulse, 
-            float millisecondsPerPulse,
+            ISingleOutput motor,
+            IBooleanInput pulse,
+            float pulsesPerSecond,
             LinearEstimater estimater)
         {
             // Let the motor run at full speed until the pulse changes from false to true:
@@ -138,7 +179,7 @@ namespace AbstractIO.Samples
             var start = DateTime.UtcNow;
             pulse.WaitFor(true, true);
             var fastTime = DateTime.UtcNow - start;
-            estimater.Add(1f, (float)fastTime.TotalMilliseconds);
+            estimater.Add(1f, 1f / (float)fastTime.TotalSeconds);
 
             // Wait until shortly before the next pulse:
             Thread.Sleep((int)(fastTime.TotalMilliseconds / 10) * 9);
@@ -150,7 +191,7 @@ namespace AbstractIO.Samples
             start = DateTime.UtcNow;
             pulse.WaitFor(true, true);
             var slowTime = DateTime.UtcNow - start;
-            estimater.Add(0.2f, (float)slowTime.TotalMilliseconds);
+            estimater.Add(0.2f, 1f / (float)slowTime.TotalSeconds);
         }
     }
 }

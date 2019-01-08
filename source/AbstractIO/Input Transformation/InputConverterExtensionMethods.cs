@@ -90,8 +90,8 @@
         /// values: 0.0 -> false, 1.0 -> true, 0.6 -> true, 0.5 -> true, 0.4 -> true, 0.3 -> false, 0.4 -> false,
         /// 0.5 -> false, 0.6 -> false, 0.7 -> true.</remarks>
         public static DoubleSchmittTriggerInput SchmittTrigger(
-            this IDoubleInput source, 
-            double threshold, 
+            this IDoubleInput source,
+            double threshold,
             double hysteresis)
         {
             return new DoubleSchmittTriggerInput(source, threshold, hysteresis);
@@ -117,6 +117,34 @@
             float hysteresis)
         {
             return new SingleSchmittTriggerInput(source, threshold, hysteresis);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="=BooleanDebouncedInput" which returnes a debounced version of a
+        /// <see cref="IBooleanInput"/>.
+        /// </summary>
+        /// <param name="inputToDebounce">The input to debounce, for example a switch.</param>
+        /// <param name="debounceMilliseconds">The number of milliseconds that value which was read from
+        /// <paramref name="inputToDebounce"/> shall be returned unchanged by the resulting <see cref="IBooleanInput"/>,
+        /// even if the source value changes (due to bouncing effects, say, on a mechanical switch).</param>
+        /// <returns>The debounced input.</returns>
+        public static IBooleanInput Debounced(this IBooleanInput inputToDebounce, int debounceMilliseconds)
+        {
+            return new BooleanDebouncedInput(inputToDebounce, debounceMilliseconds);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="BooleanMonitoredInput"/> which passes a copy of the read value of the source input to a
+        /// tee target <see cref="IBooleanOutput"/> each time it gets read.
+        /// </summary>
+        /// <param name="sourceInput">The input to tee.</param>
+        /// <param name="teeTarget">The output to receive the passed-through value of the
+        /// <paramref name="sourceInput"/>.</param>
+        /// <returns>The input which returns the <paramref name="sourceInput"/> value and at the same time sets the
+        /// <paramref name="teeTarget"/> to that same value.</returns>
+        public static IBooleanInput MonitoredTo(this IBooleanInput sourceInput, IBooleanOutput teeTarget)
+        {
+            return new BooleanMonitoredInput(sourceInput, teeTarget);
         }
     }
 }

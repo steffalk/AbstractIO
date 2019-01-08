@@ -395,11 +395,14 @@ namespace AbstractIO.Netduino3.Samples
             shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
 
             AbstractIO.Samples.Sample12ClockWithContinuouslyControlledMotor.Run(
-                motor: shield.GetDcMotor(1),
-                pulse: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1),
-                millisecondsPerPulse: 3600f * 1000f / (22f * 24f),
+                motor: shield.GetDcMotor(1).Scaled(-1f, 0f),
+                pulse: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1).
+                       Debounced(debounceMilliseconds: 500).
+                       MonitoredTo(new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.GoPort1Led).
+                                   MappedFromBoolean(falseValue: 0f, trueValue: 0.02f)),
+                pulsesPerSecond: (22f * 24f) / 3600f,
                 secondsLamp: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.OnboardLedBlue)
-                             .Smoothed(valueChangePerSecond: 2f, rampIntervalMs: 500)
+                             .Smoothed(valueChangePerSecond: 3f, rampIntervalMs: 20)
                              .MappedFromBoolean(falseValue: 0f, trueValue: 1f));
 
 #else
