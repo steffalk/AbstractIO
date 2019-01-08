@@ -392,6 +392,19 @@ namespace AbstractIO.Netduino3.Samples
             // Let a clock run that is driven by a simple DC motor (no stepper) and which has a digital input that gives
             // a specific number of "1" pulses for a turn of a specific axis of the clock's gear.
 
+            // The motor is a simple DC motor. As its pins are swapped in the fischertechnik model currently, we use
+            // the .Scaled extension to turn its direction by a factor of -1.
+
+            // The pulse switch gets heavily debounced, as it is a contact customly built out of fischertechnik parts
+            // directly on a very small metallic worm gear. We accept changes only each 500 ms. Also, note that this
+            // (debounced) value is not only fed into the model code, but also tee-like output to a monitor LED, which
+            // is PWM-ed to light up only dimmed.
+
+            // The seconds lamp is driven independently of all this. The model code just has a timer firing every
+            // 500 ms to change a boolean output. To have the effect of a lamp going smoothly on and of, we use the
+            // .Smoothed extension method to smooth the boolean value from the timer code into a nice looking LED
+            // pattern.
+
             shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
 
             AbstractIO.Samples.Sample12ClockWithContinuouslyControlledMotor.Run(
