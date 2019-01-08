@@ -133,7 +133,7 @@ namespace AbstractIO.Samples
             while (true)
             {
                 // This is the time we want the next gear cycle to end, ideally:
-                var t1 = t0.AddSeconds(pulsesPerSecond);
+                var t1 = t0.AddSeconds(1f / pulsesPerSecond);
 
                 // Calculate the needed motor speed to have this goal reached.
                 // Note that we use the real "now" to calculate this, as we may have reached this point too early or
@@ -158,7 +158,7 @@ namespace AbstractIO.Samples
                 pulse.WaitFor(true, true);
 
                 // Take note of the new measurement:
-                estimater.Add(speed, (float)(DateTime.UtcNow - t0).TotalSeconds);
+                estimater.Add(speed, 1f / (float)(DateTime.UtcNow - t0).TotalSeconds);
 
                 // t1 is the new t0:
                 t0 = t1;
