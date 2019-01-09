@@ -393,27 +393,32 @@ namespace AbstractIO.Netduino3.Samples
             // a specific number of "1" pulses for a turn of a specific axis of the clock's gear.
 
             // The motor is a simple DC motor. As its pins are swapped in the fischertechnik model currently, we use
-            // the .Scaled extension to turn its direction by a factor of -1.
+            // the .Scaled() extension to turn its direction by a factor of -1.
 
-            // The pulse switch gets heavily debounced, as it is a contact customly built out of fischertechnik parts
-            // directly on a very small metallic worm gear. We accept changes only each 500 ms. Also, note that this
-            // (debounced) value is not only fed into the model code, but also tee-like output to a monitor LED, which
-            // is PWM-ed to light up only dimmed.
+            // The pulse switch gets heavily debounced using the .Debounce() extension method, as it is a contact
+            // customly built out of fischertechnik parts directly on a very small metallic worm gear. We accept changes
+            // only each 300 ms. Also, note that this (debounced) value is not only fed into the model code, but also
+            // tee-like output to a monitor LED, which is PWM-ed to light up only dimmed.
 
-            // The seconds lamp is driven independently of all this. The model code just has a timer firing every
-            // 500 ms to change a boolean output. To have the effect of a lamp going smoothly on and of, we use the
-            // .Smoothed extension method to smooth the boolean value from the timer code into a nice looking LED
+            // The seconds lamp is driven independently of all this. The model code just has a timer changing a boolean
+            // output each time it fires. To have the effect of a lamp going smoothly on and of, we use the
+            // .Smoothed() extension method to smooth the boolean value from the timer code into a nice looking LED
             // pattern.
 
             shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
 
             AbstractIO.Samples.Sample12ClockWithContinuouslyControlledMotor.Run(
-                motor: shield.GetDcMotor(1).Scaled(-1f, 0f),
-                pulse: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1).
-                       Debounced(debounceMilliseconds: 500).
-                       MonitoredTo(new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.GoPort1Led).
-                                   MappedFromBoolean(falseValue: 0f, trueValue: 0.02f)),
+
+                motor: shield.GetDcMotor(1)
+                       .Scaled(factor: -1f, offset: 0f),
+                
+                pulse: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1)
+                       .Debounced(debounceMilliseconds: 300)
+                       .MonitoredTo(teeTarget: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.GoPort1Led)
+                                               .MappedFromBoolean(falseValue: 0f, trueValue: 0.02f)),
+                
                 pulsesPerSecond: (22f * 24f) / 3600f,
+                
                 secondsLamp: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.OnboardLedBlue)
                              .Smoothed(valueChangePerSecond: 3f, rampIntervalMs: 20)
                              .MappedFromBoolean(falseValue: 0f, trueValue: 1f));

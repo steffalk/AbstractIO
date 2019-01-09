@@ -7,46 +7,85 @@ namespace AbstractIO.Samples
     {
         private class LinearEstimater
         {
-
+            /// <summary>
+            /// A pair of values for which linear regression will be calculated.
+            /// </summary>
             private struct Pair
             {
                 public float MotorSpeed;
                 public float PulsesPerSecond;
             }
 
-            private int _maxPairs;
+            /// <summary>
+            /// The capacity of the estimater, that is, the maximum number of value pairs to keep.
+            /// </summary>
+            private int _capacity;
+
+            /// <summary>
+            /// The value pairs over which the statistical calculations will be done.
+            /// </summary>
             private Pair[] _pairs;
-            private int _firstUsedIndex = 0;
+
+            /// <summary>
+            /// The valid number of pairs in <see cref="_pairs"/>.
+            /// </summary>
+            private int _count = 0;
+
+            /// <summary>
+            /// The index into <see cref="_pairs"/> into which the next value added by the
+            /// <see cref="Add(float, float)"/> method will be stored.
+            /// </summary>
             private int _nextIndexToWrite = 0;
 
+            /// <summary>
+            /// Creates an instance.
+            /// </summary>
+            /// <param name="capacity">The maximum number of value pairs to store. Only the last
+            /// <paramref name="capacity"/> number of pairs are kept, older ones are dismissed.</param>
             public LinearEstimater(int capacity)
             {
                 if (capacity < 2)
                 {
                     throw new ArgumentOutOfRangeException(nameof(capacity));
                 }
-                _maxPairs = capacity;
-                _pairs = new Pair[_maxPairs];
+                _capacity = capacity;
+                _pairs = new Pair[_capacity];
             }
 
+            /// <summary>
+            /// Adds a value pair to the list of pairs to be calculated over.
+            /// </summary>
+            /// <param name="motorSpeed">The motor speed for which a time measurement was done.</param>
+            /// <param name="pulsesPerSecond">The measured number of pulses per second for the given
+            /// <paramref name="motorSpeed"/>.</param>
             public void Add(float motorSpeed, float pulsesPerSecond)
             {
-                _pairs[_nextIndexToWrite] = new Pair { MotorSpeed = motorSpeed, PulsesPerSecond = pulsesPerSecond };
-                _nextIndexToWrite = (_nextIndexToWrite + 1) % _maxPairs;
-                if (_nextIndexToWrite == _firstUsedIndex)
+                _pairs[_nextIndexToWrite] =
+                    new Pair
+                    {
+                        MotorSpeed = motorSpeed,
+                        PulsesPerSecond = pulsesPerSecond
+                    };
+
+                if (_nextIndexToWrite + 1 > _count)
                 {
-                    _firstUsedIndex = (_firstUsedIndex + 1) % _maxPairs;
+                    _count = _nextIndexToWrite + 1;
                 }
+
+                _nextIndexToWrite = (_nextIndexToWrite + 1) % _capacity;
 
                 Console.WriteLine("Added MotorSpeed = " + motorSpeed.ToString()
                                   + ", PulsesPerSecond = " + pulsesPerSecond.ToString());
             }
 
+            /// <summary>
+            /// Gets the number of value pairs stored.
+            /// </summary>
             public int Count
             {
                 get
                 {
-                    return (_nextIndexToWrite - _firstUsedIndex + _maxPairs) % _maxPairs;
+                    return _count;
                 }
             }
 
@@ -55,8 +94,8 @@ namespace AbstractIO.Samples
                 // Compute sums freshly (no cumulative errors on removing pairs):
 
                 float sumX = 0f, sumY = 0f, sumX2 = 0f, sumY2 = 0f, sumXY = 0f;
-                int index = _firstUsedIndex;
-                while (index != _nextIndexToWrite)
+
+                for (int index = 0; index < _count; index++)
                 {
                     Pair p = _pairs[index];
                     float x = p.MotorSpeed;
@@ -66,7 +105,6 @@ namespace AbstractIO.Samples
                     sumX2 += x * x;
                     sumY2 += y * y;
                     sumXY += x * y;
-                    index = (index + 1) % _maxPairs;
                 }
 
                 // Compute regression:
@@ -81,8 +119,8 @@ namespace AbstractIO.Samples
                     c = 0f;
                 }
 
-                offset = b / a;
-                slope = (sumX2 * sumY - sumX * sumXY) / a;
+                slope = b / a;
+                offset = (sumX2 * sumY - sumX * sumXY) / a;
 
                 Console.WriteLine("Calculate with count = " + n.ToString() + ": PulsesPerSecond = "
                                   + slope.ToString() + " * MotorSpeed "
@@ -119,13 +157,13 @@ namespace AbstractIO.Samples
                                float pulsesPerSecond,
                                IBooleanOutput secondsLamp)
         {
-            // Start a seconds lamp:
+            // Start a blinking seconds lamp calmly going on in one second and off again in the next:
             var secondsTimer = new Timer((state) => { secondsLamp.Value = !secondsLamp.Value; },
-                                         null, 0, 500);
+                                         null, 0, 1000);
 
             var estimater = new LinearEstimater(64);
 
-            Calibrate(motor, pulse, pulsesPerSecond, estimater);
+            CollectSpeedSamples(motor, pulse, estimater);
 
             // This is our starting point:
             var t0 = DateTime.UtcNow;
@@ -165,10 +203,15 @@ namespace AbstractIO.Samples
             }
         }
 
-        private static void Calibrate(
+        /// <summary>
+        /// Collects two speed samples to initialize the <see cref="LinearEstimater"/>.
+        /// </summary>
+        /// <param name="motor">The motor to drive.</param>
+        /// <param name="pulse">The pulse switch.</param>
+        /// <param name="estimater">The estimator to add the measured sample data to.</param>
+        private static void CollectSpeedSamples(
             ISingleOutput motor,
             IBooleanInput pulse,
-            float pulsesPerSecond,
             LinearEstimater estimater)
         {
             // Let the motor run at full speed until the pulse changes from false to true:
