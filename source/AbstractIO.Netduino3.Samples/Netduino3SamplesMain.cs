@@ -420,7 +420,7 @@ namespace AbstractIO.Netduino3.Samples
                 pulsesPerSecond: (22f * 24f) / 3600f,
                 
                 secondsLamp: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.OnboardLedBlue)
-                             .Smoothed(valueChangePerSecond: 3f, rampIntervalMs: 20)
+                             .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20)
                              .MappedFromBoolean(falseValue: 0f, trueValue: 1f));
 
 #else
