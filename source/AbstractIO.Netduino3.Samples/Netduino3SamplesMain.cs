@@ -417,7 +417,7 @@ namespace AbstractIO.Netduino3.Samples
                        .MonitoredTo(teeTarget: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.GoPort1Led)
                                                .MappedFromBoolean(falseValue: 0f, trueValue: 0.02f)),
                 
-                pulsesPerSecond: (22f * 24f) / 3600f,
+                pulsesPerSecond: (22f * 14f) / 3600f,
                 
                 secondsLamp: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.OnboardLedBlue)
                              .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20)

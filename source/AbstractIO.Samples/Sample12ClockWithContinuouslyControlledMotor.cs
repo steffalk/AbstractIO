@@ -5,6 +5,11 @@ namespace AbstractIO.Samples
 {
     public static class Sample12ClockWithContinuouslyControlledMotor
     {
+        /// <summary>
+        /// The minimal speed that the DC motor shall receive.
+        /// </summary>
+        private const float MinimumMotorSpeed = 0.05f;
+
         private class LinearEstimater
         {
             /// <summary>
@@ -161,9 +166,9 @@ namespace AbstractIO.Samples
                 // time t.
                 var speed = estimater.EstimateMotorSpeed(1f / (Single)(t1 - DateTime.UtcNow).TotalSeconds);
 
-                if (speed < 0.1f)
+                if (speed < MinimumMotorSpeed)
                 {
-                    speed = 0.1f;
+                    speed = MinimumMotorSpeed;
                 }
                 else if (speed > 1.0f)
                 {
@@ -210,13 +215,16 @@ namespace AbstractIO.Samples
             Thread.Sleep((int)(fastTime.TotalMilliseconds / 10) * 9);
 
             // Let the motor run at 20% fullSpeedTime:
-            motor.Value = 0.2f;
+
+            const float slowSpeed = 0.2f;
+
+            motor.Value = slowSpeed;
             pulse.WaitFor(true, true);
 
             start = DateTime.UtcNow;
             pulse.WaitFor(true, true);
             var slowTime = DateTime.UtcNow - start;
-            estimater.Add(0.2f, 1f / (float)slowTime.TotalSeconds);
+            estimater.Add(slowSpeed, 1f / (float)slowTime.TotalSeconds);
         }
     }
 }
