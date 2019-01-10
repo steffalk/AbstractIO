@@ -8,6 +8,11 @@ namespace AbstractIO.Samples
         private class LinearEstimater
         {
             /// <summary>
+            /// The capacity of the estimater, that is, the maximum number of value pairs to keep.
+            /// </summary>
+            private const int Capacity = 128;
+
+            /// <summary>
             /// A pair of values for which linear regression will be calculated.
             /// </summary>
             private struct Pair
@@ -17,39 +22,15 @@ namespace AbstractIO.Samples
             }
 
             /// <summary>
-            /// The capacity of the estimater, that is, the maximum number of value pairs to keep.
-            /// </summary>
-            private int _capacity;
-
-            /// <summary>
             /// The value pairs over which the statistical calculations will be done.
             /// </summary>
-            private Pair[] _pairs;
-
-            /// <summary>
-            /// The valid number of pairs in <see cref="_pairs"/>.
-            /// </summary>
-            private int _count = 0;
-
-            /// <summary>
-            /// The index into <see cref="_pairs"/> into which the next value added by the
-            /// <see cref="Add(float, float)"/> method will be stored.
-            /// </summary>
-            private int _nextIndexToWrite = 0;
+            private Pair[] _pairs = new Pair[Capacity];
 
             /// <summary>
             /// Creates an instance.
             /// </summary>
-            /// <param name="capacity">The maximum number of value pairs to store. Only the last
-            /// <paramref name="capacity"/> number of pairs are kept, older ones are dismissed.</param>
-            public LinearEstimater(int capacity)
+            public LinearEstimater()
             {
-                if (capacity < 2)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(capacity));
-                }
-                _capacity = capacity;
-                _pairs = new Pair[_capacity];
             }
 
             /// <summary>
@@ -60,33 +41,26 @@ namespace AbstractIO.Samples
             /// <paramref name="motorSpeed"/>.</param>
             public void Add(float motorSpeed, float pulsesPerSecond)
             {
-                _pairs[_nextIndexToWrite] =
+                if (motorSpeed < 0f)
+                {
+                    motorSpeed = 0f;
+                }
+                else if (motorSpeed > 1f)
+                {
+                    motorSpeed = 1f;
+                }
+                int targetIndex = (int)Math.Round(motorSpeed * (Capacity - 1));
+
+                _pairs[targetIndex] =
                     new Pair
                     {
                         MotorSpeed = motorSpeed,
                         PulsesPerSecond = pulsesPerSecond
                     };
 
-                if (_nextIndexToWrite + 1 > _count)
-                {
-                    _count = _nextIndexToWrite + 1;
-                }
-
-                _nextIndexToWrite = (_nextIndexToWrite + 1) % _capacity;
-
-                Console.WriteLine("Added MotorSpeed = " + motorSpeed.ToString()
+                Console.WriteLine("Added at index " + targetIndex.ToString()
+                                  + ": MotorSpeed = " + motorSpeed.ToString()
                                   + ", PulsesPerSecond = " + pulsesPerSecond.ToString());
-            }
-
-            /// <summary>
-            /// Gets the number of value pairs stored.
-            /// </summary>
-            public int Count
-            {
-                get
-                {
-                    return _count;
-                }
             }
 
             private void Calculate(ref float offset, ref float slope)
@@ -94,25 +68,29 @@ namespace AbstractIO.Samples
                 // Compute sums freshly (no cumulative errors on removing pairs):
 
                 float sumX = 0f, sumY = 0f, sumX2 = 0f, sumY2 = 0f, sumXY = 0f;
+                int count = 0;
 
-                for (int index = 0; index < _count; index++)
+                for (int index = 0; index < Capacity; index++)
                 {
                     Pair p = _pairs[index];
-                    float x = p.MotorSpeed;
                     float y = p.PulsesPerSecond;
-                    sumX += x;
-                    sumY += y;
-                    sumX2 += x * x;
-                    sumY2 += y * y;
-                    sumXY += x * y;
+                    if (y > 0)
+                    {
+                        float x = p.MotorSpeed;
+                        sumX += x;
+                        sumY += y;
+                        sumX2 += x * x;
+                        sumY2 += y * y;
+                        sumXY += x * y;
+                        count++;
+                    }
                 }
 
                 // Compute regression:
 
-                int n = Count;
-                float b = n * sumXY - sumX * sumY;
-                float a = n * sumX2 - sumX * sumX;
-                float c = (n * sumY2 - sumY * sumY) * a;
+                float b = count * sumXY - sumX * sumY;
+                float a = count * sumX2 - sumX * sumX;
+                float c = (count * sumY2 - sumY * sumY) * a;
 
                 if (c < 0f)
                 {
@@ -122,7 +100,7 @@ namespace AbstractIO.Samples
                 slope = b / a;
                 offset = (sumX2 * sumY - sumX * sumXY) / a;
 
-                Console.WriteLine("Calculate with count = " + n.ToString() + ": PulsesPerSecond = "
+                Console.WriteLine("Calculate with count = " + count.ToString() + ": PulsesPerSecond = "
                                   + slope.ToString() + " * MotorSpeed "
                                   + (offset < 0f ? "- " : "+ ") + Math.Abs(offset).ToString());
             }
@@ -161,17 +139,21 @@ namespace AbstractIO.Samples
             var secondsTimer = new Timer((state) => { secondsLamp.Value = !secondsLamp.Value; },
                                          null, 0, 1000);
 
-            var estimater = new LinearEstimater(64);
+            var estimater = new LinearEstimater();
 
             CollectSpeedSamples(motor, pulse, estimater);
 
             // This is our starting point:
-            var t0 = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
+            var t0 = startTime;
+            int pulses = 0;
 
             while (true)
             {
                 // This is the time we want the next gear cycle to end, ideally:
-                var t1 = t0.AddSeconds(1f / pulsesPerSecond);
+                pulses++;
+                // Do not add some seconds every pulse but multiply and add to start time to avoid cumulative errors.
+                var t1 = startTime.AddSeconds(pulses / pulsesPerSecond);
 
                 // Calculate the needed motor speed to have this goal reached.
                 // Note that we use the real "now" to calculate this, as we may have reached this point too early or
