@@ -8,7 +8,7 @@ namespace AbstractIO.Samples
         /// <summary>
         /// The minimal speed that the DC motor shall receive.
         /// </summary>
-        private const float MinimumMotorSpeed = 0.05f;
+        private const float MinimumMotorSpeed = 0.08f;
 
         private class LinearEstimater
         {
@@ -24,6 +24,7 @@ namespace AbstractIO.Samples
             {
                 public float MotorSpeed;
                 public float PulsesPerSecond;
+                public bool IsValid;
             }
 
             /// <summary>
@@ -60,12 +61,14 @@ namespace AbstractIO.Samples
                     new Pair
                     {
                         MotorSpeed = motorSpeed,
-                        PulsesPerSecond = pulsesPerSecond
+                        PulsesPerSecond = pulsesPerSecond,
+                        IsValid = true
                     };
 
                 Console.WriteLine("Added at index " + targetIndex.ToString()
                                   + ": MotorSpeed = " + motorSpeed.ToString()
-                                  + ", PulsesPerSecond = " + pulsesPerSecond.ToString());
+                                  + ", PulsesPerSecond = " + pulsesPerSecond.ToString()
+                                  + ", Time = " + (1f / pulsesPerSecond).ToString());
             }
 
             private void Calculate(ref float offset, ref float slope)
@@ -77,11 +80,11 @@ namespace AbstractIO.Samples
 
                 for (int index = 0; index < Capacity; index++)
                 {
-                    Pair p = _pairs[index];
-                    float y = p.PulsesPerSecond;
-                    if (y > 0)
+                    Pair pair = _pairs[index];
+                    if (pair.IsValid)
                     {
-                        float x = p.MotorSpeed;
+                        float x = pair.MotorSpeed;
+                        float y = pair.PulsesPerSecond;
                         sumX += x;
                         sumY += y;
                         sumX2 += x * x;
@@ -177,7 +180,7 @@ namespace AbstractIO.Samples
 
                 // Run the motor at this speed:
                 motor.Value = speed;
-                Console.WriteLine("Motor Speed = " + speed.ToString());
+                Console.WriteLine("Motor Speed = " + speed.ToString() + " at time " + DateTime.UtcNow.ToString());
 
                 // Wait for this cycle to end:
                 pulse.WaitFor(true, true);
