@@ -186,10 +186,7 @@ namespace AbstractIO.Samples
 
                 // Run the motor at this speed:
                 motor.Value = speed;
-                Console.WriteLine("Motor Speed = " + speed.ToString("N9")
-                                  + " at time " + DateTime.UtcNow.ToString()
-                                  + "; deviation = "
-                                  + (DateTime.UtcNow - beginOfCurrentPeriod).TotalSeconds.ToString("N9"));
+                Console.WriteLine("Motor Speed = " + speed.ToString("N9") + " at time " + DateTime.UtcNow.ToString());
 
                 bool repeat;
                 do
@@ -212,13 +209,16 @@ namespace AbstractIO.Samples
                     else if (secondsForThisPulse > idealSecondsForPulse)
                     {
                         // The detector probably missed one or more pulses. Adapt the time at which the clock is:
-                        pulses += (int)(Math.Round(secondsForThisPulse / idealSecondsForPulse)) - 1;
+                        int missedPulses = (int)(Math.Round(secondsForThisPulse / idealSecondsForPulse)) - 1;
+                        Console.WriteLine("We probably missed " + missedPulses.ToString() + " pulses.");
+                        pulses += missedPulses;
                         beginOfNextPeriod = startTime.AddSeconds(pulses / pulsesPerSecond);
                         repeat = false;
                     }
                     else
                     {
                         // We had multiple switch pulses in this period. Wait for the next pulse:
+                        Console.WriteLine("We probably had an early pulse; waiting for the next pulse.");
                         repeat = true;
                     }
                 } while (repeat);
