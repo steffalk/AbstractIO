@@ -5,26 +5,20 @@ namespace AbstractIO.Samples
 {
     public static class Sample12ClockWithContinuouslyControlledMotor
     {
-        /// <summary>
-        /// The minimal speed that the DC motor shall receive.
-        /// </summary>
-        private const float MinimumMotorSpeed = 0.08f;
-
         private class LinearEstimater
         {
             /// <summary>
             /// The capacity of the estimater, that is, the maximum number of value pairs to keep.
             /// </summary>
-            private const int Capacity = 128;
+            private const int Capacity = 256;
 
             /// <summary>
             /// A pair of values for which linear regression will be calculated.
             /// </summary>
-            private struct Pair
+            private class Pair
             {
                 public float MotorSpeed;
                 public float PulsesPerSecond;
-                public bool IsValid;
             }
 
             /// <summary>
@@ -61,14 +55,13 @@ namespace AbstractIO.Samples
                     new Pair
                     {
                         MotorSpeed = motorSpeed,
-                        PulsesPerSecond = pulsesPerSecond,
-                        IsValid = true
+                        PulsesPerSecond = pulsesPerSecond
                     };
 
                 Console.WriteLine("Added at index " + targetIndex.ToString()
-                                  + ": MotorSpeed = " + motorSpeed.ToString()
-                                  + ", PulsesPerSecond = " + pulsesPerSecond.ToString()
-                                  + ", Time = " + (1f / pulsesPerSecond).ToString());
+                                  + ": MotorSpeed = " + motorSpeed.ToString("N9")
+                                  + ", PulsesPerSecond = " + pulsesPerSecond.ToString("N9")
+                                  + ", Time = " + (1f / pulsesPerSecond).ToString("N9"));
             }
 
             private void Calculate(ref float offset, ref float slope)
@@ -81,8 +74,9 @@ namespace AbstractIO.Samples
                 for (int index = 0; index < Capacity; index++)
                 {
                     Pair pair = _pairs[index];
-                    if (pair.IsValid)
+                    if (pair != null)
                     {
+                        // We have a measurement here.
                         float x = pair.MotorSpeed;
                         float y = pair.PulsesPerSecond;
                         sumX += x;
@@ -109,8 +103,8 @@ namespace AbstractIO.Samples
                 offset = (sumX2 * sumY - sumX * sumXY) / a;
 
                 Console.WriteLine("Calculate with count = " + count.ToString() + ": PulsesPerSecond = "
-                                  + slope.ToString() + " * MotorSpeed "
-                                  + (offset < 0f ? "- " : "+ ") + Math.Abs(offset).ToString());
+                                  + slope.ToString("N9") + " * MotorSpeed "
+                                  + (offset < 0f ? "- " : "+ ") + Math.Abs(offset).ToString("N9"));
             }
 
             public float EstimatePulsesPerSecond(float motorSpeed)
@@ -132,13 +126,17 @@ namespace AbstractIO.Samples
         /// Runs a clock driven by a simple DC motor.
         /// </summary>
         /// <param name="motor">The motor to drive continuously.</param>
+        /// <param name="minimumMotorSpeed">The minimum speed setting that causes the motor to turn. Speeds below this
+        /// threshold may cause the motor to not turn at all.</param>
         /// <param name="pulse">The input which pulses to measure the motor speed.</param>
         /// <param name="pulsesPerSecond">The number of seconds per pulse which would give a perfectly
         /// accurate operation of the clock.</param>
+        /// <param name="secondsLamp">A lamp which shall be turned on and off in 1 second intervals.</param>
         /// <remarks>The motor speed is constantly adapted to the measurement given by the pulse to realize the needed
         /// pulse times without cumulative errors, even if the motor changes its behaviour during the operation.
         /// </remarks>
         public static void Run(ISingleOutput motor,
+                               float minimumMotorSpeed,
                                IBooleanInput pulse,
                                float pulsesPerSecond,
                                IBooleanOutput secondsLamp)
@@ -153,43 +151,67 @@ namespace AbstractIO.Samples
 
             // This is our starting point:
             var startTime = DateTime.UtcNow;
-            var t0 = startTime;
+            var beginOfCurrentPeriod = startTime;
             int pulses = 0;
+            var idealSecondsForPulse = 1f / pulsesPerSecond;
 
             while (true)
             {
+                // Do not add some seconds every pulse but multiply and add to start time to avoid cumulative errors.
                 // This is the time we want the next gear cycle to end, ideally:
                 pulses++;
-                // Do not add some seconds every pulse but multiply and add to start time to avoid cumulative errors.
-                var t1 = startTime.AddSeconds(pulses / pulsesPerSecond);
+
+                double deviation = (DateTime.UtcNow - beginOfCurrentPeriod).TotalSeconds;
+                if (deviation < 0.0)
+                {
+                    Console.WriteLine("Too fast by " + (-deviation).ToString("N9") + " s");
+                }
+                else if (deviation > 0.0)
+                {
+                    Console.WriteLine("Too slow by " + deviation.ToString("N9") + " s");
+                }
+
+                var beginOfNextPeriod = startTime.AddSeconds(pulses / pulsesPerSecond);
 
                 // Calculate the needed motor speed to have this goal reached.
                 // Note that we use the real "now" to calculate this, as we may have reached this point too early or
                 // too late from the last cycle, and we aim to realize (at least in the long term) our ideally counted
                 // time t.
-                var speed = estimater.EstimateMotorSpeed(1f / (Single)(t1 - DateTime.UtcNow).TotalSeconds);
-
-                if (speed < MinimumMotorSpeed)
-                {
-                    speed = MinimumMotorSpeed;
-                }
-                else if (speed > 1.0f)
-                {
-                    speed = 1.0f;
-                }
+                var speed = Math.Max(
+                                Math.Min(
+                                    estimater.EstimateMotorSpeed(1f / (Single)(beginOfNextPeriod - DateTime.UtcNow)
+                                                                              .TotalSeconds),
+                                    1f),
+                                minimumMotorSpeed);
 
                 // Run the motor at this speed:
                 motor.Value = speed;
-                Console.WriteLine("Motor Speed = " + speed.ToString() + " at time " + DateTime.UtcNow.ToString());
+                Console.WriteLine("Motor Speed = " + speed.ToString("N9")
+                                  + " at time " + DateTime.UtcNow.ToString()
+                                  + "; deviation = "
+                                  + (DateTime.UtcNow - beginOfCurrentPeriod).TotalSeconds.ToString("N9"));
 
                 // Wait for this cycle to end:
                 pulse.WaitFor(true, true);
 
                 // Take note of the new measurement:
-                estimater.Add(speed, 1f / (float)(DateTime.UtcNow - t0).TotalSeconds);
+                var secondsForThisPulse = (float)(DateTime.UtcNow - beginOfCurrentPeriod).TotalSeconds;
 
-                // t1 is the new t0:
-                t0 = t1;
+                // Only use the measurement if it is withing 20% of the ideal time, otherwise assume that the it failed
+                // due to multiple or missing pulses:
+                if (Math.Abs(secondsForThisPulse - idealSecondsForPulse) / idealSecondsForPulse < 0.2f)
+                {
+                    estimater.Add(speed, 1f / secondsForThisPulse);
+                    if (secondsForThisPulse > idealSecondsForPulse)
+                    {
+                        // The detector probably missed one or more pulses, adapt the time at which the clock is:
+                        pulses += (int)(Math.Round(secondsForThisPulse / idealSecondsForPulse)) - 1;
+                        beginOfNextPeriod = startTime.AddSeconds(pulses / pulsesPerSecond);
+                    }
+                }
+
+                // Prepare for the next period:
+                beginOfCurrentPeriod = beginOfNextPeriod;
             }
         }
 

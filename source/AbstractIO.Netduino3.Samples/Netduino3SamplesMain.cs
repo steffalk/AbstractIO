@@ -411,6 +411,8 @@ namespace AbstractIO.Netduino3.Samples
 
                 motor: shield.GetDcMotor(1)
                        .Scaled(factor: -1f, offset: 0f),
+
+                minimumMotorSpeed: 0.08f,
                 
                 pulse: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1)
                        .Debounced(debounceMilliseconds: 300)
