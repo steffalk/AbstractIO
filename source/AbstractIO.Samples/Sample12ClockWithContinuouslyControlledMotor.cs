@@ -191,24 +191,38 @@ namespace AbstractIO.Samples
                                   + "; deviation = "
                                   + (DateTime.UtcNow - beginOfCurrentPeriod).TotalSeconds.ToString("N9"));
 
-                // Wait for this cycle to end:
-                pulse.WaitFor(true, true);
-
-                // Take note of the new measurement:
-                var secondsForThisPulse = (float)(DateTime.UtcNow - beginOfCurrentPeriod).TotalSeconds;
-
-                // Only use the measurement if it is withing 20% of the ideal time, otherwise assume that the it failed
-                // due to multiple or missing pulses:
-                if (Math.Abs(secondsForThisPulse - idealSecondsForPulse) / idealSecondsForPulse < 0.2f)
+                bool repeat;
+                do
                 {
-                    estimater.Add(speed, 1f / secondsForThisPulse);
-                    if (secondsForThisPulse > idealSecondsForPulse)
+                    // Wait for this cycle to end:
+                    pulse.WaitFor(true, true);
+
+                    // Take note of the new measurement:
+                    var secondsForThisPulse = (float)(DateTime.UtcNow - beginOfCurrentPeriod).TotalSeconds;
+
+                    // Only use the measurement if it is withing 20% of the ideal time, otherwise assume that the it
+                    // failed due to multiple or missing pulses:
+                    if (Math.Abs(secondsForThisPulse - idealSecondsForPulse) / idealSecondsForPulse < 0.2f)
                     {
-                        // The detector probably missed one or more pulses, adapt the time at which the clock is:
+                        // The measurement is in the expected accuracy range. Take it into account for future
+                        // calculations:
+                        estimater.Add(speed, 1f / secondsForThisPulse);
+                        repeat = false;
+                    }
+                    else if (secondsForThisPulse > idealSecondsForPulse)
+                    {
+                        // The detector probably missed one or more pulses. Adapt the time at which the clock is:
                         pulses += (int)(Math.Round(secondsForThisPulse / idealSecondsForPulse)) - 1;
                         beginOfNextPeriod = startTime.AddSeconds(pulses / pulsesPerSecond);
+                        repeat = false;
                     }
-                }
+                    else
+                    {
+                        // We had multiple switch pulses in this period. Wait for the next pulse:
+                        repeat = true;
+                    }
+                } while (repeat);
+
 
                 // Prepare for the next period:
                 beginOfCurrentPeriod = beginOfNextPeriod;
