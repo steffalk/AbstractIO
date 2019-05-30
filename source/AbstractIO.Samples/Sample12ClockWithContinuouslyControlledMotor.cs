@@ -189,6 +189,9 @@ namespace AbstractIO.Samples
                 numberOfCycles++;
                 var targetEndOfCurrentCycle = startTime.AddSeconds(numberOfCycles / idealSecondsForCycle);
 
+                // Wait for 1/3 of the ideal cycle time to avoid measuring contact too early:
+                Thread.Sleep((int)(idealSecondsForCycle * 1000f / 3f));
+
                 // Run the motor at the current speed until the next cycle and measure the time::
                 debouncedPulse.WaitFor(true, true);
                 var actualEndOfCurrentCycle = DateTime.UtcNow;
