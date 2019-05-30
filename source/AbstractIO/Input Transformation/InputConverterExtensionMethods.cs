@@ -128,7 +128,7 @@
         /// <paramref name="inputToDebounce"/> shall be returned unchanged by the resulting <see cref="IBooleanInput"/>,
         /// even if the source value changes (due to bouncing effects, say, on a mechanical switch).</param>
         /// <returns>The debounced input.</returns>
-        public static IBooleanInput Debounced(this IBooleanInput inputToDebounce, int debounceMilliseconds)
+        public static BooleanDebouncedInput Debounced(this IBooleanInput inputToDebounce, int debounceMilliseconds)
         {
             return new BooleanDebouncedInput(inputToDebounce, debounceMilliseconds);
         }
@@ -142,7 +142,7 @@
         /// <paramref name="sourceInput"/>.</param>
         /// <returns>The input which returns the <paramref name="sourceInput"/> value and at the same time sets the
         /// <paramref name="teeTarget"/> to that same value.</returns>
-        public static IBooleanInput MonitoredTo(this IBooleanInput sourceInput, IBooleanOutput teeTarget)
+        public static BooleanMonitoredInput MonitoredTo(this IBooleanInput sourceInput, IBooleanOutput teeTarget)
         {
             return new BooleanMonitoredInput(sourceInput, teeTarget);
         }

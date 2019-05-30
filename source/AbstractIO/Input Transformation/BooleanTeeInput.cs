@@ -10,9 +10,6 @@ namespace AbstractIO
     /// </summary>
     public class BooleanMonitoredInput : IBooleanInput
     {
-        private IBooleanInput _sourceInput;
-        private IBooleanOutput _teeTarget;
-
         /// <summary>
         /// Creates an instance.
         /// </summary>
@@ -21,9 +18,19 @@ namespace AbstractIO
         /// <paramref name="sourceInput"/>.</param>
         public BooleanMonitoredInput(IBooleanInput sourceInput, IBooleanOutput teeTarget)
         {
-            _sourceInput = sourceInput ?? throw new ArgumentNullException(nameof(sourceInput));
-            _teeTarget = teeTarget ?? throw new ArgumentNullException(nameof(teeTarget));
+            this.SourceInput = sourceInput ?? throw new ArgumentNullException(nameof(sourceInput));
+            this.TeeTarget = teeTarget ?? throw new ArgumentNullException(nameof(teeTarget));
         }
+
+        /// <summary>
+        /// Gets the input to be monitored.
+        /// </summary>
+        public IBooleanInput SourceInput { get; }
+
+        /// <summary>
+        /// Gets the tee target output which will receive the <see cref="SourceInput"/>'s value.
+        /// </summary>
+        public IBooleanOutput TeeTarget { get; }
 
         /// <summary>
         /// Gets the <see cref="IBooleanInput.Value">Value</see> of the source input and at the same time sets the tee
@@ -33,8 +40,8 @@ namespace AbstractIO
         {
             get
             {
-                var value = _sourceInput.Value;
-                _teeTarget.Value = value;
+                var value = SourceInput.Value;
+                TeeTarget.Value = value;
                 return value;
             }
         }

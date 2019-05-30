@@ -8,7 +8,6 @@ namespace AbstractIO
     /// </summary>
     public class BooleanDebouncedInput : IBooleanInput
     {
-        private IBooleanInput _inputToDebounce;
         private int _debounceMilliseconds;
         private DateTime _nextMeasurementTime = DateTime.MinValue;
         private bool _value;
@@ -22,12 +21,41 @@ namespace AbstractIO
         /// even if the source value changes (due to bouncing effects, say, on a mechanical switch).</param>
         public BooleanDebouncedInput(IBooleanInput inputToDebounce, int debounceMilliseconds)
         {
-            _inputToDebounce = inputToDebounce ?? throw new ArgumentNullException(nameof(inputToDebounce));
+            this.InputToDebounce = inputToDebounce ?? throw new ArgumentNullException(nameof(inputToDebounce));
             if (debounceMilliseconds < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(debounceMilliseconds));
             }
             _debounceMilliseconds = debounceMilliseconds;
+        }
+
+        /// <summary>
+        /// Gets the input to be debounced.
+        /// </summary>
+        public IBooleanInput InputToDebounce { get; }
+
+        /// <summary>
+        /// Gets or sets the time, in milliseconds, that the <see cref="Value"/> property will return an unchanged value
+        /// after the <see cref="InputToDebounce"/> changed its value, even if the input changes its value during this
+        /// time.
+        /// </summary>
+        public int DebounceMilliseconds
+        {
+            get
+            {
+                return _debounceMilliseconds;
+            }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(DebounceMilliseconds));
+                }
+                else
+                {
+                    _debounceMilliseconds = value;
+                }
+            }
         }
 
         /// <summary>
@@ -40,8 +68,8 @@ namespace AbstractIO
                 var now = DateTime.UtcNow;
                 if (now >= _nextMeasurementTime)
                 {
-                    _value = _inputToDebounce.Value;
-                    _nextMeasurementTime = now.AddMilliseconds(_debounceMilliseconds);
+                    _value = InputToDebounce.Value;
+                    _nextMeasurementTime = now.AddMilliseconds(DebounceMilliseconds);
                 }
                 return _value;
             }

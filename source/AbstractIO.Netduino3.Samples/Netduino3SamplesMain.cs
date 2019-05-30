@@ -413,14 +413,16 @@ namespace AbstractIO.Netduino3.Samples
                        .Scaled(factor: -1f, offset: 0f),
 
                 minimumMotorSpeed: 0.08f,
-                
-                pulse: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1)
-                       .Debounced(debounceMilliseconds: 300)
-                       .MonitoredTo(teeTarget: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.GoPort1Led)
-                                               .MappedFromBoolean(falseValue: 0f, trueValue: 0.02f)),
-                
+
+                pulse: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1),
+
+                pulseDebounceMillisecondsAtFullSpeed: 300,
+
+                pulseMonitor: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.GoPort1Led)
+                              .MappedFromBoolean(falseValue: 0f, trueValue: 0.02f),
+
                 pulsesPerSecond: (22f * 14f) / 3600f,
-                
+
                 secondsLamp: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.OnboardLedBlue)
                              .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20)
                              .MappedFromBoolean(falseValue: 0f, trueValue: 1f));

@@ -129,6 +129,10 @@ namespace AbstractIO.Samples
         /// <param name="minimumMotorSpeed">The minimum speed setting that causes the motor to turn. Speeds below this
         /// threshold may cause the motor to not turn at all.</param>
         /// <param name="pulse">The input which pulses to measure the motor speed.</param>
+        /// <param name="pulseDebounceMillisecondsAtFullSpeed">The time, in milliseconds, that shall be used as the
+        /// debounce time for the <paramref name="pulse"/> input when the <paramref name="motor"/> runs at full speed.
+        /// </param>
+        /// <param name="pulseMonitor">An output to show the monitored pulse input.</param>
         /// <param name="pulsesPerSecond">The number of seconds per pulse which would give a perfectly
         /// accurate operation of the clock.</param>
         /// <param name="secondsLamp">A lamp which shall be turned on and off in 1 second intervals.</param>
@@ -138,132 +142,68 @@ namespace AbstractIO.Samples
         public static void Run(ISingleOutput motor,
                                float minimumMotorSpeed,
                                IBooleanInput pulse,
+                               int pulseDebounceMillisecondsAtFullSpeed,
+                               IBooleanOutput pulseMonitor,
                                float pulsesPerSecond,
                                IBooleanOutput secondsLamp)
         {
+            // Check parameters:
+            if (motor == null) { throw new ArgumentNullException(nameof(motor)); }
+            if (minimumMotorSpeed <= 0f) { throw new ArgumentOutOfRangeException(nameof(minimumMotorSpeed)); }
+            if (pulse == null) { throw new ArgumentNullException(nameof(pulse)); }
+            if (pulseDebounceMillisecondsAtFullSpeed < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pulseDebounceMillisecondsAtFullSpeed));
+            }
+            if (pulseMonitor == null) { throw new ArgumentNullException(nameof(pulseMonitor)); }
+            if (pulsesPerSecond <= 0f) { throw new ArgumentOutOfRangeException(nameof(pulsesPerSecond)); }
+            if (secondsLamp == null) { throw new ArgumentNullException(nameof(secondsLamp)); }
+
+            const float MinimalSpeed = 0.1f;
+
             // Start a blinking seconds lamp calmly going on in one second and off again in the next:
             var secondsTimer = new Timer((state) => { secondsLamp.Value = !secondsLamp.Value; },
                                          null, 0, 1000);
 
-            var estimater = new LinearEstimater();
+            BooleanDebouncedInput debouncedPulse = pulse.Debounced(pulseDebounceMillisecondsAtFullSpeed);
 
-            CollectSpeedSamples(motor, pulse, estimater);
+            // Let the motor run at full speed until the pulse changes from false to true:
+            motor.Value = 1f;
+            debouncedPulse.DebounceMilliseconds = pulseDebounceMillisecondsAtFullSpeed;
+            debouncedPulse.WaitFor(true, true);
 
-            // This is our starting point:
+            // This is our staring point:
             var startTime = DateTime.UtcNow;
-            var beginOfCurrentPeriod = startTime;
-            int pulses = 0;
-            var idealSecondsForPulse = 1f / pulsesPerSecond;
+            var beginOfCurrentCycle = startTime;
+            uint numberOfCycles = 0;
+            var idealSecondsForCycle = 1f / pulsesPerSecond;
+
+            // Initialize the speed:
+            motor.Value = 0.2f;
 
             while (true)
             {
+                // Calculate when the next cyle _should_ be finished:
                 // Do not add some seconds every pulse but multiply and add to start time to avoid cumulative errors.
                 // This is the time we want the next gear cycle to end, ideally:
-                pulses++;
+                numberOfCycles++;
+                var targetEndOfCurrentCycle = startTime.AddSeconds(numberOfCycles / idealSecondsForCycle);
 
-                double deviation = (DateTime.UtcNow - beginOfCurrentPeriod).TotalSeconds;
-                if (deviation < 0.0)
-                {
-                    Console.WriteLine("Too fast by " + (-deviation).ToString("N9") + " s");
-                }
-                else if (deviation > 0.0)
-                {
-                    Console.WriteLine("Too slow by " + deviation.ToString("N9") + " s");
-                }
+                // Run the motor at the current speed until the next cycle and measure the time::
+                debouncedPulse.WaitFor(true, true);
+                var actualEndOfCurrentCycle = DateTime.UtcNow;
 
-                var beginOfNextPeriod = startTime.AddSeconds(pulses / pulsesPerSecond);
+                // Calculate the new motor speed, so that the next cycle should end at the correct time:
+                var secondsOfPassedCycle = (float)((actualEndOfCurrentCycle - beginOfCurrentCycle).TotalSeconds);
+                var targetEndOfNextCycle = startTime.AddSeconds((numberOfCycles + 1) / idealSecondsForCycle);
+                var secondsToEndOfNextCycle = (float)((targetEndOfNextCycle - actualEndOfCurrentCycle).TotalSeconds);
+                // With motor.Value, a cycle took secondsOfPassedCycle seconds.
+                // With which motor.Value will we realize secondsToEndOfNextCycle seconds?
+                motor.Value = Math.Max(MinimalSpeed, motor.Value * secondsToEndOfNextCycle / secondsOfPassedCycle);
 
-                // Calculate the needed motor speed to have this goal reached.
-                // Note that we use the real "now" to calculate this, as we may have reached this point too early or
-                // too late from the last cycle, and we aim to realize (at least in the long term) our ideally counted
-                // time t.
-                var speed = Math.Max(
-                                Math.Min(
-                                    estimater.EstimateMotorSpeed(1f / (Single)(beginOfNextPeriod - DateTime.UtcNow)
-                                                                              .TotalSeconds),
-                                    1f),
-                                minimumMotorSpeed);
-
-                // Run the motor at this speed:
-                motor.Value = speed;
-                Console.WriteLine("Motor Speed = " + speed.ToString("N9") + " at time " + DateTime.UtcNow.ToString());
-
-                bool repeat;
-                do
-                {
-                    // Wait for this cycle to end:
-                    pulse.WaitFor(true, true);
-
-                    // Take note of the new measurement:
-                    var secondsForThisPulse = (float)(DateTime.UtcNow - beginOfCurrentPeriod).TotalSeconds;
-
-                    // Only use the measurement if it is withing 20% of the ideal time, otherwise assume that the it
-                    // failed due to multiple or missing pulses:
-                    if (Math.Abs(secondsForThisPulse - idealSecondsForPulse) / idealSecondsForPulse < 0.2f)
-                    {
-                        // The measurement is in the expected accuracy range. Take it into account for future
-                        // calculations:
-                        estimater.Add(speed, 1f / secondsForThisPulse);
-                        repeat = false;
-                    }
-                    else if (secondsForThisPulse > idealSecondsForPulse)
-                    {
-                        // The detector probably missed one or more pulses. Adapt the time at which the clock is:
-                        int missedPulses = (int)(Math.Round(secondsForThisPulse / idealSecondsForPulse)) - 1;
-                        Console.WriteLine("We probably missed " + missedPulses.ToString() + " pulses.");
-                        pulses += missedPulses;
-                        beginOfNextPeriod = startTime.AddSeconds(pulses / pulsesPerSecond);
-                        repeat = false;
-                    }
-                    else
-                    {
-                        // We had multiple switch pulses in this period. Wait for the next pulse:
-                        Console.WriteLine("We probably had an early pulse; waiting for the next pulse.");
-                        repeat = true;
-                    }
-                } while (repeat);
-
-
-                // Prepare for the next period:
-                beginOfCurrentPeriod = beginOfNextPeriod;
+                // Turnover to the next cycle:
+                beginOfCurrentCycle = actualEndOfCurrentCycle;
             }
-        }
-
-        /// <summary>
-        /// Collects two speed samples to initialize the <see cref="LinearEstimater"/>.
-        /// </summary>
-        /// <param name="motor">The motor to drive.</param>
-        /// <param name="pulse">The pulse switch.</param>
-        /// <param name="estimater">The estimator to add the measured sample data to.</param>
-        private static void CollectSpeedSamples(
-            ISingleOutput motor,
-            IBooleanInput pulse,
-            LinearEstimater estimater)
-        {
-            // Let the motor run at full speed until the pulse changes from false to true:
-            motor.Value = 1f;
-            pulse.WaitFor(true, true);
-
-            // Measure the time until pulse turns to true again:
-            var start = DateTime.UtcNow;
-            pulse.WaitFor(true, true);
-            var fastTime = DateTime.UtcNow - start;
-            estimater.Add(1f, 1f / (float)fastTime.TotalSeconds);
-
-            // Wait until shortly before the next pulse:
-            Thread.Sleep((int)(fastTime.TotalMilliseconds / 10) * 9);
-
-            // Let the motor run at 20% fullSpeedTime:
-
-            const float slowSpeed = 0.2f;
-
-            motor.Value = slowSpeed;
-            pulse.WaitFor(true, true);
-
-            start = DateTime.UtcNow;
-            pulse.WaitFor(true, true);
-            var slowTime = DateTime.UtcNow - start;
-            estimater.Add(slowSpeed, 1f / (float)slowTime.TotalSeconds);
         }
     }
 }
