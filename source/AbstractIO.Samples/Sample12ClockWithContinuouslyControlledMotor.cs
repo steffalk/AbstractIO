@@ -202,7 +202,11 @@ namespace AbstractIO.Samples
                 var secondsToEndOfNextCycle = (float)((targetEndOfNextCycle - actualEndOfCurrentCycle).TotalSeconds);
                 // With motor.Value, a cycle took secondsOfPassedCycle seconds.
                 // With which motor.Value will we realize secondsToEndOfNextCycle seconds?
-                motor.Value = Math.Max(MinimalSpeed, motor.Value * secondsToEndOfNextCycle / secondsOfPassedCycle);
+
+                motor.Value = Math.Max(MinimalSpeed, 
+                                       motor.Value
+                                       * secondsToEndOfNextCycle * idealSecondsForCycle
+                                       / (secondsOfPassedCycle * secondsOfPassedCycle));
 
                 // Turnover to the next cycle:
                 beginOfCurrentCycle = actualEndOfCurrentCycle;
