@@ -405,6 +405,11 @@ namespace AbstractIO.Netduino3.Samples
             // .Smoothed() extension method to smooth the boolean value from the timer code into a nice looking LED
             // pattern.
 
+            // The pulses per second are calculated for a miniaturized fischertechnik clock with the following gear:
+            // Motor worm => Z14 and worm => Z14 and worm (here pulses are detected) => Z14 and worm => Z22 and minutes.
+            // So the relation of pulse detection to minutes is 1/14/22 and thus the turnaround time of the detecting
+            // worm is 3600 s / 14 / 22 = 11,69 seconds (rounded).
+
             shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
 
             AbstractIO.Samples.Sample12ClockWithContinuouslyControlledMotor.Run(

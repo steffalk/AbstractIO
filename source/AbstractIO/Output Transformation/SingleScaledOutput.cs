@@ -53,7 +53,7 @@ namespace AbstractIO
             set
             {
                 _value = value;
-                _target.Value = value * _factor + _offset;
+                _target.Value = _value * _factor + _offset;
             }
         }
 

@@ -159,7 +159,14 @@ namespace AbstractIO.Samples
             if (pulsesPerSecond <= 0f) { throw new ArgumentOutOfRangeException(nameof(pulsesPerSecond)); }
             if (secondsLamp == null) { throw new ArgumentNullException(nameof(secondsLamp)); }
 
-            const float MinimalSpeed = 0.1f;
+            // The minimal speed at which we are sure the motor is still turning at all (and not halting):
+            const float MinimalSpeed = 0.07f;
+
+            // The maximal speed the motor can handle:
+            const float MaximalSpeed = 1.0f;
+
+            // A rough guess for a good speed to reach the timing goals:
+            const float InitialSpeedGuess = 0.2f;
 
             // Start a blinking seconds lamp calmly going on in one second and off again in the next:
             var secondsTimer = new Timer((state) => { secondsLamp.Value = !secondsLamp.Value; },
@@ -167,49 +174,65 @@ namespace AbstractIO.Samples
 
             BooleanDebouncedInput debouncedPulse = pulse.Debounced(pulseDebounceMillisecondsAtFullSpeed);
 
-            // Let the motor run at full speed until the pulse changes from false to true:
-            motor.Value = 1f;
+            // Let the motor run until the pulse changes from false to true to initialize the position to a pulse
+            // boundary:
+            motor.Value = InitialSpeedGuess;
             debouncedPulse.DebounceMilliseconds = pulseDebounceMillisecondsAtFullSpeed;
             debouncedPulse.WaitFor(true, true);
 
-            // This is our staring point:
-            var startTime = DateTime.UtcNow;
-            var beginOfCurrentCycle = startTime;
-            uint numberOfCycles = 0;
+            // This is our starting point:
+            var clockStartTime = DateTime.UtcNow;
             var idealSecondsForCycle = 1f / pulsesPerSecond;
+            int safetyDebounceMilliseconds = 10;
 
-            // Initialize the speed:
-            motor.Value = 0.2f;
+            // State variables, divided into "ideal" (t) and "actual" (a) values:
+
+            // ------------------------------------------> time
+            //      :    |        : |          |
+            //      :    t0       : t1         t2
+            //      :             :            :
+            //      : ----v0----> : ----v1---> :
+            //      a0            a1
+
+            // v0 is the speed which should have brought the clock from a0 to t1 but brought it to a1.
+            // v1 is the speed to be calculated needed to bring the clock from a1 to t2.
+
+            // v1 = v0 * ((t1 - a0) / (t2 - a1)) * ((a1 - a0) / (t1 - a0))
+            //    = v0 * (a1 - a0) / (t2 - a1)
+
+            uint n;      // The number of cycles passed
+            DateTime t0; // Ideal start of the running cycle
+            DateTime t1; // Ideal end of the running cycle
+            DateTime t2; // Ideal end of the next cycle
+            DateTime a0; // Actual start of the running cycle
+            DateTime a1; // Actual end of the running cycle
+
+            n = 0;
+            t0 = clockStartTime;
+            a0 = t0;
 
             while (true)
             {
-                // Calculate when the next cyle _should_ be finished:
-                // Do not add some seconds every pulse but multiply and add to start time to avoid cumulative errors.
-                // This is the time we want the next gear cycle to end, ideally:
-                numberOfCycles++;
-                var targetEndOfCurrentCycle = startTime.AddSeconds(numberOfCycles / idealSecondsForCycle);
-
-                // Wait for 1/3 of the ideal cycle time to avoid measuring contact too early:
-                Thread.Sleep((int)(idealSecondsForCycle * 1000f / 3f));
-
-                // Run the motor at the current speed until the next cycle and measure the time::
+                // Run one cycle and measure time:
+                n++;
+                t1 = clockStartTime.AddSeconds(n * idealSecondsForCycle);
+                Thread.Sleep(safetyDebounceMilliseconds);
                 debouncedPulse.WaitFor(true, true);
-                var actualEndOfCurrentCycle = DateTime.UtcNow;
+                a1 = DateTime.UtcNow;
 
-                // Calculate the new motor speed, so that the next cycle should end at the correct time:
-                var secondsOfPassedCycle = (float)((actualEndOfCurrentCycle - beginOfCurrentCycle).TotalSeconds);
-                var targetEndOfNextCycle = startTime.AddSeconds((numberOfCycles + 1) / idealSecondsForCycle);
-                var secondsToEndOfNextCycle = (float)((targetEndOfNextCycle - actualEndOfCurrentCycle).TotalSeconds);
-                // With motor.Value, a cycle took secondsOfPassedCycle seconds.
-                // With which motor.Value will we realize secondsToEndOfNextCycle seconds?
+                // Calculate and apply the new speed:
+                t2 = clockStartTime.AddSeconds((n + 1) * idealSecondsForCycle);
+                double v1 = motor.Value * (a1 - a0).TotalSeconds / (t2 - a1).TotalSeconds;
 
-                motor.Value = Math.Max(MinimalSpeed, 
-                                       motor.Value
-                                       * secondsToEndOfNextCycle * idealSecondsForCycle
-                                       / (secondsOfPassedCycle * secondsOfPassedCycle));
+                Console.WriteLine("n = " + n.ToString("N0") +
+                                  "   v0 = " + motor.Value.ToString("N4") +
+                                  "   v1 = " + v1.ToString("N4"));
 
-                // Turnover to the next cycle:
-                beginOfCurrentCycle = actualEndOfCurrentCycle;
+                motor.Value = Math.Min(MaximalSpeed, Math.Max(MinimalSpeed, (float)v1));
+
+                // The current cycle gets the passed one:
+                t0 = t1;
+                a0 = a1;
             }
         }
     }
