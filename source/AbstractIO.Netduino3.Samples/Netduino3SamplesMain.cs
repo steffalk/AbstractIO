@@ -405,32 +405,41 @@ namespace AbstractIO.Netduino3.Samples
             // .Smoothed() extension method to smooth the boolean value from the timer code into a nice looking LED
             // pattern.
 
-            // The pulses per second are calculated for a miniaturized fischertechnik clock with the following gear:
+            // The ideal seconds per pulse are calculated for a miniaturized fischertechnik clock with the following
+            // gear:
             // Motor worm => Z14 and worm => Z14 and worm (here pulses are detected) => Z14 and worm => Z22 and minutes.
             // So the relation of pulse detection to minutes is 1/14/22 and thus the turnaround time of the detecting
-            // worm is 3600 s / 14 / 22 = 11,69 seconds (rounded).
+            // worm is 3600 s / 14 / 22 ≈ 11,69 seconds (rounded).
 
             shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
 
+            // Let a lamp blink in one-second-intervals:
+            // Start a blinking seconds lamp calmly going on in one second and off again in the next:
+
+            var secondsLamp = new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.OnboardLedBlue)
+                                     .Scaled(quadraticCoefficient: 1f, factor: 0f, offset: 0f)
+                                     .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20)
+                                     .MappedFromBoolean(falseValue: 0f, trueValue: 1f);
+
+            var secondsTimer = new System.Threading.Timer(
+                                    (state) => { secondsLamp.Value = !secondsLamp.Value; },
+                                    null, 0, 1000);
+
+            // Run the clock:
             AbstractIO.Samples.Sample12ClockWithContinuouslyControlledMotor.Run(
 
                 motor: shield.GetDcMotor(1)
-                       .Scaled(factor: -1f, offset: 0f),
+                       .Scaled(factor: -1f), // Pins are reversed in the model, so negate speed.
 
                 minimumMotorSpeed: 0.08f,
 
-                pulse: new Netduino3.DigitalInput(Netduino3.DigitalInputPin.D1),
+                initialSpeedGuess: 0.11f,
 
-                pulseDebounceMillisecondsAtFullSpeed: 300,
+                pulse: (new Netduino3.DigitalInput(DigitalInputPin.D1))
+                       .Debounced(debounceMilliseconds: 300)
+                       .MonitoredTo(teeTarget: new Netduino3.DigitalOutput(DigitalOutputPin.GoPort3Led)),
 
-                pulseMonitor: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.GoPort1Led)
-                              .MappedFromBoolean(falseValue: 0f, trueValue: 0.02f),
-
-                pulsesPerSecond: (22f * 14f) / 3600f,
-
-                secondsLamp: new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.OnboardLedBlue)
-                             .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20)
-                             .MappedFromBoolean(falseValue: 0f, trueValue: 1f));
+                idealSecondsPerCycle: 3600f / (22f * 14f));
 
 #else
 #error Please uncomment exactly one of the samples.

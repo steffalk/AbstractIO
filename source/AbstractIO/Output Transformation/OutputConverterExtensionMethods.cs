@@ -111,6 +111,27 @@
         }
 
         /// <summary>
+        /// Creates a <see cref="DoubleScaledOutput"/> object which will scale values quadratic and linear using a
+        /// factor and an offset.
+        /// </summary>
+        /// <param name="targetOutput">The target output to received the scaled values.</param>
+        /// <param name="quadraticCoefficient">The factor by which the square of the value will be used.</param>
+        /// <param name="factor">The factor to use.</param>
+        /// <param name="offset">The offset to use.</param>
+        /// <returns>The creted <see cref="DoubleScaledOutput"/> object.</returns>
+        /// <remarks>The <paramref name="targetOutput"/> will receive values scaled by the formula:
+        /// <see cref="IDoubleOutput.Value">Value</see> * <paramref name="factor"/> + <paramref name="offset"/>.
+        /// </remarks>
+        public static DoubleScaledOutput Scaled(
+            this IDoubleOutput targetOutput,
+            double quadraticCoefficient,
+            double factor,
+            double offset)
+        {
+            return new DoubleScaledOutput(targetOutput, quadraticCoefficient, factor, offset);
+        }
+
+        /// <summary>
         /// Creates a <see cref="DoubleScaledOutput"/> object which will scale values linear using a factor and an
         /// offset.
         /// </summary>
@@ -138,6 +159,27 @@
         public static DoubleScaledOutput Scaled(this IDoubleOutput targetOutput, double factor)
         {
             return new DoubleScaledOutput(targetOutput, factor);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="SingleScaledOutput"/> object which will scale values linear using a factor and an
+        /// offset.
+        /// </summary>
+        /// <param name="targetOutput">The target output to received the scaled values.</param>
+        /// <param name="quadraticCoefficient">The factor by which the square of the value will be used.</param>
+        /// <param name="factor">The factor to use.</param>
+        /// <param name="offset">The offset to use.</param>
+        /// <returns>The creted <see cref="SingleScaledOutput"/> object.</returns>
+        /// <remarks>The <paramref name="targetOutput"/> will receive values scaled by the formula:
+        /// <see cref="ISingleOutput.Value">Value</see> * <paramref name="factor"/> + <paramref name="offset"/>.
+        /// </remarks>
+        public static SingleScaledOutput Scaled(
+            this ISingleOutput targetOutput,
+            float quadraticCoefficient,
+            float factor,
+            float offset)
+        {
+            return new SingleScaledOutput(targetOutput, quadraticCoefficient, factor, offset);
         }
 
         /// <summary>

@@ -8,10 +8,32 @@ namespace AbstractIO
     public class SingleScaledOutput : ISingleOutput
     {
         private ISingleOutput _target;
-        private float _factor, _offset, _value;
+        private float _quadraticCoefficient, _factor, _offset, _value;
 
         /// <summary>
-        /// Creates an instance given a factor and an offset.
+        /// Creates an instance given a quadratic and linear factor and an offset (y = ax² + bx + c).
+        /// </summary>
+        /// <param name="target">The target output which shall receive the scaled values.</param>
+        /// <param name="quadraticCoefficient">The factor by which the square of the value will be used.</param>
+        /// <param name="factor">The factor to scale the output.</param>
+        /// <param name="offset">The offset to add to the output.</param>
+        /// <remarks>Setting the <see cref="Value"/> will set the <paramref name="target"/> value to
+        /// <see cref="Value"/> * <paramref name="factor"/> + <paramref name="offset"/>.</remarks>
+        public SingleScaledOutput(ISingleOutput target, float quadraticCoefficient, float factor, float offset)
+        {
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
+            _target = target;
+            _quadraticCoefficient = quadraticCoefficient;
+            _factor = factor;
+            _offset = offset;
+        }
+
+        /// <summary>
+        /// Creates an instance given a factor and an offset (y = ax + b).
         /// </summary>
         /// <param name="target">The target output which shall receive the scaled values.</param>
         /// <param name="factor">The factor to scale the output.</param>
@@ -20,14 +42,18 @@ namespace AbstractIO
         /// <see cref="Value"/> * <paramref name="factor"/> + <paramref name="offset"/>.</remarks>
         public SingleScaledOutput(ISingleOutput target, float factor, float offset)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
             _target = target;
             _factor = factor;
             _offset = offset;
         }
 
         /// <summary>
-        /// Creates an instance given a factor only, using 0.0 as the offset.
+        /// Creates an instance given a factor only, using 0.0 as the offset (y = ax).
         /// </summary>
         /// <param name="target">The target output which shall receive the scaled values.</param>
         /// <param name="factor">The factor to scale the output.</param>
@@ -35,7 +61,11 @@ namespace AbstractIO
         /// <see cref="Value"/> * <paramref name="factor"/>.</remarks>
         public SingleScaledOutput(ISingleOutput target, float factor)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
             _target = target;
             _factor = factor;
         }
@@ -53,7 +83,7 @@ namespace AbstractIO
             set
             {
                 _value = value;
-                _target.Value = _value * _factor + _offset;
+                _target.Value = (_quadraticCoefficient * _value + _factor) * _value + _offset;
             }
         }
 
