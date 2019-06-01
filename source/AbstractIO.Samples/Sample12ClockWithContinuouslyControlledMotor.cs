@@ -26,7 +26,8 @@ namespace AbstractIO.Samples
                                float minimumMotorSpeed,
                                float initialSpeedGuess,
                                IBooleanInput pulse,
-                               double idealSecondsPerCycle)
+                               double idealSecondsPerCycle,
+                               IBooleanInput runAtFullSpeedSwitch)
         {
             // Check parameters:
             if (motor == null)
@@ -89,6 +90,23 @@ namespace AbstractIO.Samples
 
             while (true)
             {
+                if (runAtFullSpeedSwitch.Value)
+                {
+                    Console.WriteLine("Manually adjusting clock by running at full speed");
+
+                    // Let the motor run at full speed to adjust the clock's time on the user's request:
+                    float lastSpeed = motor.Value;
+                    motor.Value = 1f;
+                    runAtFullSpeedSwitch.WaitFor(false);
+
+                    // Reinitialize:
+                    motor.Value = lastSpeed;
+                    pulse.WaitFor(true, true);
+                    n = 0;
+                    clockStartTime = DateTime.UtcNow;
+                    t0 = clockStartTime;
+                    a0 = t0;
+                }
                 // Run one cycle and measure time:
                 n++;
                 t1 = clockStartTime.AddSeconds(n * idealSecondsPerCycle);
@@ -102,10 +120,10 @@ namespace AbstractIO.Samples
                     a1 = DateTime.UtcNow;
                     a1a0 = (a1 - a0).TotalSeconds;
 
-                    // Perform a kind of additional debouncing by not accepting the next pulse earlier than at half of
+                    // Perform a kind of additional debouncing by not accepting the next pulse earlier than at 70% of
                     // the wanted time interval:
                     bounces++;
-                } while (a1a0 / (t1 - a0).TotalSeconds < 0.5);
+                } while (a1a0 / (t1 - a0).TotalSeconds < 0.7);
 
                 // We may miss a pulse due to mechanical errors in pulse detection.
                 // Estimate the number of missed pulses, rounding by adding 0.5 and casting to int (which truncates):

@@ -14,23 +14,14 @@ namespace AbstractIO
         /// </summary>
         /// <param name="input">The input which shall be awaited.</param>
         /// <param name="value">The value that the input shall have before this method returns.</param>
-        /// <param name="edgeOnly">If false, this method returns immediately if the desired <paramref name="value"/> is
-        /// already present. If true, only a change from another value than <paramref name="value"/> to
-        /// <paramref name="value"/> will cause the method to return.</param>
         /// <remarks>
         /// This is a blocking method polling the <paramref name="input"/> value in short intervals.
         /// </remarks>
-        public static void WaitFor(this IBooleanInput input, bool value, bool edgeOnly)
+        public static void WaitFor(this IBooleanInput input, bool value)
         {
-            if (input == null) throw new ArgumentNullException(nameof(input));
-
-            // If we wait for an edge, wait for the input value be unequal to the desired value:
-            if (edgeOnly)
+            if (input == null)
             {
-                while (input.Value == value)
-                {
-                    Thread.Sleep(1);
-                }
+                throw new ArgumentNullException(nameof(input));
             }
 
             // Wait for the input having the desired value.
@@ -41,13 +32,47 @@ namespace AbstractIO
         }
 
         /// <summary>
+        /// Pauses until an <see cref="IBooleanInput"/> returns a specified value, using polling, optionally on an edge.
+        /// </summary>
+        /// <param name="input">The input which shall be awaited.</param>
+        /// <param name="value">The value that the input shall have before this method returns.</param>
+        /// <param name="edgeOnly">If false, this method returns immediately if the desired <paramref name="value"/> is
+        /// already present. If true, only a change from another value than <paramref name="value"/> to
+        /// <paramref name="value"/> will cause the method to return.</param>
+        /// <remarks>
+        /// This is a blocking method polling the <paramref name="input"/> value in short intervals.
+        /// </remarks>
+        public static void WaitFor(this IBooleanInput input, bool value, bool edgeOnly)
+        {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            // If we wait for an edge, wait for the input value be unequal to the desired value:
+            if (edgeOnly)
+            {
+                while (input.Value == value)
+                {
+                    Thread.Sleep(1);
+                }
+            }
+
+            // Now wait for the desired value:
+            WaitFor(input, value);
+        }
+
+        /// <summary>
         /// Pauses until an <see cref="IBooleanInput"/> changes its value and return the new value, using polling.
         /// </summary>
         /// <param name="input">The input which shall be awaited.</param>
         /// <returns>The new value of the input.</returns>
         public static bool WaitForChange(this IBooleanInput input)
         {
-            if (input == null) throw new ArgumentNullException(nameof(input));
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             bool oldValue = input.Value;
             bool newValue;
@@ -74,7 +99,10 @@ namespace AbstractIO
         /// </remarks>
         public static void WaitFor(this IObservableBooleanInput input, bool value, bool edgeOnly)
         {
-            if (input == null) throw new ArgumentNullException(nameof(input));
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             // Only wait if the desired value is not already present and we do not wait for an edge:
             if (edgeOnly || (input.Value != value))
@@ -137,7 +165,10 @@ namespace AbstractIO
         /// </remarks>
         public static bool WaitForChange(this IObservableBooleanInput input)
         {
-            if (input == null) throw new ArgumentNullException(nameof(input));
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             // The signal being set when the desired value is reached:
             ManualResetEvent valueReached = new ManualResetEvent(false);

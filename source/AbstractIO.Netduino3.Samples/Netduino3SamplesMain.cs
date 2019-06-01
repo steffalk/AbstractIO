@@ -439,7 +439,9 @@ namespace AbstractIO.Netduino3.Samples
                        .Debounced(debounceMilliseconds: 300)
                        .MonitoredTo(teeTarget: new Netduino3.DigitalOutput(DigitalOutputPin.GoPort3Led)),
 
-                idealSecondsPerCycle: 3600f / (22f * 14f));
+                idealSecondsPerCycle: 3600f / (22f * 14f),
+                
+                runAtFullSpeedSwitch: new DigitalInput(DigitalInputPin.OnboardButton));
 
 #else
 #error Please uncomment exactly one of the samples.
