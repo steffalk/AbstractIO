@@ -435,8 +435,7 @@ namespace AbstractIO.Netduino3.Samples
 
                 initialSpeedGuess: 0.11f,
 
-                pulse: (new Netduino3.DigitalInput(DigitalInputPin.D1))
-                       .Debounced(debounceMilliseconds: 300)
+                pulse: (new Netduino3.DigitalInput(DigitalInputPin.D2))
                        .MonitoredTo(teeTarget: new Netduino3.DigitalOutput(DigitalOutputPin.GoPort3Led)),
 
                 idealSecondsPerCycle: 3600f / (22f * 14f),

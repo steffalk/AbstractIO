@@ -109,7 +109,7 @@ namespace AbstractIO.Samples
                 }
                 // Run one cycle and measure time:
                 n++;
-                t1 = clockStartTime.AddSeconds(n * idealSecondsPerCycle);
+                t1 = clockStartTime.AddSeconds(idealSecondsPerCycle * (double)n);
 
                 double a1a0;
                 int bounces = -1;
@@ -135,14 +135,14 @@ namespace AbstractIO.Samples
                     // Adjust the counted pulses and the ideal target time for that number of pulses since the last
                     // contact:
                     n = n + turns - 1;
-                    t1 = clockStartTime.AddSeconds(n * idealSecondsPerCycle);
+                    t1 = clockStartTime.AddSeconds(idealSecondsPerCycle * (double)n);
                 }
 
                 // Calculate the time we want the following cycle to end at:
-                t2 = clockStartTime.AddSeconds((n + 1) * idealSecondsPerCycle);
+                t2 = clockStartTime.AddSeconds(idealSecondsPerCycle * (double)(n + 1));
 
                 // Calculate and apply the new speed needed to reach that goal:
-                double v1 = motor.Value * a1a0 / ((t2 - a1).TotalSeconds * turns);
+                double v1 = motor.Value * a1a0 / (t2 - a1).TotalSeconds;
 
                 double diff = (t1 - a1).TotalSeconds;
                 // Math.Abs(double) is not implemented on Netduiono 3:
@@ -151,8 +151,9 @@ namespace AbstractIO.Samples
                     diff = -diff;
                 }
 
-                Console.WriteLine("n = " + n.ToString("N0").PadLeft(8) +
-                                  " | bounces = " + bounces.ToString() +
+                Console.WriteLine("t = " + a1.ToString("HH:mm:ss") +
+                                  " | n = " + n.ToString("N0").PadLeft(8) +
+                                  " | bounces = " + bounces.ToString().PadLeft(2) +
                                   " | turns = " + turns.ToString() +
                                   (a1 < t1 ? " | early" : " |  late") +
                                   " by " + diff.ToString("N4") +
