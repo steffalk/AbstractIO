@@ -62,6 +62,9 @@ namespace AbstractIO.Samples
 
             // State variables, divided into "ideal" (t) and "actual" (a) values:
 
+            // The case that we do not lose a pulse:
+            // turns = 1
+
             // ------------------------------------------> time
             //      :    |        : |          |
             //      :    t0       : t1         t2
@@ -74,6 +77,18 @@ namespace AbstractIO.Samples
 
             // v1 = v0 * ((t1 - a0) / (t2 - a1)) * ((a1 - a0) / (t1 - a0))
             //    = v0 * (a1 - a0) / (t2 - a1)
+
+            // Including the case that we lose pulses:
+            // example: turns = 3
+
+            // ----------------------------------------------------------------> time
+            //      :    |          |          |        : |          |
+            //      :    t0         t1a        t1b      : t1         t2
+            //      :                                   :            :
+            //      : ----v0--------------------------> : ----v1---> :
+            //      a0                                  a1
+
+            // v1 = v0 * ((a1 - a0) / turns) / (t2 - a1)
 
             int n;       // The number of cycles passed
             DateTime t0; // Ideal start of the running cycle
@@ -109,7 +124,7 @@ namespace AbstractIO.Samples
                 }
                 // Run one cycle and measure time:
                 n++;
-                t1 = clockStartTime.AddSeconds(idealSecondsPerCycle * (double)n);
+                t1 = clockStartTime.AddSeconds(idealSecondsPerCycle * n);
 
                 double a1a0;
                 int bounces = -1;
@@ -135,14 +150,14 @@ namespace AbstractIO.Samples
                     // Adjust the counted pulses and the ideal target time for that number of pulses since the last
                     // contact:
                     n = n + turns - 1;
-                    t1 = clockStartTime.AddSeconds(idealSecondsPerCycle * (double)n);
+                    t1 = clockStartTime.AddSeconds(idealSecondsPerCycle * n);
                 }
 
                 // Calculate the time we want the following cycle to end at:
-                t2 = clockStartTime.AddSeconds(idealSecondsPerCycle * (double)(n + 1));
+                t2 = clockStartTime.AddSeconds(idealSecondsPerCycle * (n + 1));
 
                 // Calculate and apply the new speed needed to reach that goal:
-                double v1 = motor.Value * a1a0 / (t2 - a1).TotalSeconds;
+                double v1 = motor.Value * a1a0 / ((t2 - a1).TotalSeconds * turns);
 
                 double diff = (t1 - a1).TotalSeconds;
                 // Math.Abs(double) is not implemented on Netduiono 3:
