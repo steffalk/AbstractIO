@@ -272,6 +272,7 @@ namespace AbstractIO.Samples
             DateTime t0 = clockStartTime; // Ideal start of the running cycle
             DateTime a0 = t0;             // Actual start of the running cycle
 
+            Console.WriteLine("Ideal seconds per cycle = " + idealSecondsPerCycle.ToString("N4"));
             Console.WriteLine("Running the clock at initial v = " + initialSpeedGuess.ToString("N4"));
 
             while (true)
@@ -336,7 +337,6 @@ namespace AbstractIO.Samples
 
                 // Calculate the motor voltage needed to reach the next cycle pulse right in time t1 and
                 // set the motor voltage to this value, taking the lower and upper bounds into account:
-                float oldMotorValue = motor.Value;
 
                 DateTime t2 = clockStartTime.AddSeconds(idealSecondsPerCycle * (n + 1));
 
@@ -361,7 +361,7 @@ namespace AbstractIO.Samples
                     " | " + (diff == 0.0 ? "exactly in time           " :
                              ((diff < 0.0 ? "early by " : " late by ") + absDiff.ToString("N4").PadLeft(7) + "s (" +
                               (absDiff * 100.0 / t1a0).ToString("N2").PadLeft(5) + "%)")) +
-                    " | v: " + oldMotorValue.ToString("N4") + " → " + motor.Value.ToString("N4"));
+                    " | v = " + motor.Value.ToString("N4"));
 
                 // The current cycle gets the passed one:
                 t0 = t1;
