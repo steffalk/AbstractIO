@@ -417,9 +417,9 @@ namespace AbstractIO.Netduino3.Samples
             // Start a blinking seconds lamp calmly going on in one second and off again in the next:
 
             var secondsLamp = new Netduino3.AnalogPwmOutput(DigitalPwmOutputPin.OnboardLedBlue)
-                                     .Scaled(quadraticCoefficient: 1f, factor: 0f, offset: 0f)
-                                     .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20)
-                                     .MappedFromBoolean(falseValue: 0f, trueValue: 1f);
+                              .Scaled(quadraticCoefficient: 1f, factor: 0f, offset: 0f)
+                              .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20)
+                              .MappedFromBoolean(falseValue: 0f, trueValue: 1f);
 
             var secondsTimer = new System.Threading.Timer(
                                     (state) => { secondsLamp.Value = !secondsLamp.Value; },

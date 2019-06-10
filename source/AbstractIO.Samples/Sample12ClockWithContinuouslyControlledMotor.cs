@@ -242,19 +242,20 @@ namespace AbstractIO.Samples
                 throw new ArgumentOutOfRangeException(nameof(idealSecondsPerCycle));
             }
 
+
             // Run unit tests on the RunningAverageCalculator class:
             Console.WriteLine("Testing RunningAverageCalculator");
             RunningAverageCalculator.Test();
             Console.WriteLine("RunningAverageCalculator successfully tested");
 
-            // An average calculator for how many seconds it will take to perform a given number of cycles using a given
-            // motor output voltage (ranging from 0.0f to 1.0f):
-            var averageSecondsPerCyclePerMotorVoltage = new RunningAverageCalculator(1);
+            // An average calculator the motor output voltage (ranging from 0.0f to 1.0f) needed to read one cycle in
+            // idealSecondsPerCycle seconds:
+            var voltageForIdealCycleTime = new RunningAverageCalculator(10);
 
-            // Add the initial speed value so that we can get a speed value the first time we need it:
-            averageSecondsPerCyclePerMotorVoltage.Add(idealSecondsPerCycle / initialSpeedGuess);
+            // Add the initial guess of that voltage:
+            voltageForIdealCycleTime.Add(initialSpeedGuess);
 
-            // Give a short full speed puls on the motor to get it surely running:
+            // Give a short full speed pulse to the motor to get it surely running:
             motor.Value = 1.0f;
             System.Threading.Thread.Sleep(10);
 
@@ -263,7 +264,6 @@ namespace AbstractIO.Samples
             Console.WriteLine("Initializing to pulse position");
             motor.Value = initialSpeedGuess;
             pulse.WaitFor(true, true);
-            Console.WriteLine("Pulse reached");
 
             // This is our starting point:
             var clockStartTime = DateTime.UtcNow;
@@ -271,10 +271,8 @@ namespace AbstractIO.Samples
             int n = 0;                    // The number of cycles passed
             DateTime t0 = clockStartTime; // Ideal start of the running cycle
             DateTime a0 = t0;             // Actual start of the running cycle
-            int bounces = 0;              // The number of bounces the pulse contacts made
-            int cycles = 0;               // The number of actual cycles the clock has made in the last thought cylcle
 
-            Console.WriteLine("Running the clock");
+            Console.WriteLine("Running the clock at initial v = " + initialSpeedGuess.ToString("N4"));
 
             while (true)
             {
@@ -301,54 +299,28 @@ namespace AbstractIO.Samples
                 // Calculate the end of the current (and the beginning of the next) cylce:
                 n++;
                 DateTime t1 = clockStartTime.AddSeconds(idealSecondsPerCycle * n);
-
-                // Calculate the motor voltage needed to reach the next cycle pulse right in time t1 and
-                // set the motor voltage to this value, taking the lower and upper bounds into account:
-                float oldMotorValue = motor.Value;
-
-                motor.Value = Math.Max(minimumMotorSpeed,
-                                       Math.Min(1.0f,
-                                                (float)((t1 - a0).TotalSeconds /
-                                                        averageSecondsPerCyclePerMotorVoltage.Average)));
-
-                // Report to debugger:
-                double diff = (a0 - t0).TotalSeconds;
-                // Math.Abs(double) is not implemented on Netduiono 3:
-                double absDiff = diff < 0.0 ? -diff : diff;
-
-                Console.WriteLine(
-                    "n = " + n.ToString("N0").PadLeft(8) +
-                    " | bounces = " + bounces.ToString().PadLeft(3) +
-                    " | cycles = " + cycles.ToString() +
-                    " | s/cv = " + averageSecondsPerCyclePerMotorVoltage.Average.ToString("N4").PadLeft(8) +
-                    " | a0 = " + a0.ToString("HH:mm:ss") +
-                    " | t0 = " + t0.ToString("HH:mm:ss") +
-                    " | " + (diff == 0.0 ? "exactly in time           " :
-                             ((diff < 0.0 ? "early" : " late") + " by " + absDiff.ToString("N4").PadLeft(7) +
-                              "s (" + (absDiff * 100.0 / (t1 - a0).TotalSeconds).ToString("N1").PadLeft(5)) + "%)") +
-                    " | v " + oldMotorValue.ToString("N4") + " → " + motor.Value.ToString("N4"));
-
-                DateTime a1;// The actual end of the current cycle.
-                double a1a0; // a1 - a0: The number of seconds between a0 and a1.
+                double t1a0 = (t1 - a0).TotalSeconds;
 
                 // Wait for the next (debounced) pulse, telling us that we reached the end of the current cycle:
+                DateTime a1;     // The actual end of the current cycle.
+                double a1a0;     // a1 - a0: The number of seconds between a0 and a1.
+                int bounces = 0; // The number of bounces the pulse contacts made
+
                 do
                 {
                     pulse.WaitFor(true, true);
                     a1 = DateTime.UtcNow;
                     a1a0 = (a1 - a0).TotalSeconds;
-
-                    // Perform a kind of additional debouncing by not accepting the next pulse earlier than at 70% of
-                    // the wanted time interval:
                     bounces++;
-                } while (a1a0 / (t1 - a0).TotalSeconds < 0.7);
+                } // Debounce by accepting the next pulse not earlier than at 70% of the wanted time interval:
+                while (a1a0 < 0.7 * t1a0);
 
-                // We may miss a pulse due to mechanical errors in pulse detection.
-                // Estimate the number of missed pulses, rounding by adding 0.5 and casting to int (which truncates):
-                cycles = (int)((a1 - t1).TotalSeconds /
-                               (averageSecondsPerCyclePerMotorVoltage.Average * motor.Value)
-                               + 0.5)
-                         + 1;
+                // We may have missed one or more pulses due to mechanical errors in pulse detection.
+                // Estimate the number of real cyles, rounding by adding 0.5 and casting to int (which truncates):
+                int cycles = (int)((a1 - t1).TotalSeconds * motor.Value /
+                                   (voltageForIdealCycleTime.Average * idealSecondsPerCycle)
+                                   + 0.5)
+                             + 1;
 
                 if (cycles > 1)
                 {
@@ -360,7 +332,36 @@ namespace AbstractIO.Samples
                 }
 
                 // Take note of the current measurement's insight:
-                averageSecondsPerCyclePerMotorVoltage.Add(a1a0 / (cycles * motor.Value));
+                voltageForIdealCycleTime.Add(motor.Value * a1a0 / (idealSecondsPerCycle * cycles));
+
+                // Calculate the motor voltage needed to reach the next cycle pulse right in time t1 and
+                // set the motor voltage to this value, taking the lower and upper bounds into account:
+                float oldMotorValue = motor.Value;
+
+                DateTime t2 = clockStartTime.AddSeconds(idealSecondsPerCycle * (n + 1));
+
+                motor.Value =
+                    Math.Max(minimumMotorSpeed,
+                             Math.Min(1.0f,
+                                      (float)(voltageForIdealCycleTime.Average * idealSecondsPerCycle
+                                              / (t2 - a1).TotalSeconds)));
+
+                // Report to debugger:
+                double diff = (a1 - t1).TotalSeconds;
+                // Math.Abs(double) is not implemented on Netduiono 3:
+                double absDiff = diff < 0.0 ? -diff : diff;
+
+                Console.WriteLine(
+                    "n = " + n.ToString("N0").PadLeft(8) +
+                    " | bounces = " + bounces.ToString().PadLeft(3) +
+                    " | cycles = " + cycles.ToString().PadLeft(2) +
+                    " | vi = " + voltageForIdealCycleTime.Average.ToString("N4").PadLeft(6) +
+                    " | t1 = " + t1.ToString("HH:mm:ss") +
+                    " | a1 = " + a1.ToString("HH:mm:ss") +
+                    " | " + (diff == 0.0 ? "exactly in time           " :
+                             ((diff < 0.0 ? "early by " : " late by ") + absDiff.ToString("N4").PadLeft(7) + "s (" +
+                              (absDiff * 100.0 / t1a0).ToString("N2").PadLeft(5) + "%)")) +
+                    " | v: " + oldMotorValue.ToString("N4") + " → " + motor.Value.ToString("N4"));
 
                 // The current cycle gets the passed one:
                 t0 = t1;
