@@ -395,10 +395,9 @@ namespace AbstractIO.Netduino3.Samples
             // The motor is a simple DC motor. As its pins are swapped in the fischertechnik model currently, we use
             // the .Scaled() extension to turn its direction by a factor of -1.
 
-            // The pulse switch gets heavily debounced using the .Debounce() extension method, as it is a contact
-            // customly built out of fischertechnik parts directly on a very small metallic worm gear. We accept changes
-            // only each 300 ms. Also, note that this (debounced) value is not only fed into the model code, but also
-            // tee-like output to a monitor LED, which is PWM-ed to light up only dimmed.
+            // The pulse switch is a contact customly built out of fischertechnik parts directly on a very small
+            // metallic worm gear. Note that its value is not only fed into the model code, but also tee-like output to
+            // a monitor LED.
 
             // The seconds lamp is driven independently of all this. The model code just has a timer changing a boolean
             // output each time it fires. To have the effect of a lamp going smoothly on and of, we use the
