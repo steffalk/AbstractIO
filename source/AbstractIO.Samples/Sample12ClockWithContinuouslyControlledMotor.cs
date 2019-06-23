@@ -272,12 +272,6 @@ namespace AbstractIO.Samples
             DateTime t0 = clockStartTime; // Ideal start of the running cycle
             DateTime a0 = t0;             // Actual start of the running cycle
 
-            //////////////////////////////////////////////////////////////////////////////
-            // Debug suspected problems with GetUtcNow()
-            int timerMinutes = 0;
-            var timer = new System.Threading.Timer((state) => { timerMinutes++; }, null, 60000, 60000);
-            //////////////////////////////////////////////////////////////////////////////
-
             Console.WriteLine("Ideal seconds per cycle = " + idealSecondsPerCycle.ToString("N4"));
             Console.WriteLine("Running the clock at initial v = " + initialSpeedGuess.ToString("N4"));
 
@@ -359,7 +353,6 @@ namespace AbstractIO.Samples
 
                 Console.WriteLine(
                     "n = " + n.ToString("N0").PadLeft(8) +
-                    " | min = " + timerMinutes.ToString("N0").PadLeft(4) +
                     " | bounces = " + bounces.ToString().PadLeft(3) +
                     " | cycles = " + cycles.ToString().PadLeft(2) +
                     " | vi = " + voltageForIdealCycleTime.Average.ToString("N4").PadLeft(6) +

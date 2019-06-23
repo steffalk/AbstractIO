@@ -389,28 +389,6 @@ namespace AbstractIO.Netduino3.Samples
 
 #elif Sample12ClockWithContinuouslyControlledMotor
 
-            var startTime = new System.DateTime();
-            int seconds = 0;
-
-            var timer = new System.Threading.Timer(
-                (args) =>
-                {
-                    if (seconds == 0)
-                    {
-                        startTime = System.DateTime.UtcNow;
-                    }
-                    seconds++;
-                    var diff = (System.DateTime.UtcNow - startTime).TotalSeconds;
-
-                    System.Console.WriteLine(
-                        "DateTimeSeconds = " + diff.ToString("N4") +
-                        " | TimerSeconds = " + seconds.ToString("N0") +
-                        " | ratio = " + (diff / seconds).ToString("N4"));
-                },
-                null, 0, 1000);
-
-            System.Threading.Thread.Sleep(System.Threading.Timeout.Infinite);
-
             // Let a clock run that is driven by a simple DC motor (no stepper) and which has a digital input that gives
             // a specific number of "1" pulses for a turn of a specific axis of the clock's gear.
 
