@@ -46,6 +46,7 @@ namespace AbstractIO
             _largestValueMappedTo = largestValueMappedTo;
             _sourceMinimum = float.MaxValue;
             _sourceMaximum = float.MinValue;
+            float firstValue = source.Value;
         }
 
         private static float Min(float value1, float value2)
@@ -117,7 +118,10 @@ namespace AbstractIO
                     result = Min(Max(result, _largestValueMappedTo), _smallestValueMappedTo);
                 }
 
-                Console.WriteLine("In = " + sourceValue.ToString("N6") + "  Out = " + result.ToString("N6"));
+                Console.WriteLine("Min = " + _sourceMinimum.ToString("N6") +
+                                  "  Max = " + _sourceMaximum.ToString("N6") +
+                                  "  In = " + sourceValue.ToString("N6") +
+                                  "  Out = " + result.ToString("N6"));
 
                 return result;
             }

@@ -523,11 +523,31 @@ namespace AbstractIO.Netduino3.Samples
 
             // Replace the lamp with an analog photocell, auto-learning its value range:
 
+            //AbstractIO.Samples.Sample13SimplifiedDevelopment.Run(
+
+            //    button: new Netduino3.AnalogAdcInput(AnalogInputPin.A1)                // An analog input
+            //        .ScaleToRange(smallestValueMappedTo: 0f, largestValueMappedTo: 1f) // auto-learning its range
+            //        .SchmittTrigger(threshold: 0.5f, hysteresis: 0.05f),               // converted too boolean
+
+            //    motor: shield.GetDcMotor(1)
+            //           .Smoothed(valueChangePerSecond: 0.5f, rampIntervalMs: 20)
+            //           .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
+            //           .Distributed(
+            //                shield.GetDcMotor(2)
+            //                .Smoothed(valueChangePerSecond: 2f, rampIntervalMs: 20)
+            //                .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
+            //                .BlinkedWhenTrue(onDurationMs: 500, offDurationMs: 500))
+
+            //    );
+
+            // Invert the behavior of the light barrier:
+
             AbstractIO.Samples.Sample13SimplifiedDevelopment.Run(
 
-                button: new Netduino3.AnalogAdcInput(AnalogInputPin.A0)                    // An analog input
-                        .ScaleToRange(smallestValueMappedTo: 0f, largestValueMappedTo: 1f) // auto-learning its range
-                        .SchmittTrigger(threshold: 0.5f, hysteresis: 0.05f),               // converted too boolean
+                button: new Netduino3.AnalogAdcInput(AnalogInputPin.A1)                
+                    .ScaleToRange(smallestValueMappedTo: 0f, largestValueMappedTo: 1f) 
+                    .SchmittTrigger(threshold: 0.5f, hysteresis: 0.05f)
+                    .Invert(),                                                         // Invert the light barrier
 
                 motor: shield.GetDcMotor(1)
                        .Smoothed(valueChangePerSecond: 0.5f, rampIntervalMs: 20)
