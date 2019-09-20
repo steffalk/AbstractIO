@@ -24,7 +24,8 @@
 //#define Sample09SimpleStepperMotor
 //#define Sample10StepperMotorClock
 //#define Sample11SimpleTrainWithDoors
-#define Sample12ClockWithContinuouslyControlledMotor
+//#define Sample12ClockWithContinuouslyControlledMotor
+#define Sample13SimplifiedDevelopment
 
 namespace AbstractIO.Netduino3.Samples
 {
@@ -440,6 +441,16 @@ namespace AbstractIO.Netduino3.Samples
                 idealSecondsPerCycle: 3600f / (22f * 14f),
 
                 runAtFullSpeedSwitch: new DigitalInput(DigitalInputPin.OnboardButton));
+
+#elif Sample13SimplifiedDevelopment
+
+            // The most primitive program ever: Let a motor run when a button is pressed.
+
+            shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2(address: 97);
+
+            AbstractIO.Samples.Sample13SimplifiedDevelopment.Run(
+                button: new Netduino3.DigitalInput(DigitalInputPin.D2),
+                motor: shield.GetDcMotor(1).MappedFromBoolean(falseValue: 0f, trueValue: 1f));
 
 #else
 #error Please uncomment exactly one of the samples.
