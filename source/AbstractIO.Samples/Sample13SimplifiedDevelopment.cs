@@ -13,7 +13,7 @@ namespace AbstractIO.Samples
                 while (true)
                 {
                     motor.Value = button.Value;
-                    System.Threading.Thread.Sleep(50);
+                    System.Threading.Thread.Sleep(20);
                 }
             });
 

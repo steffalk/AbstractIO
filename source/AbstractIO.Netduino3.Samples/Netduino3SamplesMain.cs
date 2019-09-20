@@ -468,7 +468,7 @@ namespace AbstractIO.Netduino3.Samples
             //    button: new Netduino3.DigitalInput(DigitalInputPin.D2),
 
             //    motor: shield.GetDcMotor(1)
-            //           .Smoothed(valueChangePerSecond: 0.5f, rampIntervalMs: 20) // Smooth the float value
+            //           .Smoothed(valueChangePerSecond: 2f, rampIntervalMs: 20) // Smooth the float value
             //           .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
 
             //    );
@@ -480,7 +480,7 @@ namespace AbstractIO.Netduino3.Samples
             //    button: new Netduino3.DigitalInput(DigitalInputPin.D2),
 
             //    motor: shield.GetDcMotor(1)
-            //           .Smoothed(valueChangePerSecond: 0.5f, rampIntervalMs: 20)
+            //           .Smoothed(valueChangePerSecond: 2f, rampIntervalMs: 20)
             //           .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
             //           .Distributed(                                           // Distribute output to another one
             //                shield.GetDcMotor(2)                               // A lamp output
@@ -495,7 +495,7 @@ namespace AbstractIO.Netduino3.Samples
             //    button: new Netduino3.DigitalInput(DigitalInputPin.D2),
 
             //    motor: shield.GetDcMotor(1)
-            //           .Smoothed(valueChangePerSecond: 0.5f, rampIntervalMs: 20)
+            //           .Smoothed(valueChangePerSecond: 2f, rampIntervalMs: 20)
             //           .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
             //           .Distributed(
             //                shield.GetDcMotor(2)
@@ -515,7 +515,7 @@ namespace AbstractIO.Netduino3.Samples
             //           .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
             //           .Distributed(
             //                shield.GetDcMotor(2)
-            //                .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20) // Smooth the blinking lamp
+            //                .Smoothed(valueChangePerSecond: 2f, rampIntervalMs: 20) // Smooth the blinking lamp
             //                .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
             //                .BlinkedWhenTrue(onDurationMs: 500, offDurationMs: 500))
 
@@ -534,7 +534,7 @@ namespace AbstractIO.Netduino3.Samples
                        .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
                        .Distributed(
                             shield.GetDcMotor(2)
-                            .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20)
+                            .Smoothed(valueChangePerSecond: 2f, rampIntervalMs: 20)
                             .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
                             .BlinkedWhenTrue(onDurationMs: 500, offDurationMs: 500))
 

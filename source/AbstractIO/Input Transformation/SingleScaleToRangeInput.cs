@@ -117,6 +117,8 @@ namespace AbstractIO
                     result = Min(Max(result, _largestValueMappedTo), _smallestValueMappedTo);
                 }
 
+                Console.WriteLine("In = " + sourceValue.ToString("N6") + "  Out = " + result.ToString("N6"));
+
                 return result;
             }
         }
