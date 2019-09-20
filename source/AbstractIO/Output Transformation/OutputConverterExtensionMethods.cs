@@ -118,7 +118,7 @@
         /// <param name="quadraticCoefficient">The factor by which the square of the value will be used.</param>
         /// <param name="factor">The factor to use.</param>
         /// <param name="offset">The offset to use.</param>
-        /// <returns>The creted <see cref="DoubleScaledOutput"/> object.</returns>
+        /// <returns>The created <see cref="DoubleScaledOutput"/> object.</returns>
         /// <remarks>The <paramref name="targetOutput"/> will receive values scaled by the formula:
         /// <see cref="IDoubleOutput.Value">Value</see> * <paramref name="factor"/> + <paramref name="offset"/>.
         /// </remarks>
@@ -138,7 +138,7 @@
         /// <param name="targetOutput">The target output to received the scaled values.</param>
         /// <param name="factor">The factor to use.</param>
         /// <param name="offset">The offset to use.</param>
-        /// <returns>The creted <see cref="DoubleScaledOutput"/> object.</returns>
+        /// <returns>The created <see cref="DoubleScaledOutput"/> object.</returns>
         /// <remarks>The <paramref name="targetOutput"/> will receive values scaled by the formula:
         /// <see cref="IDoubleOutput.Value">Value</see> * <paramref name="factor"/> + <paramref name="offset"/>.
         /// </remarks>
@@ -153,7 +153,7 @@
         /// </summary>
         /// <param name="targetOutput">The target output to received the scaled values.</param>
         /// <param name="factor">The factor to use.</param>
-        /// <returns>The creted <see cref="DoubleScaledOutput"/> object.</returns>
+        /// <returns>The created <see cref="DoubleScaledOutput"/> object.</returns>
         /// <remarks>The <paramref name="targetOutput"/> will receive values scaled by the formula:
         /// <see cref="IDoubleOutput.Value">Value</see> * <paramref name="factor"/>.</remarks>
         public static DoubleScaledOutput Scaled(this IDoubleOutput targetOutput, double factor)
@@ -169,7 +169,7 @@
         /// <param name="quadraticCoefficient">The factor by which the square of the value will be used.</param>
         /// <param name="factor">The factor to use.</param>
         /// <param name="offset">The offset to use.</param>
-        /// <returns>The creted <see cref="SingleScaledOutput"/> object.</returns>
+        /// <returns>The created <see cref="SingleScaledOutput"/> object.</returns>
         /// <remarks>The <paramref name="targetOutput"/> will receive values scaled by the formula:
         /// <see cref="ISingleOutput.Value">Value</see> * <paramref name="factor"/> + <paramref name="offset"/>.
         /// </remarks>
@@ -189,7 +189,7 @@
         /// <param name="targetOutput">The target output to received the scaled values.</param>
         /// <param name="factor">The factor to use.</param>
         /// <param name="offset">The offset to use.</param>
-        /// <returns>The creted <see cref="SingleScaledOutput"/> object.</returns>
+        /// <returns>The created <see cref="SingleScaledOutput"/> object.</returns>
         /// <remarks>The <paramref name="targetOutput"/> will receive values scaled by the formula:
         /// <see cref="ISingleOutput.Value">Value</see> * <paramref name="factor"/> + <paramref name="offset"/>.
         /// </remarks>
@@ -204,12 +204,27 @@
         /// </summary>
         /// <param name="targetOutput">The target output to received the scaled values.</param>
         /// <param name="factor">The factor to use.</param>
-        /// <returns>The creted <see cref="SingleScaledOutput"/> object.</returns>
+        /// <returns>The created <see cref="SingleScaledOutput"/> object.</returns>
         /// <remarks>The <paramref name="targetOutput"/> will receive values scaled by the formula:
         /// <see cref="ISingleOutput.Value">Value</see> * <paramref name="factor"/>.</remarks>
         public static SingleScaledOutput Scaled(this ISingleOutput targetOutput, float factor)
         {
             return new SingleScaledOutput(targetOutput, factor);
+        }
+
+        /// <summary>
+        /// Distributes an <see cref="IBooleanOutput"/> to another one in copy.
+        /// </summary>
+        /// <param name="targetOutput">The output whose value shall be passed to another output whenever it is set.
+        /// </param>
+        /// <param name="monitor">The other output, which shall receive whatever <paramref name="targetOutput"/>
+        /// receives.</param>
+        /// <returns>The created <see cref="BooleanOutputDistributor"/> object.</returns>
+        /// <remarks>If you need multiple monitors, directly use the <see cref="BooleanOutputDistributor"/> class whose
+        /// constructor accepts any number of <see cref="IBooleanOutput"/> objects.</remarks>
+        public static BooleanOutputDistributor Distributed(this IBooleanOutput targetOutput, IBooleanOutput monitor)
+        {
+            return new BooleanOutputDistributor(targetOutput, monitor);
         }
     }
 }

@@ -101,14 +101,14 @@ namespace AbstractIO
         void ComputeMicrostepTables(int microsteps)
         {
             // This implementation prefers performance over memory footprint.
-            var radiansPerIndex = (2 * (float)Math.PI) / (microsteps - 1);
+            var radiansPerIndex = (2 * (float)System.Math.PI) / (microsteps - 1);
             _inPhaseDutyCycle = new float[microsteps];
             _outOfPhaseDutyCycle = new float[microsteps];
             for (var i = 0; i < microsteps; ++i)
             {
                 var phaseAngle = i * radiansPerIndex;
-                _inPhaseDutyCycle[i] = Math.Sin(phaseAngle);
-                _outOfPhaseDutyCycle[i] = Math.Cos(phaseAngle);
+                _inPhaseDutyCycle[i] = System.Math.Sin(phaseAngle);
+                _outOfPhaseDutyCycle[i] = System.Math.Cos(phaseAngle);
             }
         }
 

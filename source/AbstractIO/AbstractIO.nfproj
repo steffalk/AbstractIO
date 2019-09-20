@@ -33,6 +33,7 @@
     <Compile Include="Input Interfaces\IObservableDoubleInput.cs" />
     <Compile Include="Input Transformation\BooleanDebouncedInput.cs" />
     <Compile Include="Input Transformation\BooleanTeeInput.cs" />
+    <Compile Include="Math.cs" />
     <Compile Include="StepDrives\IStepDrive.cs" />
     <Compile Include="Output Transformation\ITargetReachedObservable.cs" />
     <Compile Include="Input Settable\BooleanSettableInput.cs" />
@@ -73,17 +74,17 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib, Version=1.2.6.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\packages\nanoFramework.CoreLibrary.1.2.6-preview.7\lib\mscorlib.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.CoreLibrary.1.2.6-preview.19\lib\mscorlib.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
-    <Reference Include="nanoFramework.Runtime.Events, Version=1.0.8.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\packages\nanoFramework.Runtime.Events.1.0.8-preview.14\lib\nanoFramework.Runtime.Events.dll</HintPath>
+    <Reference Include="nanoFramework.Runtime.Events, Version=1.1.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\packages\nanoFramework.Runtime.Events.1.1.0-preview.4\lib\nanoFramework.Runtime.Events.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="System.Math, Version=1.0.6.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\packages\nanoFramework.System.Math.1.0.6-preview.15\lib\System.Math.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.System.Math.1.0.6-preview.18\lib\System.Math.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>

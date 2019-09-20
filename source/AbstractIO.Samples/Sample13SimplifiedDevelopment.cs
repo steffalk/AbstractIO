@@ -1,13 +1,23 @@
-﻿namespace AbstractIO.Samples
+﻿using System.Threading;
+
+namespace AbstractIO.Samples
 {
     public static class Sample13SimplifiedDevelopment
     {
         public static void Run(IBooleanInput button, IBooleanOutput motor)
         {
-            while (true)
+            // Multithreading is simple:
+
+            Thread thread = new Thread(() =>
             {
-                motor.Value = button.Value;
-            }
+                while (true)
+                {
+                    motor.Value = button.Value;
+                    System.Threading.Thread.Sleep(50);
+                }
+            });
+
+            thread.Start();
         }
     }
 }

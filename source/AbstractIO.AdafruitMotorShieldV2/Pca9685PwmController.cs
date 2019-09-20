@@ -90,7 +90,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
             else
             {
                 uint onCount = 0;
-                var offCount = (uint)Math.Floor(PwmCounterCycle * dutyCycle);
+                var offCount = (uint)System.Math.Floor(PwmCounterCycle * dutyCycle);
                 if (offCount <= onCount)
                 {
                     offCount = onCount + 1; // The two counts may not be the same value
@@ -216,8 +216,8 @@ namespace AbstractIO.AdafruitMotorShieldV2
         public void SetOutputModulationFrequency(float frequencyHz = Pca9685Constants.DefaultOutputModulationFrequency)
         {
             // See PCA9685 data sheet, pp.24 for details on calculating the prescale value.
-            var computedPrescale = Math.Round(Pca9685Constants.InternalOscillatorFrequencyHz / 4096.0f /
-                                              frequencyHz) - 1;
+            var computedPrescale = System.Math.Round(Pca9685Constants.InternalOscillatorFrequencyHz / 4096.0f /
+                                                     frequencyHz) - 1;
 
             if (computedPrescale < 3.0 || computedPrescale > 255.0)
             {

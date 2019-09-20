@@ -27,6 +27,8 @@
 //#define Sample12ClockWithContinuouslyControlledMotor
 #define Sample13SimplifiedDevelopment
 
+using System.Threading;
+
 namespace AbstractIO.Netduino3.Samples
 {
 
@@ -42,6 +44,7 @@ namespace AbstractIO.Netduino3.Samples
         {
 
             AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2 shield;
+
 
 #if Sample01SimpleBlinker
 
@@ -444,13 +447,101 @@ namespace AbstractIO.Netduino3.Samples
 
 #elif Sample13SimplifiedDevelopment
 
+
             // The most primitive program ever: Let a motor run when a button is pressed.
 
             shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2(address: 97);
 
+            //AbstractIO.Samples.Sample13SimplifiedDevelopment.Run(
+
+            //    button: new Netduino3.DigitalInput(DigitalInputPin.D2),          // Monitor a digital input pin
+
+            //    motor: shield.GetDcMotor(1)                                      // Create a motor output
+            //           .MappedFromBoolean(falseValue: 0f, trueValue: 1f)         // Map a boolean to a float
+
+            //    );
+
+            // Let the motor turn on and off smoothly!
+
+            //AbstractIO.Samples.Sample13SimplifiedDevelopment.Run(
+
+            //    button: new Netduino3.DigitalInput(DigitalInputPin.D2),
+
+            //    motor: shield.GetDcMotor(1)
+            //           .Smoothed(valueChangePerSecond: 0.5f, rampIntervalMs: 20) // Smooth the float value
+            //           .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
+
+            //    );
+
+            // Let a lamp monitor when the motor is on or off:
+
+            //AbstractIO.Samples.Sample13SimplifiedDevelopment.Run(
+
+            //    button: new Netduino3.DigitalInput(DigitalInputPin.D2),
+
+            //    motor: shield.GetDcMotor(1)
+            //           .Smoothed(valueChangePerSecond: 0.5f, rampIntervalMs: 20)
+            //           .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
+            //           .Distributed(                                           // Distribute output to another one
+            //                shield.GetDcMotor(2)                               // A lamp output
+            //                .MappedFromBoolean(falseValue: 0f, trueValue: 1f)) // Mapped from boolean
+
+            //    );
+
+            // Let the lamp blink instead of only light up:
+
+            //AbstractIO.Samples.Sample13SimplifiedDevelopment.Run(
+
+            //    button: new Netduino3.DigitalInput(DigitalInputPin.D2),
+
+            //    motor: shield.GetDcMotor(1)
+            //           .Smoothed(valueChangePerSecond: 0.5f, rampIntervalMs: 20)
+            //           .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
+            //           .Distributed(
+            //                shield.GetDcMotor(2)
+            //                .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
+            //                .BlinkedWhenTrue(onDurationMs: 500, offDurationMs: 500)) // Blink as long as pressed
+
+            //    );
+
+            // Let the lamp blink smoothly:
+
+            //AbstractIO.Samples.Sample13SimplifiedDevelopment.Run(
+
+            //    button: new Netduino3.DigitalInput(DigitalInputPin.D2),
+
+            //    motor: shield.GetDcMotor(1)
+            //           .Smoothed(valueChangePerSecond: 0.5f, rampIntervalMs: 20)
+            //           .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
+            //           .Distributed(
+            //                shield.GetDcMotor(2)
+            //                .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20) // Smooth the blinking lamp
+            //                .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
+            //                .BlinkedWhenTrue(onDurationMs: 500, offDurationMs: 500))
+
+            //);
+
+            // Replace the lamp with an analog photocell, auto-learning its value range:
+
             AbstractIO.Samples.Sample13SimplifiedDevelopment.Run(
-                button: new Netduino3.DigitalInput(DigitalInputPin.D2),
-                motor: shield.GetDcMotor(1).MappedFromBoolean(falseValue: 0f, trueValue: 1f));
+
+                button: new Netduino3.AnalogAdcInput(AnalogInputPin.A0)                    // An analog input
+                        .ScaleToRange(smallestValueMappedTo: 0f, largestValueMappedTo: 1f) // auto-learning its range
+                        .SchmittTrigger(threshold: 0.5f, hysteresis: 0.05f),               // converted too boolean
+
+                motor: shield.GetDcMotor(1)
+                       .Smoothed(valueChangePerSecond: 0.5f, rampIntervalMs: 20)
+                       .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
+                       .Distributed(
+                            shield.GetDcMotor(2)
+                            .Smoothed(valueChangePerSecond: 1f, rampIntervalMs: 20)
+                            .MappedFromBoolean(falseValue: 0f, trueValue: 1f)
+                            .BlinkedWhenTrue(onDurationMs: 500, offDurationMs: 500))
+
+                );
+
+            // Run forever:
+            Thread.Sleep(Timeout.Infinite);
 
 #else
 #error Please uncomment exactly one of the samples.

@@ -17,7 +17,6 @@
 
 using AbstractIO;
 using System;
-using Math = System.Math;
 
 namespace AbstractIO.AdafruitMotorShieldV2
 {

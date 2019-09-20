@@ -102,14 +102,14 @@ namespace AbstractIO.AdafruitMotorShieldV2
         void ComputeMicrostepTables(int microsteps)
         {
             // This implementation prefers performance over memory footprint.
-            var radiansPerIndex = (2 * (float)Math.PI) / (microsteps - 1);
+            var radiansPerIndex = (2 * (float)System.Math.PI) / (microsteps - 1);
             inPhaseDutyCycle = new float[microsteps];
             outOfPhaseDutyCycle = new float[microsteps];
             for (var i = 0; i < microsteps; ++i)
             {
                 var phaseAngle = i * radiansPerIndex;
-                inPhaseDutyCycle[i] = Math.Sin(phaseAngle);
-                outOfPhaseDutyCycle[i] = Math.Cos(phaseAngle);
+                inPhaseDutyCycle[i] = System.Math.Sin(phaseAngle);
+                outOfPhaseDutyCycle[i] = System.Math.Cos(phaseAngle);
             }
         }
     }
