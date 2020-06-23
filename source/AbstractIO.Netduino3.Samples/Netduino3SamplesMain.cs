@@ -24,8 +24,8 @@
 //#define Sample09SimpleStepperMotor
 //#define Sample10StepperMotorClock
 //#define Sample11SimpleTrainWithDoors
-//#define Sample12ClockWithContinuouslyControlledMotor
-#define Sample13SimplifiedDevelopment
+#define Sample12ClockWithContinuouslyControlledMotor
+//#define Sample13SimplifiedDevelopment
 
 using System.Threading;
 

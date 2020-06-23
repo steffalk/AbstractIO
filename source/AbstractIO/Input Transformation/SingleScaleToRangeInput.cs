@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace AbstractIO
 {
@@ -118,10 +119,10 @@ namespace AbstractIO
                     result = Min(Max(result, _largestValueMappedTo), _smallestValueMappedTo);
                 }
 
-                Console.WriteLine("Min = " + _sourceMinimum.ToString("N6") +
-                                  "  Max = " + _sourceMaximum.ToString("N6") +
-                                  "  In = " + sourceValue.ToString("N6") +
-                                  "  Out = " + result.ToString("N6"));
+                Debug.WriteLine("Min = " + _sourceMinimum.ToString("N6") +
+                                "  Max = " + _sourceMaximum.ToString("N6") +
+                                "  In = " + sourceValue.ToString("N6") +
+                                "  Out = " + result.ToString("N6"));
 
                 return result;
             }

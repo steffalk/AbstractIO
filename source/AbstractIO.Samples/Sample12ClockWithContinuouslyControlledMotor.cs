@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace AbstractIO.Samples
 {
@@ -244,9 +245,9 @@ namespace AbstractIO.Samples
 
 
             // Run unit tests on the RunningAverageCalculator class:
-            Console.WriteLine("Testing RunningAverageCalculator");
+            Debug.WriteLine("Testing RunningAverageCalculator");
             RunningAverageCalculator.Test();
-            Console.WriteLine("RunningAverageCalculator successfully tested");
+            Debug.WriteLine("RunningAverageCalculator successfully tested");
 
             // An average calculator the motor output voltage (ranging from 0.0f to 1.0f) needed to read one cycle in
             // idealSecondsPerCycle seconds:
@@ -261,7 +262,7 @@ namespace AbstractIO.Samples
 
             // Let the motor run until the pulse changes from false to true to initialize the position to a pulse
             // boundary:
-            Console.WriteLine("Initializing to pulse position");
+            Debug.WriteLine("Initializing to pulse position");
             motor.Value = initialSpeedGuess;
             pulse.WaitFor(true, true);
 
@@ -272,14 +273,14 @@ namespace AbstractIO.Samples
             DateTime t0 = clockStartTime; // Ideal start of the running cycle
             DateTime a0 = t0;             // Actual start of the running cycle
 
-            Console.WriteLine("Ideal seconds per cycle = " + idealSecondsPerCycle.ToString("N4"));
-            Console.WriteLine("Running the clock at initial v = " + initialSpeedGuess.ToString("N4"));
+            Debug.WriteLine("Ideal seconds per cycle = " + idealSecondsPerCycle.ToString("N4"));
+            Debug.WriteLine("Running the clock at initial v = " + initialSpeedGuess.ToString("N4"));
 
             while (true)
             {
                 if (runAtFullSpeedSwitch.Value)
                 {
-                    Console.WriteLine("Manually adjusting clock by running at full speed");
+                    Debug.WriteLine("Manually adjusting clock by running at full speed");
 
                     // Let the motor run at full speed to adjust the clock's time on the user's request:
                     float lastSpeed = motor.Value;
@@ -287,10 +288,10 @@ namespace AbstractIO.Samples
                     runAtFullSpeedSwitch.WaitFor(false);
 
                     // Reinitialize:
-                    Console.WriteLine("Initializing to pulse position");
+                    Debug.WriteLine("Initializing to pulse position");
                     motor.Value = lastSpeed;
                     pulse.WaitFor(true, true);
-                    Console.WriteLine("Pulse reached");
+                    Debug.WriteLine("Pulse reached");
                     n = 0;
                     clockStartTime = DateTime.UtcNow;
                     t0 = clockStartTime;
@@ -351,7 +352,7 @@ namespace AbstractIO.Samples
                 // Math.Abs(double) is not implemented on Netduiono 3:
                 double absDiff = diff < 0.0 ? -diff : diff;
 
-                Console.WriteLine(
+                Debug.WriteLine(
                     "n = " + n.ToString("N0").PadLeft(8) +
                     " | bounces = " + bounces.ToString().PadLeft(3) +
                     " | cycles = " + cycles.ToString().PadLeft(2) +
