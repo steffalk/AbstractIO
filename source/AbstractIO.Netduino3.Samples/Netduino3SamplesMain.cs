@@ -431,8 +431,8 @@ namespace AbstractIO.Netduino3.Samples
             // Run the clock:
             AbstractIO.Samples.Sample12ClockWithContinuouslyControlledMotor.Run(
 
-                motor: shield.GetDcMotor(1)
-                       .Scaled(factor: -1f), // Pins are reversed in the model, so negate speed.
+                motor: shield.GetDcMotor(3)
+                       .Scaled(factor: -1f), // If pins are reversed in the model, negate speed.
 
                 minimumMotorSpeed: 0.08f,
 

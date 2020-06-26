@@ -55,7 +55,7 @@ namespace AbstractIO.AdafruitMotorShieldV2
 
         #region Other constants
         public const int ClockRateKhz = 100;
-        public const int DefaultOutputModulationFrequency = 250; // = 1600;
+        public const int DefaultOutputModulationFrequency = 1600;
         public const int I2CTimeout = 3000; // milliseconds
         public const int InternalOscillatorFrequencyHz = 25000000;
         #endregion Other constants
