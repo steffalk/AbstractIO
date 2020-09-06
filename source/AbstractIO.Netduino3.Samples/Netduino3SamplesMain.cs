@@ -27,6 +27,8 @@
 #define Sample12ClockWithContinuouslyControlledMotor
 //#define Sample13SimplifiedDevelopment
 
+using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace AbstractIO.Netduino3.Samples
@@ -43,7 +45,7 @@ namespace AbstractIO.Netduino3.Samples
         public static void Main()
         {
 
-            AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2 shield;
+            // AbstractIO.AdafruitMotorShieldV2.AdafruitMotorShieldV2 shield;
 
 
 #if Sample01SimpleBlinker
@@ -414,7 +416,7 @@ namespace AbstractIO.Netduino3.Samples
             // So the relation of pulse detection to minutes is 1/14/22 and thus the turnaround time of the detecting
             // worm is 3600 s / 14 / 22 ≈ 11,69 seconds (rounded).
 
-            shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
+            var shield = new AdafruitMotorShieldV2.AdafruitMotorShieldV2();
 
             // Let a lamp blink in one-second-intervals:
             // Start a blinking seconds lamp calmly going on in one second and off again in the next:
@@ -564,7 +566,24 @@ namespace AbstractIO.Netduino3.Samples
             Thread.Sleep(Timeout.Infinite);
 
 #else
-#error Please uncomment exactly one of the samples.
+            //#error Please uncomment exactly one of the samples.
+
+            var startTime = DateTime.UtcNow;
+            int periods = 0;
+
+            var timer = new Timer(
+                (state) =>
+                {
+                    periods++;
+                    double s = DateTime.UtcNow.Subtract(startTime).TotalSeconds;
+                    double p = periods;
+                    Debug.WriteLine(p.ToString() + " | " + s.ToString() + " | " + ((p - s) / s).ToString());
+                },
+                null,
+                1000,
+                1000);
+
+            System.Threading.Thread.Sleep(Timeout.Infinite);
 #endif
         }
     }
