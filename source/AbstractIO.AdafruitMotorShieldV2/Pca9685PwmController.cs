@@ -182,7 +182,12 @@ namespace AbstractIO.AdafruitMotorShieldV2
             byte[] writeBuffer = { registerOffset, data };
             lock (AbstractIO.GlobalLockObjects.I2cLockObject)
             {
-                _i2cDevice.Write(writeBuffer);
+                var operationResult = _i2cDevice.WritePartial(writeBuffer);
+                if(operationResult.Status != I2cTransferStatus.FullTransfer)
+                {
+                    // TODO
+                    // handle error
+                }
             }
         }
 
@@ -202,7 +207,12 @@ namespace AbstractIO.AdafruitMotorShieldV2
             }
             lock (AbstractIO.GlobalLockObjects.I2cLockObject)
             {
-                _i2cDevice.Write(writeBuffer);
+                var operationResult = _i2cDevice.WritePartial(writeBuffer);
+                if (operationResult.Status != I2cTransferStatus.FullTransfer)
+                {
+                    // TODO
+                    // handle error
+                }
             }
         }
 
@@ -272,8 +282,19 @@ namespace AbstractIO.AdafruitMotorShieldV2
             var readBuffer = new byte[1];
             lock (AbstractIO.GlobalLockObjects.I2cLockObject)
             {
-                _i2cDevice.Write(writeBuffer);
-                _i2cDevice.Read(readBuffer);
+                var operationResult = _i2cDevice.WritePartial(writeBuffer);
+                if (operationResult.Status != I2cTransferStatus.FullTransfer)
+                {
+                    // TODO
+                    // handle error
+                }
+
+                operationResult = _i2cDevice.ReadPartial(readBuffer);
+                if (operationResult.Status != I2cTransferStatus.FullTransfer)
+                {
+                    // TODO
+                    // handle error
+                }
             }
             return readBuffer[0];
         }
